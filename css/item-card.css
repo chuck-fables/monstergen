@@ -733,7 +733,8 @@
         min-width: auto;
         border-right: none;
         border-bottom: 1px solid var(--border-color, #333);
-        max-height: 45vh;
+        max-height: none;
+        overflow-y: visible;
     }
 
     .item-output {

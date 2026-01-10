@@ -633,44 +633,64 @@ select option {
     }
 }
 
-/* Mobile: Sidebar becomes horizontal nav bar - no collapse */
+/* Mobile: Sidebar becomes stacked header + collapsible tabs */
 @media (max-width: 768px) {
     .toolkit-container {
         flex-direction: column;
     }
 
-    /* Override any collapsed state on mobile */
+    /* Sidebar becomes stacked vertical layout */
     .sidebar,
     .sidebar.collapsed {
         width: 100% !important;
         min-width: 100% !important;
-        flex-direction: row;
+        flex-direction: column;
         border-right: none;
-        border-bottom: 2px solid var(--primary-dark);
+        border-bottom: none;
         order: -1;
     }
 
+    /* Thin header bar */
     .sidebar-header {
-        padding: 10px 12px;
+        padding: 8px 12px;
         flex-shrink: 0;
     }
 
     .sidebar-title,
     .sidebar.collapsed .sidebar-title {
-        font-size: 0.9rem;
+        font-size: 0.85rem;
         opacity: 1 !important;
         width: auto !important;
+        letter-spacing: 1px;
     }
 
+    .sidebar-toggle {
+        width: 28px;
+        height: 28px;
+    }
+
+    /* Tabs row below header - collapsible */
     .sidebar-nav,
     .sidebar.collapsed .sidebar-nav {
         display: flex;
         flex-direction: row;
-        padding: 4px 8px;
+        flex-wrap: nowrap;
+        padding: 6px 8px;
         gap: 4px;
         overflow-x: auto;
-        flex: 1;
         -webkit-overflow-scrolling: touch;
+        background: var(--panel-bg);
+        border-bottom: 2px solid var(--primary-dark);
+        max-height: 200px;
+        transition: max-height 0.3s ease, padding 0.3s ease, opacity 0.3s ease;
+    }
+
+    /* Collapsed state for tabs */
+    .sidebar.mobile-tabs-collapsed .sidebar-nav {
+        max-height: 0;
+        padding: 0 8px;
+        overflow: hidden;
+        border-bottom: none;
     }
 
     .nav-item,
@@ -678,17 +698,18 @@ select option {
         padding: 8px 12px;
         margin-bottom: 0;
         flex-direction: column;
-        gap: 4px;
+        gap: 2px;
         flex-shrink: 0;
+        border-radius: 6px;
     }
 
     .nav-icon {
-        font-size: 1.1rem;
+        font-size: 1rem;
     }
 
     .nav-label,
     .sidebar.collapsed .nav-label {
-        font-size: 0.7rem;
+        font-size: 0.65rem;
         opacity: 1 !important;
         width: auto !important;
     }
@@ -696,7 +717,7 @@ select option {
     .nav-divider {
         width: 1px;
         height: auto;
-        margin: 4px;
+        margin: 4px 2px;
     }
 
     .sidebar-footer {
@@ -710,7 +731,18 @@ select option {
     }
 
     .generator-panel {
-        height: calc(100vh - 70px);
+        height: calc(100vh - 100px);
+        overflow-y: auto;
+    }
+
+    /* When tabs are collapsed, give more room to content */
+    .sidebar.mobile-tabs-collapsed ~ .main-content .generator-panel {
+        height: calc(100vh - 45px);
+    }
+
+    /* Add indicator to toggle button when tabs are collapsed */
+    .sidebar.mobile-tabs-collapsed .sidebar-toggle {
+        background: rgba(255, 255, 255, 0.3);
     }
 }
 

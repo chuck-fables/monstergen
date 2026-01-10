@@ -82,6 +82,11 @@ const Sidebar = {
         this.currentPanel = panelId;
         this.saveState();
 
+        // On mobile, collapse tabs after selecting a panel
+        if (this.isMobile()) {
+            this.sidebar.classList.add('mobile-tabs-collapsed');
+        }
+
         // Dispatch custom event for other modules to react
         document.dispatchEvent(new CustomEvent('panelchange', {
             detail: { panel: panelId }
@@ -89,8 +94,11 @@ const Sidebar = {
     },
 
     toggleSidebar() {
-        // Don't toggle on mobile - sidebar is always visible as horizontal bar
-        if (this.isMobile()) return;
+        if (this.isMobile()) {
+            // On mobile, toggle the tabs visibility
+            this.sidebar.classList.toggle('mobile-tabs-collapsed');
+            return;
+        }
 
         this.isCollapsed = !this.isCollapsed;
         this.sidebar.classList.toggle('collapsed', this.isCollapsed);
