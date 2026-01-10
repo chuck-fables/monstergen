@@ -50,9 +50,12 @@ const Generator = {
             throw new Error(`No CR data found for CR: ${cr}`);
         }
 
+        // Determine element early for dragons/elementals so name matches breath weapon
+        const element = (type === 'dragon' || type === 'elemental') ? this.determineElement(type) : null;
+
         // Generate base stats
         const monster = {
-            name: name || this.generateName(type, race),
+            name: name || this.generateName(type, race, element),
             size: size || Utils.randomChoice(typeData.typicalSizes),
             type: type,
             subtype: this.getSubtype(type, race),
@@ -72,8 +75,8 @@ const Generator = {
             // Defenses
             savingThrows: this.generateSavingThrows(cr, typeData, characterClass),
             skills: this.generateSkills(type, typeData, characterClass),
-            damageResistances: this.generateDamageResistances(type, typeData, race),
-            damageImmunities: this.generateDamageImmunities(type, typeData, race),
+            damageResistances: this.generateDamageResistances(type, typeData, race, element),
+            damageImmunities: this.generateDamageImmunities(type, typeData, race, element),
             conditionImmunities: this.generateConditionImmunities(type, typeData, race),
 
             // Senses and languages
@@ -97,7 +100,10 @@ const Generator = {
             race: race,
             characterClass: characterClass,
             inventory: generateInventory ? [] : null,
-            magicItems: includeMagicItems ? [] : null
+            magicItems: includeMagicItems ? [] : null,
+
+            // Element for dragons/elementals (used for name matching and breath weapons)
+            element: element
         };
 
         // Generate traits based on type (pass hit dice for humanoid spellcasters)
@@ -386,8 +392,9 @@ const Generator = {
 
     /**
      * Generate damage resistances
+     * Dragons/elementals get resistances matching their element
      */
-    generateDamageResistances(type, typeData, race) {
+    generateDamageResistances(type, typeData, race, element = null) {
         let resistances = [...(typeData.commonDamageResistances || [])];
 
         // Add racial resistances
@@ -403,9 +410,31 @@ const Generator = {
 
     /**
      * Generate damage immunities
+     * Dragons/elementals get immunities matching their element
      */
-    generateDamageImmunities(type, typeData, race) {
-        return [...(typeData.commonDamageImmunities || [])];
+    generateDamageImmunities(type, typeData, race, element = null) {
+        let immunities = [...(typeData.commonDamageImmunities || [])];
+
+        // Add element-based immunities for dragons and elementals
+        if (element && (type === 'dragon' || type === 'elemental')) {
+            const elementToImmunity = {
+                fire: 'fire',
+                water: 'cold',
+                cold: 'cold',
+                earth: 'acid',
+                air: 'lightning',
+                lightning: 'lightning',
+                acid: 'acid',
+                poison: 'poison'
+            };
+
+            const elementImmunity = elementToImmunity[element];
+            if (elementImmunity && !immunities.includes(elementImmunity)) {
+                immunities.push(elementImmunity);
+            }
+        }
+
+        return immunities;
     },
 
     /**
@@ -842,21 +871,40 @@ const Generator = {
 
     /**
      * Generate breath weapon
+     * Uses the monster's element if set (for dragons/elementals) to match the name
      */
     generateBreathWeapon(monster, typeData) {
         const cr = monster.cr;
 
-        // Select breath type based on monster type
-        const breathTypes = {
-            dragon: ['fire', 'cold', 'lightning', 'acid', 'poison'],
-            elemental: ['fire', 'cold', 'lightning', 'thunder'],
-            fiend: ['fire', 'necrotic'],
-            aberration: ['psychic', 'acid'],
-            monstrosity: ['fire', 'poison', 'acid']
+        // Map element to breath damage type
+        const elementToBreath = {
+            fire: 'fire',
+            water: 'cold',
+            earth: 'acid',
+            air: 'lightning',
+            cold: 'cold',
+            lightning: 'lightning',
+            acid: 'acid',
+            poison: 'poison'
         };
 
-        const availableTypes = breathTypes[monster.type] || ['fire'];
-        const breathType = Utils.randomChoice(availableTypes);
+        // Use monster's element if set, otherwise select randomly based on type
+        let breathType;
+        if (monster.element && elementToBreath[monster.element]) {
+            breathType = elementToBreath[monster.element];
+        } else {
+            // Fallback: select breath type based on monster type
+            const breathTypes = {
+                dragon: ['fire', 'cold', 'lightning', 'acid', 'poison'],
+                elemental: ['fire', 'cold', 'lightning', 'thunder'],
+                fiend: ['fire', 'necrotic'],
+                aberration: ['psychic', 'acid'],
+                monstrosity: ['fire', 'poison', 'acid']
+            };
+
+            const availableTypes = breathTypes[monster.type] || ['fire'];
+            breathType = Utils.randomChoice(availableTypes);
+        }
         const breathData = AttackData.breathWeapons[breathType];
 
         if (!breathData) return null;
@@ -1131,8 +1179,11 @@ const Generator = {
 
     /**
      * Generate name
+     * @param {string} type - Monster type
+     * @param {string} race - Race for humanoids
+     * @param {string} element - Element type for elementals/dragons (fire, cold, lightning, etc.)
      */
-    generateName(type, race) {
+    generateName(type, race, element = null) {
         // Try humanoid names first
         if (race && typeof HumanoidNames !== 'undefined' && HumanoidNames[race]) {
             return HumanoidNames.generateName(race);
@@ -1140,10 +1191,30 @@ const Generator = {
 
         // Fall back to monster names
         if (typeof MonsterNames !== 'undefined') {
+            // For elementals and dragons, use element-appropriate names
+            if ((type === 'elemental' || type === 'dragon') && element) {
+                return MonsterNames.generateName(type, true, element);
+            }
             return MonsterNames.generateName(type, true);
         }
 
         return 'Unknown Creature';
+    },
+
+    /**
+     * Determine element type for elementals and dragons
+     */
+    determineElement(type) {
+        const elementsByType = {
+            dragon: ['fire', 'cold', 'lightning', 'acid', 'poison'],
+            elemental: ['fire', 'water', 'earth', 'air']
+        };
+
+        const elements = elementsByType[type];
+        if (elements && elements.length > 0) {
+            return Utils.randomChoice(elements);
+        }
+        return null;
     },
 
     /**
