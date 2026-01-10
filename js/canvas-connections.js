@@ -31,6 +31,11 @@ const CanvasConnections = {
      * Start drawing a connection from a card
      */
     startDrawing(cardId) {
+        // Cancel any existing drawing operation first
+        if (this.isDrawing) {
+            this.cancelDrawing();
+        }
+
         this.isDrawing = true;
         this.drawingFromCard = cardId;
         this.drawingFromSide = null;
@@ -42,8 +47,19 @@ const CanvasConnections = {
         // Create temp line
         this.createTempLine();
 
-        // Add click listener for target cards
-        document.addEventListener('click', this.onDrawingClick);
+        // Use setTimeout to prevent immediate trigger from the click that started this
+        setTimeout(() => {
+            if (this.isDrawing) {
+                document.addEventListener('click', this.handleDrawingClick);
+            }
+        }, 10);
+    },
+
+    /**
+     * Bound handler for drawing clicks (so we can remove it properly)
+     */
+    handleDrawingClick: function(e) {
+        CanvasConnections.onDrawingClick(e);
     },
 
     /**
@@ -51,6 +67,12 @@ const CanvasConnections = {
      */
     startDrawingFromConnector(cardId, side, e) {
         e.stopPropagation();
+
+        // Cancel any existing drawing operation first
+        if (this.isDrawing) {
+            this.cancelDrawing();
+        }
+
         this.isDrawing = true;
         this.drawingFromCard = cardId;
         this.drawingFromSide = side;
@@ -66,6 +88,13 @@ const CanvasConnections = {
             this.tempLine.setAttribute('x1', startPos.x);
             this.tempLine.setAttribute('y1', startPos.y);
         }
+
+        // Use setTimeout to prevent immediate trigger
+        setTimeout(() => {
+            if (this.isDrawing) {
+                document.addEventListener('click', this.handleDrawingClick);
+            }
+        }, 10);
     },
 
     /**
@@ -106,31 +135,45 @@ const CanvasConnections = {
     /**
      * Handle click while drawing
      */
-    onDrawingClick: function(e) {
+    onDrawingClick(e) {
+        // Ignore if not drawing
+        if (!this.isDrawing) return;
+
         // Find if we clicked on a card
         const cardEl = e.target.closest('.canvas-card');
 
-        if (cardEl && cardEl.dataset.canvasId !== CanvasConnections.drawingFromCard) {
+        if (cardEl && cardEl.dataset.canvasId !== this.drawingFromCard) {
             // Connect to this card
             const targetId = cardEl.dataset.canvasId;
             const targetSide = e.target.closest('.connector')?.dataset.side || null;
 
-            CanvasConnections.createConnection(
-                CanvasConnections.drawingFromCard,
+            this.createConnection(
+                this.drawingFromCard,
                 targetId,
-                CanvasConnections.drawingFromSide,
+                this.drawingFromSide,
                 targetSide
             );
         }
 
-        CanvasConnections.cancelDrawing();
-        document.removeEventListener('click', CanvasConnections.onDrawingClick);
+        // Always finish the drawing operation after one click (whether successful or not)
+        this.finishDrawing();
+    },
+
+    /**
+     * Finish drawing operation and clean up
+     */
+    finishDrawing() {
+        document.removeEventListener('click', this.handleDrawingClick);
+        this.cancelDrawing();
     },
 
     /**
      * Cancel drawing
      */
     cancelDrawing() {
+        // Remove click listener if still attached
+        document.removeEventListener('click', this.handleDrawingClick);
+
         this.isDrawing = false;
 
         // Remove highlight

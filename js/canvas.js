@@ -407,6 +407,7 @@ const CampaignCanvas = {
 
         this.renderNote(note);
         this.saveState();
+        this.updateEmptyState();
 
         return note;
     },
@@ -521,6 +522,7 @@ const CampaignCanvas = {
         if (el) el.remove();
 
         this.saveState();
+        this.updateEmptyState();
     },
 
     /**
@@ -636,6 +638,27 @@ const CampaignCanvas = {
             this.currentBoard.notes.forEach(note => {
                 this.renderNote(note);
             });
+        }
+
+        // Update empty state visibility
+        this.updateEmptyState();
+    },
+
+    /**
+     * Update the visibility of the empty state message
+     */
+    updateEmptyState() {
+        const emptyState = document.getElementById('canvas-empty-state');
+        if (!emptyState) return;
+
+        const hasContent = this.currentBoard &&
+            ((this.currentBoard.cards && this.currentBoard.cards.length > 0) ||
+             (this.currentBoard.notes && this.currentBoard.notes.length > 0));
+
+        if (hasContent) {
+            emptyState.classList.add('hidden');
+        } else {
+            emptyState.classList.remove('hidden');
         }
     },
 

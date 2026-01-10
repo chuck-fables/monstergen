@@ -890,6 +890,39 @@
                             <input type="file" id="canvas-import-file" accept=".json" style="display:none" onchange="CampaignCanvas.importBoard(this.files[0])">
                             <button class="canvas-btn" onclick="document.getElementById('canvas-import-file').click()">Import</button>
                         </div>
+
+                        <div class="canvas-toolbar-divider"></div>
+
+                        <div class="canvas-toolbar-section">
+                            <button class="canvas-btn canvas-btn-primary" onclick="CanvasLibrary.toggle()" id="canvas-library-toggle">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 4px; vertical-align: middle;">
+                                    <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
+                                </svg>
+                                Library
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Library Drawer -->
+                    <div id="canvas-library-drawer" class="canvas-library-drawer">
+                        <div class="canvas-library-header">
+                            <h3>Saved Items</h3>
+                            <button class="canvas-library-close" onclick="CanvasLibrary.close()">&times;</button>
+                        </div>
+                        <div class="canvas-library-tabs">
+                            <button class="canvas-library-tab active" data-type="monster" onclick="CanvasLibrary.switchTab('monster')">Monsters</button>
+                            <button class="canvas-library-tab" data-type="npc" onclick="CanvasLibrary.switchTab('npc')">NPCs</button>
+                            <button class="canvas-library-tab" data-type="loot" onclick="CanvasLibrary.switchTab('loot')">Loot</button>
+                            <button class="canvas-library-tab" data-type="hook" onclick="CanvasLibrary.switchTab('hook')">Hooks</button>
+                            <button class="canvas-library-tab" data-type="location" onclick="CanvasLibrary.switchTab('location')">Locations</button>
+                            <button class="canvas-library-tab" data-type="item" onclick="CanvasLibrary.switchTab('item')">Items</button>
+                        </div>
+                        <div class="canvas-library-search">
+                            <input type="text" id="canvas-library-search" placeholder="Search..." oninput="CanvasLibrary.filter(this.value)">
+                        </div>
+                        <div id="canvas-library-content" class="canvas-library-content">
+                            <!-- Items will be populated by JavaScript -->
+                        </div>
                     </div>
 
                     <!-- Main Canvas -->
@@ -1205,6 +1238,7 @@
     <script src="js/canvas.js"></script>
     <script src="js/canvas-cards.js"></script>
     <script src="js/canvas-connections.js"></script>
+    <script src="js/canvas-library.js"></script>
 
     <script src="js/app.js"></script>
 </body>

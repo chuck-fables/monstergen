@@ -7,6 +7,8 @@
     flex-direction: column;
     height: 100%;
     background: #1a1a1a;
+    position: relative;
+    overflow: hidden;
 }
 
 .canvas-toolbar {
@@ -599,6 +601,14 @@
     text-align: center;
     color: var(--text-muted);
     pointer-events: none;
+    z-index: 0;
+    transition: opacity 0.3s;
+}
+
+/* Hide empty state when canvas has content */
+.canvas-empty-state.hidden {
+    opacity: 0;
+    visibility: hidden;
 }
 
 .canvas-empty-state .icon {
@@ -617,6 +627,213 @@
     font-size: 0.95rem;
     max-width: 400px;
     line-height: 1.5;
+}
+
+/* ==================== LIBRARY DRAWER ==================== */
+
+.canvas-library-drawer {
+    position: absolute;
+    top: 0;
+    right: -320px;
+    width: 320px;
+    height: 100%;
+    background: var(--panel-bg);
+    border-left: 1px solid var(--border-color);
+    box-shadow: -4px 0 20px rgba(0, 0, 0, 0.3);
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    transition: right 0.3s ease;
+}
+
+.canvas-library-drawer.open {
+    right: 0;
+}
+
+.canvas-library-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border-color);
+    background: var(--card-bg);
+}
+
+.canvas-library-header h3 {
+    margin: 0;
+    font-size: 1rem;
+    color: var(--text-color);
+}
+
+.canvas-library-close {
+    width: 28px;
+    height: 28px;
+    border: none;
+    border-radius: 4px;
+    background: transparent;
+    color: var(--text-muted);
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.canvas-library-close:hover {
+    background: #dc3545;
+    color: white;
+}
+
+.canvas-library-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    padding: 8px;
+    border-bottom: 1px solid var(--border-color);
+    background: var(--card-bg);
+}
+
+.canvas-library-tab {
+    flex: 1;
+    min-width: calc(33% - 4px);
+    padding: 6px 8px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    background: transparent;
+    color: var(--text-muted);
+    font-size: 0.75rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.canvas-library-tab:hover {
+    background: var(--input-bg);
+    color: var(--text-color);
+}
+
+.canvas-library-tab.active {
+    background: var(--primary-color);
+    border-color: var(--primary-color);
+    color: white;
+}
+
+.canvas-library-search {
+    padding: 8px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.canvas-library-search input {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    background: var(--input-bg);
+    color: var(--text-color);
+    font-size: 0.9rem;
+}
+
+.canvas-library-search input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+}
+
+.canvas-library-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 8px;
+}
+
+.canvas-library-empty {
+    text-align: center;
+    padding: 32px 16px;
+    color: var(--text-muted);
+}
+
+.canvas-library-empty svg {
+    opacity: 0.3;
+    margin-bottom: 12px;
+}
+
+.canvas-library-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px;
+    margin-bottom: 6px;
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.canvas-library-item:hover {
+    border-color: var(--primary-color);
+    background: var(--input-bg);
+}
+
+.canvas-library-item-icon {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    color: white;
+    flex-shrink: 0;
+}
+
+.canvas-library-item-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.canvas-library-item-name {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--text-color);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.canvas-library-item-meta {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.canvas-library-item-add {
+    width: 28px;
+    height: 28px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    background: transparent;
+    color: var(--text-color);
+    font-size: 1rem;
+    cursor: pointer;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
+
+.canvas-library-item-add:hover {
+    background: var(--primary-color);
+    border-color: var(--primary-color);
+    color: white;
+}
+
+.canvas-btn-primary {
+    background: var(--primary-color);
+    border-color: var(--primary-color);
+    color: white;
+}
+
+.canvas-btn-primary:hover {
+    background: var(--primary-dark);
+    border-color: var(--primary-dark);
 }
 
 /* ==================== RESPONSIVE ==================== */

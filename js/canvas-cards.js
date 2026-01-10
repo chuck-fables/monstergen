@@ -88,6 +88,7 @@ const CanvasCards = {
         CampaignCanvas.currentBoard.cards.push(card);
         this.renderCard(card);
         CampaignCanvas.saveState();
+        CampaignCanvas.updateEmptyState();
 
         // Show notification
         this.showNotification(`Added ${this.cardTypes[type]?.label || type} to canvas`);
@@ -118,6 +119,14 @@ const CanvasCards = {
                 <span class="canvas-card-icon">${icon}</span>
                 <span class="canvas-card-title">${title}</span>
                 <div class="canvas-card-actions">
+                    <button class="canvas-card-btn expand-btn" title="View full details">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="15 3 21 3 21 9"></polyline>
+                            <polyline points="9 21 3 21 3 15"></polyline>
+                            <line x1="21" y1="3" x2="14" y2="10"></line>
+                            <line x1="3" y1="21" x2="10" y2="14"></line>
+                        </svg>
+                    </button>
                     <button class="canvas-card-btn collapse-btn" title="Collapse/Expand">&#9660;</button>
                     <button class="canvas-card-btn connect-btn" title="Connect to another card">${this.icons.connect}</button>
                     <button class="canvas-card-btn delete-btn" title="Remove from canvas">&times;</button>
@@ -165,6 +174,12 @@ const CanvasCards = {
         // Double-click to view full
         el.addEventListener('dblclick', (e) => {
             if (e.target.classList.contains('canvas-card-btn')) return;
+            this.viewFullCard(card);
+        });
+
+        // Expand button - view full details
+        el.querySelector('.expand-btn').addEventListener('click', (e) => {
+            e.stopPropagation();
             this.viewFullCard(card);
         });
 
@@ -306,6 +321,7 @@ const CanvasCards = {
         if (el) el.remove();
 
         CampaignCanvas.saveState();
+        CampaignCanvas.updateEmptyState();
     },
 
     /**
