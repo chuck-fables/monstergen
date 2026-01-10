@@ -227,9 +227,6 @@ const CanvasConnections = {
         this.renderConnection(connection);
         CampaignCanvas.saveState();
 
-        // Prompt for label
-        setTimeout(() => this.editConnectionLabel(connection.id), 100);
-
         return connection;
     },
 
