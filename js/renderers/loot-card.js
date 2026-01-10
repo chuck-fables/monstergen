@@ -33,6 +33,8 @@ const LootCardRenderer = {
                     }
                 </div>
 
+                <div class="loot-tapered-rule"></div>
+
                 <div class="loot-body">
                     ${this.renderGold(loot.gold, showValues, editable)}
                     ${this.renderGems(loot.gems, showValues, editable)}
@@ -41,6 +43,8 @@ const LootCardRenderer = {
                     ${this.renderMagicItems(loot.magicItems, loot.consumables, showTags, showValues, editable)}
                 </div>
 
+                <div class="loot-tapered-rule reverse"></div>
+
                 <div class="loot-footer">
                     <div class="loot-total">
                         <span class="total-label">Estimated Total Value:</span>
@@ -48,24 +52,36 @@ const LootCardRenderer = {
                     </div>
                     <div class="loot-actions">
                         ${editable ? `
-                            <button type="button" class="btn-loot btn-loot-primary" onclick="LootPanel.saveEdits()">
+                            <button type="button" class="btn-loot btn-loot-text btn-loot-primary" onclick="LootPanel.saveEdits()">
                                 Save Changes
                             </button>
-                            <button type="button" class="btn-loot" onclick="LootPanel.cancelEdits()">
+                            <button type="button" class="btn-loot btn-loot-text" onclick="LootPanel.cancelEdits()">
                                 Cancel
                             </button>
                         ` : `
                             <button type="button" class="btn-loot" onclick="LootPanel.toggleEdit()" title="Edit">
-                                &#9998; Edit
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                                </svg>
                             </button>
                             <button type="button" class="btn-loot" onclick="LootPanel.saveLoot()" title="Save to Library">
-                                &#128190; Save
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
+                                </svg>
                             </button>
                             <button type="button" class="btn-loot" onclick="LootPanel.copyLoot()" title="Copy to Clipboard">
-                                &#128203; Copy
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                                </svg>
                             </button>
                             <button type="button" class="btn-loot" onclick="LootPanel.sendToCanvas()" title="Send to Canvas">
-                                &#128203; Canvas
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                                    <line x1="12" y1="8" x2="12" y2="16"></line>
+                                    <line x1="8" y1="12" x2="16" y2="12"></line>
+                                </svg>
                             </button>
                         `}
                     </div>
@@ -85,7 +101,7 @@ const LootCardRenderer = {
         if (editable) {
             return `
                 <div class="loot-section">
-                    <h3 class="loot-section-title">&#128176; Currency</h3>
+                    <h3 class="loot-section-title">Currency</h3>
                     <div class="loot-item gold-item gold-item-edit">
                         <div class="gold-coins-edit">
                             <label>PP: <input type="number" class="loot-edit-input loot-edit-coin" data-field="gold.coins.pp" value="${coins.pp || 0}" min="0" /></label>
@@ -107,7 +123,7 @@ const LootCardRenderer = {
 
         return `
             <div class="loot-section">
-                <h3 class="loot-section-title">&#128176; Currency</h3>
+                <h3 class="loot-section-title">Currency</h3>
                 <div class="loot-item gold-item">
                     <div class="gold-coins">${coinDisplay}</div>
                     <div class="gold-flavor">${gold.description}</div>
@@ -143,7 +159,7 @@ const LootCardRenderer = {
 
         return `
             <div class="loot-section">
-                <h3 class="loot-section-title">&#128142; Gems</h3>
+                <h3 class="loot-section-title">Gems</h3>
                 ${gemItems}
             </div>
         `;
@@ -174,7 +190,7 @@ const LootCardRenderer = {
 
         return `
             <div class="loot-section">
-                <h3 class="loot-section-title">&#127912; Art Objects</h3>
+                <h3 class="loot-section-title">Art Objects</h3>
                 ${artItems}
             </div>
         `;
@@ -206,7 +222,7 @@ const LootCardRenderer = {
 
         return `
             <div class="loot-section">
-                <h3 class="loot-section-title">&#128230; Curiosities & Trinkets</h3>
+                <h3 class="loot-section-title">Curiosities and Trinkets</h3>
                 ${mundaneItems}
             </div>
         `;
@@ -273,7 +289,7 @@ const LootCardRenderer = {
 
         return `
             <div class="loot-section">
-                <h3 class="loot-section-title">&#10024; Magic Items</h3>
+                <h3 class="loot-section-title">Magic Items</h3>
                 ${items}
             </div>
         `;
@@ -393,10 +409,16 @@ const LootCardRenderer = {
                 </div>
                 <div class="loot-compact-actions">
                     <button type="button" class="btn-icon-small" onclick="LootPanel.loadLoot('${loot.id}')" title="Load">
-                        &#128065;
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                            <circle cx="12" cy="12" r="3"></circle>
+                        </svg>
                     </button>
                     <button type="button" class="btn-icon-small" onclick="LootPanel.deleteLoot('${loot.id}')" title="Delete">
-                        &#128465;
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="3 6 5 6 21 6"></polyline>
+                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                        </svg>
                     </button>
                 </div>
             </div>

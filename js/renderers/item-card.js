@@ -1,6 +1,7 @@
 /**
  * Magic Item Card Renderer
  * Renders magic items as HTML cards with optional editing
+ * D&D Parchment Theme
  */
 
 const ItemCardRenderer = {
@@ -31,7 +32,7 @@ const ItemCardRenderer = {
         const editable = options.editable === true;
 
         return `
-            <div class="item-card" data-item-id="${item.id}" data-rarity="${item.rarity}">
+            <div class="item-card${editable ? ' item-card-editing' : ''}" data-item-id="${item.id}" data-rarity="${item.rarity}">
                 <div class="item-card-header" style="border-color: ${rarityColor}">
                     <div class="item-name-row">
                         ${editable
@@ -74,6 +75,8 @@ const ItemCardRenderer = {
                     </div>
                 </div>
 
+                <div class="item-tapered-rule"></div>
+
                 <div class="item-card-body">
                     ${this.renderAppearance(item, editable)}
                     ${this.renderMechanics(item, editable)}
@@ -108,6 +111,7 @@ const ItemCardRenderer = {
                     : `<p class="item-appearance-text">${item.appearance}</p>`
                 }
             </div>
+            <div class="item-tapered-rule reverse"></div>
         `;
     },
 
@@ -136,9 +140,10 @@ const ItemCardRenderer = {
 
         return `
             <div class="item-section item-mechanics">
-                <h4 class="item-section-title">Mechanics</h4>
+                <h4 class="item-section-title">Properties</h4>
                 ${mechanicsHtml}
             </div>
+            <div class="item-tapered-rule"></div>
         `;
     },
 
@@ -181,6 +186,7 @@ const ItemCardRenderer = {
                 ${renderPropertyGroup(majorBeneficial, 'majorBeneficial', 'artifact-major-beneficial', 'Major Beneficial Property')}
                 ${renderPropertyGroup(detrimental, 'detrimental', 'artifact-detrimental', 'Detrimental Property')}
             </div>
+            <div class="item-tapered-rule reverse"></div>
         `;
     },
 
@@ -226,7 +232,7 @@ const ItemCardRenderer = {
         const rarityColor = item.rarityData?.color || '#666';
 
         return `
-            <div class="item-card-compact" data-item-id="${item.id}">
+            <div class="item-card-compact" data-item-id="${item.id}" data-rarity="${item.rarity}">
                 <div class="item-compact-header" style="border-left-color: ${rarityColor}">
                     <span class="item-compact-name">${item.name}</span>
                     <span class="item-compact-type">${item.subtype?.name || 'Item'}</span>
@@ -302,7 +308,7 @@ const ItemCardRenderer = {
         text += '\n';
 
         if (item.mechanics && item.mechanics.length > 0) {
-            text += `MECHANICS\n`;
+            text += `PROPERTIES\n`;
             item.mechanics.forEach(mech => {
                 text += `${mech.name}: ${mech.description}\n`;
             });

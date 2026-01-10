@@ -37,6 +37,7 @@ const App = {
      */
     initControlsToggle() {
         const togglePairs = [
+            { toggle: 'monster-panel-toggle', content: 'monster-panel-content' },
             { toggle: 'npc-panel-toggle', content: 'npc-panel-content' },
             { toggle: 'loot-panel-toggle', content: 'loot-panel-content' },
             { toggle: 'hook-panel-toggle', content: 'hook-panel-content' },
@@ -62,10 +63,6 @@ const App = {
      */
     cacheElements() {
         this.elements = {
-            // Panel toggle
-            panelToggle: document.getElementById('panel-toggle'),
-            panelContent: document.getElementById('panel-content'),
-
             // Inputs
             monsterName: document.getElementById('monster-name'),
             monsterType: document.getElementById('monster-type'),
@@ -146,11 +143,6 @@ const App = {
      * Bind event listeners
      */
     bindEvents() {
-        // Panel toggle for mobile
-        this.elements.panelToggle.addEventListener('click', () => {
-            this.togglePanel();
-        });
-
         // Monster type change - show/hide humanoid options
         this.elements.monsterType.addEventListener('change', () => {
             this.updateHumanoidVisibility();
@@ -298,14 +290,6 @@ const App = {
     },
 
     /**
-     * Toggle the control panel (for mobile)
-     */
-    togglePanel() {
-        this.elements.panelToggle.classList.toggle('collapsed');
-        this.elements.panelContent.classList.toggle('collapsed');
-    },
-
-    /**
      * Toggle a lock state
      */
     toggleLock(field) {
@@ -315,13 +299,17 @@ const App = {
         const btn = field === 'type' ? this.elements.lockTypeBtn : this.elements.lockCrBtn;
         const icon = btn.querySelector('.lock-icon');
 
+        // SVG icons for lock states
+        const lockedSvg = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>';
+        const unlockedSvg = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 9.9-1"></path></svg>';
+
         if (this.locks[field]) {
             btn.classList.add('locked');
-            icon.innerHTML = '&#128274;'; // Locked padlock
+            icon.innerHTML = lockedSvg;
             btn.title = field === 'type' ? 'Unlock Monster Type' : 'Unlock Challenge Rating';
         } else {
             btn.classList.remove('locked');
-            icon.innerHTML = '&#128275;'; // Unlocked padlock
+            icon.innerHTML = unlockedSvg;
             btn.title = field === 'type' ? 'Lock Monster Type' : 'Lock Challenge Rating';
         }
     },

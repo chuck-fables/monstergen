@@ -393,3 +393,63 @@
     font-style: italic;
     color: #666;
 }
+
+/* ==================== MOBILE RESPONSIVE ==================== */
+@media (max-width: 900px) {
+    /* Force single column on mobile */
+    .statblock.wide,
+    .statblock.extra-wide {
+        width: 100%;
+        min-width: auto;
+        max-width: 100%;
+    }
+
+    .statblock.wide .statblock-content,
+    .statblock.extra-wide .statblock-content {
+        column-count: 1;
+        column-gap: 0;
+    }
+
+    .statblock {
+        width: 100%;
+        min-width: auto;
+        max-width: 100%;
+        margin: 0;
+    }
+
+    .statblock-wrapper {
+        width: 100%;
+        padding: 0;
+    }
+}
+
+@media (max-width: 500px) {
+    .statblock {
+        padding: 12px;
+        font-size: 12px;
+    }
+
+    .statblock-name {
+        font-size: 20px;
+    }
+
+    .section-header {
+        font-size: 14px;
+    }
+
+    .abilities-block {
+        gap: 4px;
+    }
+
+    .ability-score {
+        padding: 6px 4px;
+    }
+
+    .ability-name {
+        font-size: 10px;
+    }
+
+    .ability-value {
+        font-size: 14px;
+    }
+}

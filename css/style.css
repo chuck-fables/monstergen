@@ -915,6 +915,45 @@ select option {
     box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.3);
 }
 
+/* Monster Actions - Icon Buttons */
+.monster-actions {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    padding: 16px;
+    background: var(--panel-bg);
+    border-radius: 10px;
+    margin-top: auto;
+    border: 2px solid var(--primary-dark);
+    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.3);
+}
+
+.monster-actions .btn-icon {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--primary-color);
+    background: var(--card-bg);
+    color: var(--text-color);
+}
+
+.monster-actions .btn-icon:hover:not(:disabled) {
+    background: var(--primary-color);
+    color: white;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
+}
+
+.monster-actions .btn-icon:disabled {
+    background: var(--card-bg);
+    color: var(--text-muted);
+    border-color: var(--border-color);
+    cursor: not-allowed;
+    opacity: 0.5;
+}
+
 /* D&D-themed action buttons - red/black scheme */
 .btn-save,
 .btn-edit,

@@ -1,9 +1,32 @@
 /**
  * Hook Card Renderer
  * Renders generated quest hooks into clean, readable HTML
+ * D&D Parchment Theme
  */
 
 const HookCardRenderer = {
+    /**
+     * SVG Icons for the card
+     */
+    icons: {
+        save: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>',
+        copy: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>',
+        edit: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>',
+        canvas: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>',
+        view: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>',
+        delete: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>',
+        setting: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>',
+        lightbulb: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5A4.61 4.61 0 0 1 8.91 14"/></svg>',
+        bolt: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>',
+        target: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>',
+        warning: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>',
+        skull: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="10" r="8"/><path d="M12 18v4"/><path d="M8 22h8"/><circle cx="9" cy="9" r="1.5" fill="currentColor"/><circle cx="15" cy="9" r="1.5" fill="currentColor"/><path d="M9 14h6"/></svg>',
+        flame: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>',
+        coins: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="8" r="6"/><path d="M18.09 10.37A6 6 0 1 1 10.34 18"/><path d="M7 6h1v4"/><path d="M16.71 13.88l.7.71-2.82 2.82"/></svg>',
+        scale: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 16l3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1z"/><path d="M2 16l3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1z"/><path d="M7 21h10"/><path d="M12 3v18"/><path d="M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2"/></svg>',
+        scroll: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21h12a2 2 0 0 0 2-2v-2H10v2a2 2 0 1 1-4 0V5a2 2 0 1 0-4 0v3h4"/><path d="M19 17V5a2 2 0 0 0-2-2H4"/></svg>'
+    },
+
     /**
      * Render a batch of hooks to HTML
      * @param {Object} result - Generation result from HookGenerator
@@ -12,7 +35,11 @@ const HookCardRenderer = {
      */
     renderBatch(result, options = {}) {
         if (!result || !result.hooks || result.hooks.length === 0) {
-            return '<div class="hook-empty-state">No hooks generated</div>';
+            return `<div class="hook-empty-state">
+                <div class="icon">${this.icons.scroll}</div>
+                <h3>No Hooks Generated</h3>
+                <p>Generate quest hooks to see them here</p>
+            </div>`;
         }
 
         const showEnvironment = options.showEnvironment !== false;
@@ -31,10 +58,10 @@ const HookCardRenderer = {
                 </div>
                 <div class="hook-batch-actions">
                     <button type="button" class="btn-hook" onclick="HookPanel.saveAll()" title="Save All">
-                        &#128190; Save All
+                        ${this.icons.save}
                     </button>
                     <button type="button" class="btn-hook" onclick="HookPanel.copyAll()" title="Copy All">
-                        &#128203; Copy All
+                        ${this.icons.copy}
                     </button>
                 </div>
             </div>
@@ -85,10 +112,12 @@ const HookCardRenderer = {
                     </div>
                 </div>
 
+                <div class="hook-tapered-rule"></div>
+
                 <div class="hook-body">
                     <!-- Setting & Atmosphere -->
                     <div class="hook-section hook-setting">
-                        <div class="hook-section-icon">&#127759;</div>
+                        <div class="hook-section-icon">${this.icons.setting}</div>
                         <div class="hook-section-content">
                             <div class="hook-section-title">Setting</div>
                             ${editable
@@ -104,7 +133,7 @@ const HookCardRenderer = {
 
                     <!-- The Hook Angle -->
                     <div class="hook-section hook-angle">
-                        <div class="hook-section-icon">&#128161;</div>
+                        <div class="hook-section-icon">${this.icons.lightbulb}</div>
                         <div class="hook-section-content">
                             <div class="hook-section-title">The ${hook.monsterType.name} Angle</div>
                             ${editable
@@ -116,7 +145,7 @@ const HookCardRenderer = {
 
                     <!-- Catalyst -->
                     <div class="hook-section hook-catalyst">
-                        <div class="hook-section-icon">&#9889;</div>
+                        <div class="hook-section-icon">${this.icons.bolt}</div>
                         <div class="hook-section-content">
                             <div class="hook-section-title">The Catalyst</div>
                             ${editable
@@ -129,7 +158,7 @@ const HookCardRenderer = {
 
                     <!-- Objective -->
                     <div class="hook-section hook-objective">
-                        <div class="hook-section-icon">&#127919;</div>
+                        <div class="hook-section-icon">${this.icons.target}</div>
                         <div class="hook-section-content">
                             <div class="hook-section-title">The Objective</div>
                             ${editable
@@ -141,7 +170,7 @@ const HookCardRenderer = {
 
                     <!-- Complication -->
                     <div class="hook-section hook-complication">
-                        <div class="hook-section-icon">&#9888;</div>
+                        <div class="hook-section-icon">${this.icons.warning}</div>
                         <div class="hook-section-content">
                             <div class="hook-section-title">The Complication</div>
                             ${editable
@@ -153,7 +182,7 @@ const HookCardRenderer = {
 
                     <!-- Stakes -->
                     <div class="hook-section hook-stake">
-                        <div class="hook-section-icon">&#128128;</div>
+                        <div class="hook-section-icon">${this.icons.skull}</div>
                         <div class="hook-section-content">
                             <div class="hook-section-title">If They Fail...</div>
                             ${editable
@@ -171,26 +200,28 @@ const HookCardRenderer = {
                     ${showMoral && hook.moralDilemma ? this.renderMoralDilemma(hook.moralDilemma, editable) : ''}
                 </div>
 
+                <div class="hook-tapered-rule reverse"></div>
+
                 <div class="hook-footer">
                     ${editable ? `
-                        <button type="button" class="btn-hook btn-hook-primary" onclick="HookPanel.saveEdits('${hook.id}')">
+                        <button type="button" class="btn-hook btn-hook-text btn-hook-primary" onclick="HookPanel.saveEdits('${hook.id}')">
                             Save Changes
                         </button>
-                        <button type="button" class="btn-hook" onclick="HookPanel.cancelEdits()">
+                        <button type="button" class="btn-hook btn-hook-text" onclick="HookPanel.cancelEdits()">
                             Cancel
                         </button>
                     ` : `
                         <button type="button" class="btn-hook-small" onclick="HookPanel.toggleEdit('${hook.id}')" title="Edit">
-                            &#9998;
+                            ${this.icons.edit}
                         </button>
                         <button type="button" class="btn-hook-small" onclick="HookPanel.saveHook('${hook.id}')" title="Save">
-                            &#128190;
+                            ${this.icons.save}
                         </button>
                         <button type="button" class="btn-hook-small" onclick="HookPanel.copyHook('${hook.id}')" title="Copy">
-                            &#128203;
+                            ${this.icons.copy}
                         </button>
                         <button type="button" class="btn-hook-small" onclick="HookPanel.sendToCanvas('${hook.id}')" title="Send to Canvas">
-                            &#127912;
+                            ${this.icons.canvas}
                         </button>
                     `}
                 </div>
@@ -206,7 +237,7 @@ const HookCardRenderer = {
 
         return `
             <div class="hook-section hook-hazard">
-                <div class="hook-section-icon">&#9888;</div>
+                <div class="hook-section-icon">${this.icons.flame}</div>
                 <div class="hook-section-content">
                     <div class="hook-section-title">Environmental Hazard</div>
                     ${editable
@@ -230,7 +261,7 @@ const HookCardRenderer = {
 
         return `
             <div class="hook-section hook-loot">
-                <div class="hook-section-icon">&#128176;</div>
+                <div class="hook-section-icon">${this.icons.coins}</div>
                 <div class="hook-section-content">
                     <div class="hook-section-title">Potential Reward</div>
                     ${editable
@@ -250,7 +281,7 @@ const HookCardRenderer = {
 
         return `
             <div class="hook-section hook-dilemma">
-                <div class="hook-section-icon">&#9878;</div>
+                <div class="hook-section-icon">${this.icons.scale}</div>
                 <div class="hook-section-content">
                     <div class="hook-section-title">Moral Dilemma</div>
                     ${editable
@@ -316,9 +347,9 @@ const HookCardRenderer = {
     toText(hook) {
         if (!hook) return '';
 
-        let text = `═══════════════════════════════════════════════════\n`;
+        let text = `${'='.repeat(50)}\n`;
         text += `${hook.title.toUpperCase()}\n`;
-        text += `═══════════════════════════════════════════════════\n\n`;
+        text += `${'='.repeat(50)}\n\n`;
 
         text += `SETTING: ${hook.biome.name}\n`;
         text += `Atmosphere: ${hook.biome.atmosphere}\n`;
@@ -356,7 +387,7 @@ const HookCardRenderer = {
             text += `Consequence: ${hook.moralDilemma.consequence}\n\n`;
         }
 
-        text += `═══════════════════════════════════════════════════\n`;
+        text += `${'='.repeat(50)}\n`;
 
         return text;
     },
@@ -368,7 +399,7 @@ const HookCardRenderer = {
         if (!result || !result.hooks) return '';
 
         let text = `QUEST HOOKS GENERATED\n`;
-        text += `${'═'.repeat(50)}\n`;
+        text += `${'='.repeat(50)}\n`;
         text += `Settings: Biome=${result.settings.biome}, Monster=${result.settings.monsterType}, Theme=${result.settings.theme}\n`;
         text += `Generated: ${result.hooks.length} hooks\n\n`;
 
@@ -396,11 +427,11 @@ const HookCardRenderer = {
                     </div>
                 </div>
                 <div class="hook-compact-actions">
-                    <button type="button" class="btn-icon-small" onclick="HookPanel.loadHook('${hook.id}')" title="View">
-                        &#128065;
+                    <button type="button" class="btn-hook-small" onclick="HookPanel.loadHook('${hook.id}')" title="View">
+                        ${this.icons.view}
                     </button>
-                    <button type="button" class="btn-icon-small" onclick="HookPanel.deleteHook('${hook.id}')" title="Delete">
-                        &#128465;
+                    <button type="button" class="btn-hook-small" onclick="HookPanel.deleteHook('${hook.id}')" title="Delete">
+                        ${this.icons.delete}
                     </button>
                 </div>
             </div>

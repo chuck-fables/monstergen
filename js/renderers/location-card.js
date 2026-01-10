@@ -1,9 +1,38 @@
 /**
  * Location Card Renderer
  * Renders generated locations into clean, readable HTML
+ * Uses D&D Parchment Theme with SVG icons
  */
 
 const LocationCardRenderer = {
+    // SVG Icons for use throughout the renderer
+    icons: {
+        eye: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>',
+        home: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>',
+        building: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2" ry="2"></rect><path d="M9 22v-4h6v4"></path><path d="M8 6h.01"></path><path d="M16 6h.01"></path><path d="M12 6h.01"></path><path d="M12 10h.01"></path><path d="M12 14h.01"></path><path d="M16 10h.01"></path><path d="M16 14h.01"></path><path d="M8 10h.01"></path><path d="M8 14h.01"></path></svg>',
+        rainbow: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 17a10 10 0 0 0-20 0"></path><path d="M6 17a6 6 0 0 1 12 0"></path><path d="M10 17a2 2 0 0 1 4 0"></path></svg>',
+        palette: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="13.5" cy="6.5" r=".5"></circle><circle cx="17.5" cy="10.5" r=".5"></circle><circle cx="8.5" cy="7.5" r=".5"></circle><circle cx="6.5" cy="12.5" r=".5"></circle><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.555C21.965 6.012 17.461 2 12 2z"></path></svg>',
+        mapPin: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>',
+        package: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="16.5" y1="9.4" x2="7.5" y2="4.21"></line><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>',
+        user: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>',
+        star: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>',
+        messageCircle: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>',
+        zap: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>',
+        search: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>',
+        globe: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>',
+        tree: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22v-6"></path><path d="M12 8V2"></path><path d="M4 12h16"></path><path d="m5 15 7-7 7 7"></path><path d="m5 9 7 7 7-7"></path></svg>',
+        wind: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.7 7.7a2.5 2.5 0 1 1 1.8 4.3H2"></path><path d="M9.6 4.6A2 2 0 1 1 11 8H2"></path><path d="M12.6 19.4A2 2 0 1 0 14 16H2"></path></svg>',
+        edit: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>',
+        save: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>',
+        copy: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>',
+        canvas: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>',
+        trash: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>',
+        settlement: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>',
+        district: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2" ry="2"></rect><path d="M9 22v-4h6v4"></path><path d="M8 6h.01"></path><path d="M16 6h.01"></path><path d="M12 6h.01"></path><path d="M12 10h.01"></path><path d="M12 14h.01"></path><path d="M16 10h.01"></path><path d="M16 14h.01"></path><path d="M8 10h.01"></path><path d="M8 14h.01"></path></svg>',
+        shop: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>',
+        wilderness: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 18a5 5 0 0 0-10 0"></path><line x1="12" y1="9" x2="12" y2="2"></line><line x1="4.22" y1="10.22" x2="5.64" y2="11.64"></line><line x1="1" y1="18" x2="3" y2="18"></line><line x1="21" y1="18" x2="23" y2="18"></line><line x1="18.36" y1="11.64" x2="19.78" y2="10.22"></line><line x1="23" y1="22" x2="1" y2="22"></line><polyline points="8 18 12 12 16 18"></polyline></svg>'
+    },
+
     /**
      * Render a batch of locations to HTML
      */
@@ -22,11 +51,11 @@ const LocationCardRenderer = {
                     </span>
                 </div>
                 <div class="location-batch-actions">
-                    <button type="button" class="btn-location" onclick="LocationPanel.saveAll()" title="Save All">
-                        &#128190; Save All
+                    <button type="button" class="btn-location btn-location-text" onclick="LocationPanel.saveAll()" title="Save All">
+                        ${this.icons.save} Save All
                     </button>
-                    <button type="button" class="btn-location" onclick="LocationPanel.copyAll()" title="Copy All">
-                        &#128203; Copy All
+                    <button type="button" class="btn-location btn-location-text" onclick="LocationPanel.copyAll()" title="Copy All">
+                        ${this.icons.copy} Copy All
                     </button>
                 </div>
             </div>
@@ -89,11 +118,12 @@ const LocationCardRenderer = {
                         <span class="location-tag tag-economic ${economicClass}">${loc.economicState?.name || 'Stable'}</span>
                     </div>
                 </div>
+                <div class="location-tapered-rule"></div>
 
                 <div class="location-body">
                     <!-- Dynamic Entry -->
                     <div class="location-section location-entry">
-                        <div class="section-icon">&#128065;</div>
+                        <div class="section-icon">${this.icons.eye}</div>
                         <div class="section-content">
                             <div class="section-title">First Impression</div>
                             <p class="entry-text">${loc.dynamicEntry}</p>
@@ -102,7 +132,7 @@ const LocationCardRenderer = {
 
                     <!-- Description -->
                     <div class="location-section">
-                        <div class="section-icon">&#127968;</div>
+                        <div class="section-icon">${this.icons.home}</div>
                         <div class="section-content">
                             <div class="section-title">Overview</div>
                             <p>${loc.description}</p>
@@ -115,7 +145,7 @@ const LocationCardRenderer = {
                     <!-- Districts -->
                     ${loc.districts && loc.districts.length > 0 ? `
                     <div class="location-section">
-                        <div class="section-icon">&#127961;</div>
+                        <div class="section-icon">${this.icons.building}</div>
                         <div class="section-content">
                             <div class="section-title">Districts</div>
                             <div class="districts-grid">
@@ -135,7 +165,7 @@ const LocationCardRenderer = {
 
                     <!-- Unique Feature -->
                     <div class="location-section location-unique">
-                        <div class="section-icon">&#10024;</div>
+                        <div class="section-icon">${this.icons.star}</div>
                         <div class="section-content">
                             <div class="section-title">Unique Feature</div>
                             <p>${loc.uniqueFeature}</p>
@@ -146,6 +176,7 @@ const LocationCardRenderer = {
                     ${this.renderRumor(loc.rumor)}
                 </div>
 
+                <div class="location-tapered-rule reverse"></div>
                 ${this.renderFooter(loc.id)}
             </div>
         `;
@@ -170,11 +201,12 @@ const LocationCardRenderer = {
                         <span class="location-tag tag-economic ${economicClass}">${loc.economicState?.name || 'Stable'}</span>
                     </div>
                 </div>
+                <div class="location-tapered-rule"></div>
 
                 <div class="location-body">
                     <!-- Dynamic Entry -->
                     <div class="location-section location-entry">
-                        <div class="section-icon">&#128065;</div>
+                        <div class="section-icon">${this.icons.eye}</div>
                         <div class="section-content">
                             <div class="section-title">First Impression</div>
                             <p class="entry-text">${loc.dynamicEntry}</p>
@@ -183,7 +215,7 @@ const LocationCardRenderer = {
 
                     <!-- Vibe & Industry -->
                     <div class="location-section">
-                        <div class="section-icon">&#127752;</div>
+                        <div class="section-icon">${this.icons.wind}</div>
                         <div class="section-content">
                             <div class="section-title">The Vibe</div>
                             <p class="vibe-text">"${loc.vibe}"</p>
@@ -197,7 +229,7 @@ const LocationCardRenderer = {
                     <!-- Notable Locations -->
                     ${loc.notableLocations && loc.notableLocations.length > 0 ? `
                     <div class="location-section">
-                        <div class="section-icon">&#128205;</div>
+                        <div class="section-icon">${this.icons.mapPin}</div>
                         <div class="section-content">
                             <div class="section-title">Notable Locations</div>
                             <ul class="notable-list">
@@ -214,7 +246,7 @@ const LocationCardRenderer = {
 
                     <!-- Unique Feature -->
                     <div class="location-section location-unique">
-                        <div class="section-icon">&#10024;</div>
+                        <div class="section-icon">${this.icons.star}</div>
                         <div class="section-content">
                             <div class="section-title">Unique Feature</div>
                             <p>${loc.uniqueFeature}</p>
@@ -225,6 +257,7 @@ const LocationCardRenderer = {
                     ${this.renderRumor(loc.rumor)}
                 </div>
 
+                <div class="location-tapered-rule reverse"></div>
                 ${this.renderFooter(loc.id)}
             </div>
         `;
@@ -251,11 +284,12 @@ const LocationCardRenderer = {
                         <span class="location-tag tag-wealth">${loc.wealthTier}</span>
                     </div>
                 </div>
+                <div class="location-tapered-rule"></div>
 
                 <div class="location-body">
                     <!-- Dynamic Entry -->
                     <div class="location-section location-entry">
-                        <div class="section-icon">&#128065;</div>
+                        <div class="section-icon">${this.icons.eye}</div>
                         <div class="section-content">
                             <div class="section-title">First Impression</div>
                             ${editable
@@ -271,7 +305,7 @@ const LocationCardRenderer = {
                     <!-- Signature Items -->
                     ${loc.signatureItems && loc.signatureItems.length > 0 ? `
                     <div class="location-section location-inventory">
-                        <div class="section-icon">&#128230;</div>
+                        <div class="section-icon">${this.icons.package}</div>
                         <div class="section-content">
                             <div class="section-title">Signature Items</div>
                             <div class="inventory-list">
@@ -303,7 +337,7 @@ const LocationCardRenderer = {
 
                     <!-- Unique Feature -->
                     <div class="location-section location-unique">
-                        <div class="section-icon">&#10024;</div>
+                        <div class="section-icon">${this.icons.star}</div>
                         <div class="section-content">
                             <div class="section-title">What Makes This Place Different</div>
                             ${editable
@@ -317,6 +351,7 @@ const LocationCardRenderer = {
                     ${this.renderRumor(loc.rumor, editable)}
                 </div>
 
+                <div class="location-tapered-rule reverse"></div>
                 ${this.renderFooter(loc.id, editable)}
             </div>
         `;
@@ -339,11 +374,12 @@ const LocationCardRenderer = {
                         ${loc.landmarkType ? `<span class="location-tag tag-type">${loc.landmarkType}</span>` : ''}
                     </div>
                 </div>
+                <div class="location-tapered-rule"></div>
 
                 <div class="location-body">
                     <!-- Dynamic Entry -->
                     <div class="location-section location-entry">
-                        <div class="section-icon">&#128065;</div>
+                        <div class="section-icon">${this.icons.eye}</div>
                         <div class="section-content">
                             <div class="section-title">First Impression</div>
                             <p class="entry-text">${loc.dynamicEntry}</p>
@@ -352,7 +388,7 @@ const LocationCardRenderer = {
 
                     <!-- Atmosphere -->
                     <div class="location-section">
-                        <div class="section-icon">&#127752;</div>
+                        <div class="section-icon">${this.icons.wind}</div>
                         <div class="section-content">
                             <div class="section-title">Atmosphere</div>
                             <p class="atmosphere-text">${loc.atmosphere}</p>
@@ -361,7 +397,7 @@ const LocationCardRenderer = {
 
                     <!-- Description -->
                     <div class="location-section">
-                        <div class="section-icon">&#127758;</div>
+                        <div class="section-icon">${this.icons.globe}</div>
                         <div class="section-content">
                             <div class="section-title">Description</div>
                             <p>${loc.description}</p>
@@ -374,7 +410,7 @@ const LocationCardRenderer = {
                     <!-- Contained Areas/Landmarks -->
                     ${loc.containedAreas ? `
                     <div class="location-section">
-                        <div class="section-icon">&#128205;</div>
+                        <div class="section-icon">${this.icons.mapPin}</div>
                         <div class="section-content">
                             <div class="section-title">Notable Areas Within</div>
                             <ul class="contained-list">
@@ -386,7 +422,7 @@ const LocationCardRenderer = {
 
                     ${loc.containedLandmarks ? `
                     <div class="location-section">
-                        <div class="section-icon">&#128205;</div>
+                        <div class="section-icon">${this.icons.mapPin}</div>
                         <div class="section-content">
                             <div class="section-title">Points of Interest</div>
                             <ul class="contained-list">
@@ -399,7 +435,7 @@ const LocationCardRenderer = {
                     <!-- Effect / Regional Effect -->
                     ${loc.effect || loc.regionalEffect ? `
                     <div class="location-section location-effect">
-                        <div class="section-icon">&#9889;</div>
+                        <div class="section-icon">${this.icons.zap}</div>
                         <div class="section-content">
                             <div class="section-title">Regional Effect</div>
                             <p class="effect-text">${loc.effect || loc.regionalEffect}</p>
@@ -413,7 +449,7 @@ const LocationCardRenderer = {
                     <!-- Discovery -->
                     ${loc.discovery ? `
                     <div class="location-section location-discovery">
-                        <div class="section-icon">&#128270;</div>
+                        <div class="section-icon">${this.icons.search}</div>
                         <div class="section-content">
                             <div class="section-title">Potential Discovery</div>
                             <p>${loc.discovery}</p>
@@ -422,6 +458,7 @@ const LocationCardRenderer = {
                     ` : ''}
                 </div>
 
+                <div class="location-tapered-rule reverse"></div>
                 ${this.renderFooter(loc.id)}
             </div>
         `;
@@ -436,20 +473,20 @@ const LocationCardRenderer = {
         if (editable) {
             return `
                 <div class="location-section location-sensory">
-                    <div class="section-icon">&#127912;</div>
+                    <div class="section-icon">${this.icons.palette}</div>
                     <div class="section-content">
                         <div class="section-title">Sensory Details</div>
                         <div class="sensory-grid sensory-grid-edit">
                             <div class="sensory-item">
-                                <span class="sensory-label">&#128064; Sight:</span>
+                                <span class="sensory-label">Sight:</span>
                                 <input type="text" class="location-edit-input" data-field="sensory.sight" value="${this.escapeHtml(sensory.sight)}" />
                             </div>
                             <div class="sensory-item">
-                                <span class="sensory-label">&#128266; Sound:</span>
+                                <span class="sensory-label">Sound:</span>
                                 <input type="text" class="location-edit-input" data-field="sensory.sound" value="${this.escapeHtml(sensory.sound)}" />
                             </div>
                             <div class="sensory-item">
-                                <span class="sensory-label">&#128067; Smell:</span>
+                                <span class="sensory-label">Smell:</span>
                                 <input type="text" class="location-edit-input" data-field="sensory.smell" value="${this.escapeHtml(sensory.smell)}" />
                             </div>
                         </div>
@@ -460,20 +497,20 @@ const LocationCardRenderer = {
 
         return `
             <div class="location-section location-sensory">
-                <div class="section-icon">&#127912;</div>
+                <div class="section-icon">${this.icons.palette}</div>
                 <div class="section-content">
                     <div class="section-title">Sensory Details</div>
                     <div class="sensory-grid">
                         <div class="sensory-item">
-                            <span class="sensory-label">&#128064; Sight:</span>
+                            <span class="sensory-label">Sight:</span>
                             <span class="sensory-text">${sensory.sight}</span>
                         </div>
                         <div class="sensory-item">
-                            <span class="sensory-label">&#128266; Sound:</span>
+                            <span class="sensory-label">Sound:</span>
                             <span class="sensory-text">${sensory.sound}</span>
                         </div>
                         <div class="sensory-item">
-                            <span class="sensory-label">&#128067; Smell:</span>
+                            <span class="sensory-label">Smell:</span>
                             <span class="sensory-text">${sensory.smell}</span>
                         </div>
                     </div>
@@ -491,7 +528,7 @@ const LocationCardRenderer = {
         if (editable) {
             return `
                 <div class="location-section location-npc">
-                    <div class="section-icon">&#128100;</div>
+                    <div class="section-icon">${this.icons.user}</div>
                     <div class="section-content">
                         <div class="section-title">${title}</div>
                         <div class="npc-info npc-info-edit">
@@ -506,7 +543,7 @@ const LocationCardRenderer = {
 
         return `
             <div class="location-section location-npc">
-                <div class="section-icon">&#128100;</div>
+                <div class="section-icon">${this.icons.user}</div>
                 <div class="section-content">
                     <div class="section-title">${title}</div>
                     <div class="npc-info">
@@ -528,7 +565,7 @@ const LocationCardRenderer = {
         if (editable) {
             return `
                 <div class="location-section location-rumor">
-                    <div class="section-icon">&#128172;</div>
+                    <div class="section-icon">${this.icons.messageCircle}</div>
                     <div class="section-content">
                         <div class="section-title">Local Rumor <span class="rumor-truth">(${rumor.isTrue ? 'True' : 'False'})</span></div>
                         <textarea class="location-edit-textarea" data-field="rumor.text">${this.escapeHtml(rumor.text)}</textarea>
@@ -539,7 +576,7 @@ const LocationCardRenderer = {
 
         return `
             <div class="location-section location-rumor">
-                <div class="section-icon">&#128172;</div>
+                <div class="section-icon">${this.icons.messageCircle}</div>
                 <div class="section-content">
                     <div class="section-title">Local Rumor <span class="rumor-truth">(${rumor.isTrue ? 'True' : 'False'})</span></div>
                     <p class="rumor-text">"${rumor.text}"</p>
@@ -555,10 +592,10 @@ const LocationCardRenderer = {
         if (editable) {
             return `
                 <div class="location-footer location-edit-footer">
-                    <button type="button" class="btn-location btn-location-primary" onclick="LocationPanel.saveEdits('${id}')">
+                    <button type="button" class="btn-location-primary btn-location-text" onclick="LocationPanel.saveEdits('${id}')">
                         Save Changes
                     </button>
-                    <button type="button" class="btn-location" onclick="LocationPanel.cancelEdits()">
+                    <button type="button" class="btn-location btn-location-text" onclick="LocationPanel.cancelEdits()">
                         Cancel
                     </button>
                 </div>
@@ -568,16 +605,16 @@ const LocationCardRenderer = {
         return `
             <div class="location-footer">
                 <button type="button" class="btn-location-small" onclick="LocationPanel.toggleEdit('${id}')" title="Edit">
-                    &#9998;
+                    ${this.icons.edit}
                 </button>
                 <button type="button" class="btn-location-small" onclick="LocationPanel.saveLocation('${id}')" title="Save">
-                    &#128190;
+                    ${this.icons.save}
                 </button>
                 <button type="button" class="btn-location-small" onclick="LocationPanel.copyLocation('${id}')" title="Copy">
-                    &#128203;
+                    ${this.icons.copy}
                 </button>
                 <button type="button" class="btn-location-small" onclick="LocationPanel.sendToCanvas('${id}')" title="Send to Canvas">
-                    &#127912;
+                    ${this.icons.canvas}
                 </button>
             </div>
         `;
@@ -611,9 +648,9 @@ const LocationCardRenderer = {
     toText(loc) {
         if (!loc) return '';
 
-        let text = `${'═'.repeat(50)}\n`;
+        let text = `${'='.repeat(50)}\n`;
         text += `${loc.name.toUpperCase()}\n`;
-        text += `${'═'.repeat(50)}\n\n`;
+        text += `${'='.repeat(50)}\n\n`;
 
         text += `Type: ${loc.type === 'shop' ? loc.typeLabel : loc.scale || loc.districtType || loc.type}\n`;
         if (loc.wealthTier) text += `Wealth: ${loc.wealthTier}\n`;
@@ -658,7 +695,7 @@ const LocationCardRenderer = {
             text += `LOCAL RUMOR (${loc.rumor.isTrue ? 'True' : 'False'}):\n"${loc.rumor.text}"\n\n`;
         }
 
-        text += `${'═'.repeat(50)}\n`;
+        text += `${'='.repeat(50)}\n`;
 
         return text;
     },
@@ -670,7 +707,7 @@ const LocationCardRenderer = {
         if (!result || !result.locations) return '';
 
         let text = `LOCATIONS GENERATED\n`;
-        text += `${'═'.repeat(50)}\n`;
+        text += `${'='.repeat(50)}\n`;
         text += `Scale: ${result.settings.scale}, Wealth: ${result.settings.wealthTier}\n`;
         text += `Generated: ${result.locations.length} locations\n\n`;
 
@@ -688,17 +725,17 @@ const LocationCardRenderer = {
     renderCompact(loc) {
         if (!loc) return '';
 
-        const typeIcon = {
-            settlement: '&#127968;',
-            district: '&#127961;',
-            shop: '&#128722;',
-            wilderness: '&#127795;'
+        const typeIcons = {
+            settlement: this.icons.settlement,
+            district: this.icons.district,
+            shop: this.icons.shop,
+            wilderness: this.icons.wilderness
         };
 
         return `
             <div class="location-card-compact" data-location-id="${loc.id}">
                 <div class="location-compact-header">
-                    <div class="location-compact-icon">${typeIcon[loc.type] || '&#128205;'}</div>
+                    <div class="location-compact-icon">${typeIcons[loc.type] || this.icons.mapPin}</div>
                     <div class="location-compact-info">
                         <div class="location-compact-name">${loc.name}</div>
                         <div class="location-compact-type">${loc.scale || loc.districtType || loc.shopType || loc.type}</div>
@@ -706,10 +743,10 @@ const LocationCardRenderer = {
                 </div>
                 <div class="location-compact-actions">
                     <button type="button" class="btn-icon-small" onclick="LocationPanel.loadLocation('${loc.id}')" title="View">
-                        &#128065;
+                        ${this.icons.eye}
                     </button>
                     <button type="button" class="btn-icon-small" onclick="LocationPanel.deleteLocation('${loc.id}')" title="Delete">
-                        &#128465;
+                        ${this.icons.trash}
                     </button>
                 </div>
             </div>
