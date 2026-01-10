@@ -897,6 +897,15 @@ const Generator = {
             const damageDice = AttackData.getDamageDice(cr, attacks.length === 0 ? 'primary' : 'secondary');
             const damageBonus = attackMod;
 
+            // Replace 'elemental' placeholder with the monster's actual element
+            let damageType = template.damage;
+            if (damageType === 'elemental' && monster.element) {
+                damageType = monster.element;
+            } else if (damageType === 'elemental') {
+                // Fallback if no element set
+                damageType = 'fire';
+            }
+
             const attack = {
                 name: template.name,
                 isAttack: true,
@@ -907,7 +916,7 @@ const Generator = {
                 damage: {
                     dice: damageDice,
                     bonus: damageBonus,
-                    type: template.damage
+                    type: damageType
                 },
                 description: this.formatAttackDescription({
                     attackType: 'Melee Weapon Attack',
@@ -916,7 +925,7 @@ const Generator = {
                     targets: 'one target',
                     damage: damageDice,
                     damageBonus: damageBonus,
-                    damageType: template.damage,
+                    damageType: damageType,
                     properties: template.properties
                 }, monster)
             };
@@ -947,6 +956,15 @@ const Generator = {
             const damageDice = AttackData.getDamageDice(cr, 'secondary');
             const damageBonus = dexMod;
 
+            // Replace 'elemental' placeholder with the monster's actual element
+            let damageType = template.damage;
+            if (damageType === 'elemental' && monster.element) {
+                damageType = monster.element;
+            } else if (damageType === 'elemental') {
+                // Fallback if no element set
+                damageType = 'fire';
+            }
+
             const attack = {
                 name: template.name,
                 isAttack: true,
@@ -957,7 +975,7 @@ const Generator = {
                 damage: {
                     dice: damageDice,
                     bonus: damageBonus,
-                    type: template.damage
+                    type: damageType
                 },
                 description: this.formatRangedAttackDescription({
                     attackType: 'Ranged Weapon Attack',
@@ -966,7 +984,7 @@ const Generator = {
                     targets: 'one target',
                     damage: damageDice,
                     damageBonus: damageBonus,
-                    damageType: template.damage,
+                    damageType: damageType,
                     properties: template.properties
                 }, monster)
             };
@@ -1219,6 +1237,9 @@ const Generator = {
         // Get legendary actions for type
         const legendaryActions = LegendaryData.getLegendaryActions(monster.type, crNum, numActions);
 
+        // Get the element type for replacing 'elemental damage'
+        const elementType = monster.element || 'fire';
+
         return legendaryActions.map(action => ({
             name: action.name,
             cost: action.cost || 1,
@@ -1226,6 +1247,7 @@ const Generator = {
                 .replace('{name}', monster.name.toLowerCase())
                 .replace('{damage}', AttackData.getDamageDice(crNum, 'secondary'))
                 .replace('{dc}', CRStats[crNum]?.saveDC || 13)
+                .replace('elemental damage', `${elementType} damage`)
         }));
     },
 
