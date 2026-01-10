@@ -246,26 +246,26 @@ const Generator = {
 
         let numDice;
 
-        // Humanoid spellcasters get more hit dice to match their caster level
-        // Example: Archmage is CR 12 with 18 hit dice (18th level caster)
-        if (type === 'humanoid' && hasSpellcasting && this.isSpellcaster(characterClass)) {
-            // Different hit dice scaling based on caster type
-            const isHalfCaster = ['paladin', 'ranger', 'artificer'].includes(characterClass);
+        // Full casters get hit dice based on caster level
+        // Half-casters (paladin, ranger, artificer) use normal HP calculation like martial classes
+        const isHalfCaster = ['paladin', 'ranger', 'artificer'].includes(characterClass);
+        const isFullCaster = type === 'humanoid' && hasSpellcasting && this.isSpellcaster(characterClass) && !isHalfCaster;
+
+        if (isFullCaster) {
             const isWarlock = characterClass === 'warlock';
 
-            if (isHalfCaster) {
-                // Half-casters are more martial, get more hit dice at same CR
-                // They max at 5th level spells, so they need more HP to compensate
-                numDice = this.getHalfCasterLevel(crNum);
-            } else if (isWarlock) {
-                // Warlocks have limited spell slots, also get more hit dice
+            if (isWarlock) {
+                // Warlocks have limited spell slots, get more hit dice
                 numDice = this.getWarlockLevel(crNum);
             } else {
                 // Full casters: hit dice = caster level
+                // Example: Archmage is CR 12 with 18 hit dice (18th level caster)
                 numDice = this.getHumanoidCasterLevel(crNum);
             }
         } else {
-            // Normal HP calculation for non-spellcasters
+            // Normal HP calculation for non-spellcasters AND half-casters
+            // Half-casters (paladin, ranger, artificer) are primarily martial,
+            // so they get the same hit dice as fighters, monks, barbarians, etc.
             const targetHP = Utils.randomInt(crData.hpMin, crData.hpMax);
             const avgHitDie = (hitDie + 1) / 2;
             numDice = Math.max(1, Math.round(targetHP / (avgHitDie + 2))); // Assume +2 CON mod average
