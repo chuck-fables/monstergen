@@ -245,6 +245,32 @@ select option {
     color: white;
 }
 
+/* Lock Button */
+.btn-lock {
+    font-size: 1rem;
+    transition: all 0.2s;
+}
+
+.btn-lock .lock-icon {
+    display: inline-block;
+    transition: transform 0.2s;
+}
+
+.btn-lock.locked {
+    background: var(--primary-color);
+    border-color: var(--primary-color);
+    color: white;
+}
+
+.btn-lock.locked .lock-icon {
+    transform: scale(1.1);
+}
+
+.btn-lock:hover:not(.locked) {
+    background: var(--card-bg);
+    border-color: var(--text-muted);
+}
+
 .btn-export {
     background: var(--success-color);
     color: white;

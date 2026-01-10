@@ -13,6 +13,12 @@ const App = {
     // Monster being deleted (for confirmation)
     pendingDeleteId: null,
 
+    // Lock states for randomization
+    locks: {
+        type: false,
+        cr: false
+    },
+
     // DOM element references
     elements: {},
 
@@ -60,6 +66,10 @@ const App = {
             humanoidClass: document.getElementById('humanoid-class'),
             generateInventory: document.getElementById('generate-inventory'),
             includeMagicItems: document.getElementById('include-magic-items'),
+
+            // Lock buttons
+            lockTypeBtn: document.getElementById('lock-type-btn'),
+            lockCrBtn: document.getElementById('lock-cr-btn'),
 
             // Buttons
             autoNameBtn: document.getElementById('auto-name-btn'),
@@ -117,6 +127,15 @@ const App = {
         // Monster type change - show/hide humanoid options
         this.elements.monsterType.addEventListener('change', () => {
             this.updateHumanoidVisibility();
+        });
+
+        // Lock buttons
+        this.elements.lockTypeBtn.addEventListener('click', () => {
+            this.toggleLock('type');
+        });
+
+        this.elements.lockCrBtn.addEventListener('click', () => {
+            this.toggleLock('cr');
         });
 
         // Auto-generate name
@@ -255,6 +274,27 @@ const App = {
     },
 
     /**
+     * Toggle a lock state
+     */
+    toggleLock(field) {
+        this.locks[field] = !this.locks[field];
+
+        // Update button visual state
+        const btn = field === 'type' ? this.elements.lockTypeBtn : this.elements.lockCrBtn;
+        const icon = btn.querySelector('.lock-icon');
+
+        if (this.locks[field]) {
+            btn.classList.add('locked');
+            icon.innerHTML = '&#128274;'; // Locked padlock
+            btn.title = field === 'type' ? 'Unlock Monster Type' : 'Unlock Challenge Rating';
+        } else {
+            btn.classList.remove('locked');
+            icon.innerHTML = '&#128275;'; // Unlocked padlock
+            btn.title = field === 'type' ? 'Lock Monster Type' : 'Lock Challenge Rating';
+        }
+    },
+
+    /**
      * Show/hide humanoid-specific options
      */
     updateHumanoidVisibility() {
@@ -339,26 +379,37 @@ const App = {
      * Randomize all generator options
      */
     randomizeAll() {
-        // Random monster type
-        const types = ['aberration', 'beast', 'celestial', 'construct', 'dragon', 'elemental',
-            'fey', 'fiend', 'giant', 'humanoid', 'monstrosity', 'ooze', 'plant', 'undead'];
-        const randomType = types[Math.floor(Math.random() * types.length)];
-        this.elements.monsterType.value = randomType;
+        let randomType;
+
+        // Random monster type (unless locked)
+        if (this.locks.type && this.elements.monsterType.value) {
+            randomType = this.elements.monsterType.value;
+        } else {
+            const types = ['aberration', 'beast', 'celestial', 'construct', 'dragon', 'elemental',
+                'fey', 'fiend', 'giant', 'humanoid', 'monstrosity', 'ooze', 'plant', 'undead'];
+            randomType = types[Math.floor(Math.random() * types.length)];
+            this.elements.monsterType.value = randomType;
+        }
         this.updateHumanoidVisibility();
 
-        // Random CR (weighted towards lower CRs)
-        const crOptions = ['0', '0.125', '0.25', '0.5', '1', '2', '3', '4', '5', '6', '7', '8',
-            '9', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20'];
-        // Weight towards lower CRs
-        const crWeighted = [];
-        crOptions.forEach((cr, index) => {
-            const weight = Math.max(1, 20 - index);
-            for (let i = 0; i < weight; i++) {
-                crWeighted.push(cr);
-            }
-        });
-        const randomCR = crWeighted[Math.floor(Math.random() * crWeighted.length)];
-        this.elements.challengeRating.value = randomCR;
+        // Random CR (unless locked)
+        let randomCR;
+        if (this.locks.cr) {
+            randomCR = this.elements.challengeRating.value;
+        } else {
+            const crOptions = ['0', '0.125', '0.25', '0.5', '1', '2', '3', '4', '5', '6', '7', '8',
+                '9', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20'];
+            // Weight towards lower CRs
+            const crWeighted = [];
+            crOptions.forEach((cr, index) => {
+                const weight = Math.max(1, 20 - index);
+                for (let i = 0; i < weight; i++) {
+                    crWeighted.push(cr);
+                }
+            });
+            randomCR = crWeighted[Math.floor(Math.random() * crWeighted.length)];
+            this.elements.challengeRating.value = randomCR;
+        }
 
         // Random size based on type
         const sizes = this.getSizesForType(randomType);
