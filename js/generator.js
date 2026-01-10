@@ -943,10 +943,36 @@ const Generator = {
 
     /**
      * Generate aura effect
+     * For elementals/dragons, uses element-appropriate auras
      */
     generateAuraEffect(monster) {
         const auraOptions = AttackData.auraEffects;
-        const aura = Utils.randomChoice(auraOptions);
+
+        let aura;
+
+        // For elementals and dragons with an element, pick an appropriate aura
+        if (monster.element && (monster.type === 'elemental' || monster.type === 'dragon')) {
+            const elementAuraMap = {
+                fire: 'Heat Aura',
+                water: 'Cold Aura',
+                cold: 'Cold Aura',
+                earth: 'Earthen Tremor',
+                air: 'Buffeting Winds',
+                lightning: 'Lightning Aura',
+                acid: 'Corrosive Aura',
+                poison: 'Stench'
+            };
+
+            const preferredAuraName = elementAuraMap[monster.element];
+            if (preferredAuraName) {
+                aura = auraOptions.find(a => a.name === preferredAuraName);
+            }
+        }
+
+        // Fallback to random aura if no element-specific one found
+        if (!aura) {
+            aura = Utils.randomChoice(auraOptions);
+        }
 
         if (!aura) return null;
 
@@ -968,12 +994,18 @@ const Generator = {
      * Generate spellcasting
      * For humanoid spellcasters, caster level equals hit dice (not CR)
      * Example: Archmage is CR 12 with 18 hit dice = 18th level caster (9th level spells)
+     * Half-casters (Paladin, Ranger, Artificer) max at 5th level spells
+     * Warlocks use Pact Magic (limited slots all same level) + Mystic Arcanum
      */
     generateSpellcasting(monster, characterClass) {
         if (typeof SpellsData === 'undefined') return null;
 
         const cr = monster.cr;
         let level;
+
+        // Determine caster type
+        const isHalfCaster = ['paladin', 'ranger', 'artificer'].includes(characterClass);
+        const isWarlock = characterClass === 'warlock';
 
         // For humanoid spellcasters, use hit dice as caster level
         if (monster.type === 'humanoid' && this.isSpellcaster(characterClass)) {
@@ -1005,12 +1037,48 @@ const Generator = {
         const spellSaveDC = Utils.spellSaveDC(monster.proficiencyBonus, abilityMod);
         const spellAttackBonus = Utils.spellAttackBonus(monster.proficiencyBonus, abilityMod);
 
-        // Get spell slots and spells based on caster level
-        const spellSlots = SpellsData.getSpellSlots(level);
+        // Handle Warlock Pact Magic separately
+        if (isWarlock) {
+            const warlockData = SpellsData.getWarlockSlots(level);
+            const mysticArcanum = SpellsData.getMysticArcanum(level);
+            const spells = SpellsData.getSpellsForLevel(level, 'warlock');
+
+            // Add Mystic Arcanum spells (6th-9th level, 1/day each)
+            for (let arcLevel = 6; arcLevel <= 9; arcLevel++) {
+                if (mysticArcanum[arcLevel]) {
+                    const arcSpells = SpellsData.spellsByLevel[arcLevel]?.warlock || [];
+                    if (arcSpells.length > 0) {
+                        spells[`level${arcLevel}`] = SpellsData.selectRandomSpells(arcSpells, 1);
+                    }
+                }
+            }
+
+            return {
+                ability: spellAbility,
+                saveDC: spellSaveDC,
+                attackBonus: spellAttackBonus,
+                level: level,
+                maxSpellLevel: warlockData.slotLevel,
+                isWarlock: true,
+                pactSlots: warlockData.slots,
+                pactSlotLevel: warlockData.slotLevel,
+                mysticArcanum: mysticArcanum,
+                spells: spells,
+                innate: false
+            };
+        }
+
+        // Get spell slots based on caster type
+        const spellSlots = SpellsData.getSpellSlots(level, characterClass);
         const spells = SpellsData.getSpellsForLevel(level, characterClass || monster.type);
 
         // Calculate max spell level available
-        const maxSpellLevel = this.maxSpellLevelForCasterLevel(level);
+        let maxSpellLevel;
+        if (isHalfCaster) {
+            maxSpellLevel = this.maxSpellLevelForHalfCaster(level);
+        } else {
+            maxSpellLevel = this.maxSpellLevelForCasterLevel(level);
+        }
 
         return {
             ability: spellAbility,
@@ -1020,7 +1088,8 @@ const Generator = {
             maxSpellLevel: maxSpellLevel,
             slots: spellSlots,
             spells: spells,
-            innate: !characterClass
+            innate: !characterClass,
+            isHalfCaster: isHalfCaster
         };
     },
 
@@ -1284,6 +1353,20 @@ const Generator = {
         if (casterLevel >= 5) return 3;
         if (casterLevel >= 3) return 2;
         return 1;
+    },
+
+    /**
+     * Get max spell level for half-casters (Paladin, Ranger, Artificer)
+     * Half-casters max at 5th level spells at level 17+
+     */
+    maxSpellLevelForHalfCaster(casterLevel) {
+        // Half-casters: level 2=1st, 5=2nd, 9=3rd, 13=4th, 17=5th
+        if (casterLevel >= 17) return 5;
+        if (casterLevel >= 13) return 4;
+        if (casterLevel >= 9) return 3;
+        if (casterLevel >= 5) return 2;
+        if (casterLevel >= 2) return 1;
+        return 0;
     },
 
     /**

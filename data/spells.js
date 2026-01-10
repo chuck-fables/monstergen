@@ -5,7 +5,7 @@
 
 const SpellsData = {
     /**
-     * Spell slot progression
+     * Full caster spell slot progression
      */
     spellSlotTable: {
         1: { 1: 2 },
@@ -28,6 +28,98 @@ const SpellsData = {
         18: { 1: 4, 2: 3, 3: 3, 4: 3, 5: 3, 6: 1, 7: 1, 8: 1, 9: 1 },
         19: { 1: 4, 2: 3, 3: 3, 4: 3, 5: 3, 6: 2, 7: 1, 8: 1, 9: 1 },
         20: { 1: 4, 2: 3, 3: 3, 4: 3, 5: 3, 6: 2, 7: 2, 8: 1, 9: 1 }
+    },
+
+    /**
+     * Half-caster spell slot progression (Paladin, Ranger)
+     * Max 5th level spells at level 17
+     */
+    halfCasterSlotTable: {
+        2: { 1: 2 },
+        3: { 1: 3 },
+        4: { 1: 3 },
+        5: { 1: 4, 2: 2 },
+        6: { 1: 4, 2: 2 },
+        7: { 1: 4, 2: 3 },
+        8: { 1: 4, 2: 3 },
+        9: { 1: 4, 2: 3, 3: 2 },
+        10: { 1: 4, 2: 3, 3: 2 },
+        11: { 1: 4, 2: 3, 3: 3 },
+        12: { 1: 4, 2: 3, 3: 3 },
+        13: { 1: 4, 2: 3, 3: 3, 4: 1 },
+        14: { 1: 4, 2: 3, 3: 3, 4: 1 },
+        15: { 1: 4, 2: 3, 3: 3, 4: 2 },
+        16: { 1: 4, 2: 3, 3: 3, 4: 2 },
+        17: { 1: 4, 2: 3, 3: 3, 4: 3, 5: 1 },
+        18: { 1: 4, 2: 3, 3: 3, 4: 3, 5: 1 },
+        19: { 1: 4, 2: 3, 3: 3, 4: 3, 5: 2 },
+        20: { 1: 4, 2: 3, 3: 3, 4: 3, 5: 2 }
+    },
+
+    /**
+     * Artificer spell slot progression (half-caster but starts at level 1)
+     */
+    artificerSlotTable: {
+        1: { 1: 2 },
+        2: { 1: 2 },
+        3: { 1: 3 },
+        4: { 1: 3 },
+        5: { 1: 4, 2: 2 },
+        6: { 1: 4, 2: 2 },
+        7: { 1: 4, 2: 3 },
+        8: { 1: 4, 2: 3 },
+        9: { 1: 4, 2: 3, 3: 2 },
+        10: { 1: 4, 2: 3, 3: 2 },
+        11: { 1: 4, 2: 3, 3: 3 },
+        12: { 1: 4, 2: 3, 3: 3 },
+        13: { 1: 4, 2: 3, 3: 3, 4: 1 },
+        14: { 1: 4, 2: 3, 3: 3, 4: 1 },
+        15: { 1: 4, 2: 3, 3: 3, 4: 2 },
+        16: { 1: 4, 2: 3, 3: 3, 4: 2 },
+        17: { 1: 4, 2: 3, 3: 3, 4: 3, 5: 1 },
+        18: { 1: 4, 2: 3, 3: 3, 4: 3, 5: 1 },
+        19: { 1: 4, 2: 3, 3: 3, 4: 3, 5: 2 },
+        20: { 1: 4, 2: 3, 3: 3, 4: 3, 5: 2 }
+    },
+
+    /**
+     * Warlock Pact Magic progression
+     * All slots are the same level, recharge on short rest
+     */
+    warlockSlotTable: {
+        1: { slots: 1, slotLevel: 1 },
+        2: { slots: 2, slotLevel: 1 },
+        3: { slots: 2, slotLevel: 2 },
+        4: { slots: 2, slotLevel: 2 },
+        5: { slots: 2, slotLevel: 3 },
+        6: { slots: 2, slotLevel: 3 },
+        7: { slots: 2, slotLevel: 4 },
+        8: { slots: 2, slotLevel: 4 },
+        9: { slots: 2, slotLevel: 5 },
+        10: { slots: 2, slotLevel: 5 },
+        11: { slots: 3, slotLevel: 5 },
+        12: { slots: 3, slotLevel: 5 },
+        13: { slots: 3, slotLevel: 5 },
+        14: { slots: 3, slotLevel: 5 },
+        15: { slots: 3, slotLevel: 5 },
+        16: { slots: 3, slotLevel: 5 },
+        17: { slots: 4, slotLevel: 5 },
+        18: { slots: 4, slotLevel: 5 },
+        19: { slots: 4, slotLevel: 5 },
+        20: { slots: 4, slotLevel: 5 }
+    },
+
+    /**
+     * Warlock Mystic Arcanum (1/day each)
+     * 6th at 11, 7th at 13, 8th at 15, 9th at 17
+     */
+    getMysticArcanum(level) {
+        const arcanum = {};
+        if (level >= 11) arcanum[6] = 1;
+        if (level >= 13) arcanum[7] = 1;
+        if (level >= 15) arcanum[8] = 1;
+        if (level >= 17) arcanum[9] = 1;
+        return arcanum;
     },
 
     /**
@@ -59,6 +151,8 @@ const SpellsData = {
             bard: ['charm person', 'cure wounds', 'detect magic', 'disguise self', 'dissonant whispers', 'faerie fire', 'feather fall', 'healing word', 'heroism', 'hideous laughter', 'identify', 'longstrider', 'silent image', 'sleep', 'speak with animals', 'thunderwave'],
             cleric: ['bless', 'command', 'create or destroy water', 'cure wounds', 'detect evil and good', 'detect magic', 'detect poison and disease', 'guiding bolt', 'healing word', 'inflict wounds', 'protection from evil and good', 'purify food and drink', 'sanctuary', 'shield of faith'],
             druid: ['animal friendship', 'charm person', 'create or destroy water', 'cure wounds', 'detect magic', 'detect poison and disease', 'entangle', 'faerie fire', 'fog cloud', 'goodberry', 'healing word', 'jump', 'longstrider', 'purify food and drink', 'speak with animals', 'thunderwave', 'absorb elements', 'earth tremor', 'ice knife'],
+            paladin: ['bless', 'command', 'compelled duel', 'cure wounds', 'detect evil and good', 'detect magic', 'detect poison and disease', 'divine favor', 'heroism', 'protection from evil and good', 'purify food and drink', 'searing smite', 'shield of faith', 'thunderous smite', 'wrathful smite'],
+            ranger: ['alarm', 'animal friendship', 'cure wounds', 'detect magic', 'detect poison and disease', 'ensnaring strike', 'fog cloud', 'goodberry', 'hail of thorns', 'hunter\'s mark', 'jump', 'longstrider', 'speak with animals', 'absorb elements', 'zephyr strike'],
             aberration: ['detect magic', 'dissonant whispers', 'sleep', 'charm person', 'cause fear', 'ray of sickness'],
             fiend: ['burning hands', 'hellish rebuke', 'charm person', 'command', 'inflict wounds', 'cause fear'],
             celestial: ['bless', 'cure wounds', 'guiding bolt', 'healing word', 'protection from evil and good', 'shield of faith'],
@@ -72,6 +166,8 @@ const SpellsData = {
             bard: ['animal messenger', 'blindness/deafness', 'calm emotions', 'cloud of daggers', 'crown of madness', 'detect thoughts', 'enhance ability', 'enthrall', 'heat metal', 'hold person', 'invisibility', 'knock', 'lesser restoration', 'locate animals or plants', 'locate object', 'magic mouth', 'phantasmal force', 'see invisibility', 'shatter', 'silence', 'suggestion', 'zone of truth'],
             cleric: ['aid', 'augury', 'blindness/deafness', 'calm emotions', 'continual flame', 'enhance ability', 'find traps', 'gentle repose', 'hold person', 'lesser restoration', 'locate object', 'prayer of healing', 'protection from poison', 'silence', 'spiritual weapon', 'warding bond', 'zone of truth'],
             druid: ['animal messenger', 'barkskin', 'beast sense', 'darkvision', 'enhance ability', 'find traps', 'flame blade', 'flaming sphere', 'gust of wind', 'heat metal', 'hold person', 'lesser restoration', 'locate animals or plants', 'locate object', 'moonbeam', 'pass without trace', 'protection from poison', 'spike growth'],
+            paladin: ['aid', 'branding smite', 'find steed', 'lesser restoration', 'locate object', 'magic weapon', 'protection from poison', 'zone of truth', 'warding bond'],
+            ranger: ['animal messenger', 'barkskin', 'beast sense', 'cordon of arrows', 'darkvision', 'find traps', 'lesser restoration', 'locate animals or plants', 'locate object', 'pass without trace', 'protection from poison', 'silence', 'spike growth', 'healing spirit'],
             aberration: ['hold person', 'crown of madness', 'detect thoughts', 'phantasmal force', 'darkness', 'mind spike'],
             fiend: ['darkness', 'scorching ray', 'hold person', 'blindness/deafness', 'suggestion'],
             celestial: ['lesser restoration', 'aid', 'prayer of healing', 'spiritual weapon', 'calm emotions'],
@@ -85,6 +181,8 @@ const SpellsData = {
             bard: ['bestow curse', 'clairvoyance', 'dispel magic', 'fear', 'feign death', 'glyph of warding', 'hypnotic pattern', 'leomund\'s tiny hut', 'major image', 'nondetection', 'plant growth', 'sending', 'slow', 'speak with dead', 'speak with plants', 'stinking cloud', 'tongues'],
             cleric: ['animate dead', 'beacon of hope', 'bestow curse', 'clairvoyance', 'create food and water', 'daylight', 'dispel magic', 'feign death', 'glyph of warding', 'magic circle', 'mass healing word', 'meld into stone', 'protection from energy', 'remove curse', 'revivify', 'sending', 'speak with dead', 'spirit guardians', 'tongues', 'water walk'],
             druid: ['call lightning', 'conjure animals', 'daylight', 'dispel magic', 'feign death', 'meld into stone', 'plant growth', 'protection from energy', 'sleet storm', 'speak with plants', 'water breathing', 'water walk', 'wind wall', 'erupting earth', 'tidal wave'],
+            paladin: ['aura of vitality', 'blinding smite', 'create food and water', 'crusader\'s mantle', 'daylight', 'dispel magic', 'elemental weapon', 'magic circle', 'remove curse', 'revivify', 'spirit shroud'],
+            ranger: ['conjure animals', 'conjure barrage', 'daylight', 'flame arrows', 'lightning arrow', 'nondetection', 'plant growth', 'protection from energy', 'speak with plants', 'water breathing', 'water walk', 'wind wall', 'summon fey'],
             aberration: ['fear', 'hypnotic pattern', 'slow', 'bestow curse', 'hunger of hadar', 'enemies abound'],
             fiend: ['fireball', 'fear', 'bestow curse', 'vampiric touch', 'summon lesser demons'],
             celestial: ['revivify', 'mass healing word', 'beacon of hope', 'daylight', 'dispel magic', 'spirit guardians'],
@@ -98,6 +196,8 @@ const SpellsData = {
             bard: ['compulsion', 'confusion', 'dimension door', 'freedom of movement', 'greater invisibility', 'hallucinatory terrain', 'locate creature', 'polymorph', 'charm monster'],
             cleric: ['banishment', 'control water', 'death ward', 'divination', 'freedom of movement', 'guardian of faith', 'locate creature', 'stone shape'],
             druid: ['blight', 'confusion', 'conjure minor elementals', 'conjure woodland beings', 'control water', 'dominate beast', 'freedom of movement', 'giant insect', 'grasping vine', 'hallucinatory terrain', 'ice storm', 'locate creature', 'polymorph', 'stone shape', 'stoneskin', 'wall of fire', 'charm monster'],
+            paladin: ['aura of life', 'aura of purity', 'banishment', 'death ward', 'find greater steed', 'locate creature', 'staggering smite'],
+            ranger: ['conjure woodland beings', 'dominate beast', 'freedom of movement', 'grasping vine', 'guardian of nature', 'locate creature', 'stoneskin', 'summon elemental'],
             aberration: ['confusion', 'phantasmal killer', 'evard\'s black tentacles', 'banishment', 'sickening radiance'],
             fiend: ['wall of fire', 'banishment', 'blight', 'summon greater demon', 'fire shield'],
             celestial: ['banishment', 'death ward', 'guardian of faith', 'freedom of movement'],
@@ -111,6 +211,8 @@ const SpellsData = {
             bard: ['animate objects', 'awaken', 'dominate person', 'dream', 'geas', 'greater restoration', 'hold monster', 'legend lore', 'mass cure wounds', 'mislead', 'modify memory', 'planar binding', 'raise dead', 'scrying', 'seeming', 'teleportation circle', 'synaptic static'],
             cleric: ['commune', 'contagion', 'dispel evil and good', 'flame strike', 'geas', 'greater restoration', 'hallow', 'insect plague', 'legend lore', 'mass cure wounds', 'planar binding', 'raise dead', 'scrying', 'dawn', 'holy weapon'],
             druid: ['antilife shell', 'awaken', 'commune with nature', 'conjure elemental', 'contagion', 'geas', 'greater restoration', 'insect plague', 'mass cure wounds', 'planar binding', 'reincarnate', 'scrying', 'tree stride', 'wall of stone', 'maelstrom', 'transmute rock'],
+            paladin: ['banishing smite', 'circle of power', 'destructive wave', 'dispel evil and good', 'geas', 'holy weapon', 'raise dead', 'summon celestial'],
+            ranger: ['commune with nature', 'conjure volley', 'greater restoration', 'steel wind strike', 'swift quiver', 'tree stride', 'wrath of nature'],
             aberration: ['dominate person', 'hold monster', 'synaptic static', 'telekinesis', 'modify memory'],
             fiend: ['flame strike', 'cloudkill', 'dominate person', 'infernal calling', 'wall of force'],
             celestial: ['flame strike', 'greater restoration', 'mass cure wounds', 'raise dead', 'dispel evil and good'],
@@ -172,10 +274,37 @@ const SpellsData = {
     },
 
     /**
-     * Get spell slots for a level
+     * Get spell slots for a level and class type
      */
-    getSpellSlots(level) {
-        return this.spellSlotTable[Math.min(level, 20)] || this.spellSlotTable[1];
+    getSpellSlots(level, characterClass = null) {
+        const clampedLevel = Math.min(Math.max(1, level), 20);
+
+        // Warlock uses Pact Magic (different system)
+        if (characterClass === 'warlock') {
+            return null; // Handled separately
+        }
+
+        // Half-casters (Paladin, Ranger) - don't get spells until level 2
+        if (characterClass === 'paladin' || characterClass === 'ranger') {
+            if (clampedLevel < 2) return {};
+            return this.halfCasterSlotTable[clampedLevel] || this.halfCasterSlotTable[2];
+        }
+
+        // Artificer (half-caster that starts at level 1)
+        if (characterClass === 'artificer') {
+            return this.artificerSlotTable[clampedLevel] || this.artificerSlotTable[1];
+        }
+
+        // Full casters
+        return this.spellSlotTable[clampedLevel] || this.spellSlotTable[1];
+    },
+
+    /**
+     * Get warlock Pact Magic slots
+     */
+    getWarlockSlots(level) {
+        const clampedLevel = Math.min(Math.max(1, level), 20);
+        return this.warlockSlotTable[clampedLevel] || this.warlockSlotTable[1];
     },
 
     /**
@@ -199,21 +328,52 @@ const SpellsData = {
             '1day': []
         };
 
-        // Determine spell source
-        const spellSource = this.cantrips[type] ? type : 'wizard';
+        // Determine if this is a half-caster
+        const isHalfCaster = ['paladin', 'ranger', 'artificer'].includes(type);
+        const isWarlock = type === 'warlock';
+
+        // Half-casters don't get cantrips (except Artificer)
+        const hasCantrips = !isHalfCaster || type === 'artificer';
+
+        // Determine spell source - use cleric list for paladin, druid for ranger
+        let spellSource = type;
+        if (type === 'paladin') spellSource = 'paladin';
+        else if (type === 'ranger') spellSource = 'ranger';
+        else if (!this.cantrips[type]) spellSource = 'wizard';
 
         // Get cantrips
-        const availableCantrips = this.cantrips[spellSource] || this.cantrips.wizard;
-        const numCantrips = Math.min(level < 4 ? 2 : level < 10 ? 3 : 4, availableCantrips.length);
-        spells.cantrips = this.selectRandomSpells(availableCantrips, numCantrips);
+        if (hasCantrips) {
+            const cantripSource = this.cantrips[type] ? type : (type === 'paladin' ? 'cleric' : type === 'ranger' ? 'druid' : 'wizard');
+            const availableCantrips = this.cantrips[cantripSource] || this.cantrips.wizard;
+            const numCantrips = Math.min(level < 4 ? 2 : level < 10 ? 3 : 4, availableCantrips.length);
+            spells.cantrips = this.selectRandomSpells(availableCantrips, numCantrips);
+        }
+
+        // Determine max spell level based on caster type
+        let maxSpellLevel;
+        if (isHalfCaster) {
+            // Half-casters max at 5th level spells
+            if (level < 2) maxSpellLevel = 0;
+            else if (level < 5) maxSpellLevel = 1;
+            else if (level < 9) maxSpellLevel = 2;
+            else if (level < 13) maxSpellLevel = 3;
+            else if (level < 17) maxSpellLevel = 4;
+            else maxSpellLevel = 5;
+        } else if (isWarlock) {
+            // Warlocks max at 5th level for regular slots, but get Mystic Arcanum
+            const warlockData = this.warlockSlotTable[Math.min(level, 20)];
+            maxSpellLevel = warlockData ? warlockData.slotLevel : 1;
+        } else {
+            // Full casters
+            maxSpellLevel = level < 3 ? 1 : level < 5 ? 2 : level < 7 ? 3 : level < 9 ? 4 : level < 11 ? 5 : level < 13 ? 6 : level < 15 ? 7 : level < 17 ? 8 : 9;
+        }
 
         // Get leveled spells
-        const maxSpellLevel = level < 3 ? 1 : level < 5 ? 2 : level < 7 ? 3 : level < 9 ? 4 : level < 11 ? 5 : level < 13 ? 6 : level < 15 ? 7 : level < 17 ? 8 : 9;
-
         for (let spellLevel = 1; spellLevel <= maxSpellLevel; spellLevel++) {
-            const availableSpells = this.spellsByLevel[spellLevel]?.[spellSource] || this.spellsByLevel[spellLevel]?.wizard || [];
+            const spellListSource = this.spellsByLevel[spellLevel]?.[spellSource] ||
+                                   this.spellsByLevel[spellLevel]?.[type === 'paladin' ? 'cleric' : type === 'ranger' ? 'druid' : 'wizard'] || [];
             const numSpells = Math.max(1, Math.min(4, Math.floor(level / 3)));
-            spells[`level${spellLevel}`] = this.selectRandomSpells(availableSpells, numSpells);
+            spells[`level${spellLevel}`] = this.selectRandomSpells(spellListSource, numSpells);
         }
 
         return spells;

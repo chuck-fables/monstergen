@@ -366,6 +366,34 @@ const AttackData = {
             description: 'Any creature that starts its turn within {radius} feet takes {damage} cold damage.'
         },
         {
+            name: 'Lightning Aura',
+            effect: 'lightning damage',
+            radius: 10,
+            saveType: 'dex',
+            description: 'Any creature that starts its turn within {radius} feet must succeed on a DC {dc} Dexterity saving throw or take {damage} lightning damage.'
+        },
+        {
+            name: 'Corrosive Aura',
+            effect: 'acid damage',
+            radius: 10,
+            saveType: 'con',
+            description: 'Any creature that starts its turn within {radius} feet takes {damage} acid damage as corrosive vapors eat away at flesh and metal.'
+        },
+        {
+            name: 'Earthen Tremor',
+            effect: 'difficult terrain',
+            radius: 15,
+            saveType: 'dex',
+            description: 'The ground within {radius} feet trembles and shifts. Any creature that starts its turn in this area must succeed on a DC {dc} Dexterity saving throw or fall prone. The area is difficult terrain.'
+        },
+        {
+            name: 'Buffeting Winds',
+            effect: 'movement',
+            radius: 15,
+            saveType: 'str',
+            description: 'Swirling winds surround the creature. Any creature that starts its turn within {radius} feet must succeed on a DC {dc} Strength saving throw or be pushed 10 feet away and take {damage} bludgeoning damage.'
+        },
+        {
             name: 'Necrotic Aura',
             effect: 'necrotic damage',
             radius: 15,

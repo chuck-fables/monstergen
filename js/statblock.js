@@ -333,7 +333,10 @@ const StatblockRenderer = {
         }[sc.ability];
 
         let header;
-        if (sc.innate) {
+        if (sc.isWarlock) {
+            // Warlock Pact Magic header
+            header = `<span class="trait-name">Pact Magic.</span> The ${monster.name.toLowerCase()} is a ${Utils.ordinal(sc.level)}-level spellcaster. Its spellcasting ability is ${abilityName} (spell save DC ${sc.saveDC}, ${Utils.formatModifier(sc.attackBonus)} to hit with spell attacks). It regains its expended spell slots when it finishes a short or long rest. It knows the following warlock spells:`;
+        } else if (sc.innate) {
             header = `<span class="trait-name">Innate Spellcasting.</span> The ${monster.name.toLowerCase()}'s innate spellcasting ability is ${abilityName} (spell save DC ${sc.saveDC}, ${Utils.formatModifier(sc.attackBonus)} to hit with spell attacks). It can innately cast the following spells, requiring no material components:`;
         } else {
             header = `<span class="trait-name">Spellcasting.</span> The ${monster.name.toLowerCase()} is a ${Utils.ordinal(sc.level)}-level spellcaster. Its spellcasting ability is ${abilityName} (spell save DC ${sc.saveDC}, ${Utils.formatModifier(sc.attackBonus)} to hit with spell attacks). The ${monster.name.toLowerCase()} has the following spells prepared:`;
@@ -346,13 +349,40 @@ const StatblockRenderer = {
             spellLists.push(`<p class="spell-level"><span class="spell-level-name">Cantrips (at will):</span> <em>${sc.spells.cantrips.join(', ')}</em></p>`);
         }
 
-        for (let level = 1; level <= 9; level++) {
-            const levelSpells = sc.spells[`level${level}`];
-            const slots = sc.slots[level];
+        // Warlock Pact Magic uses different slot display
+        if (sc.isWarlock) {
+            // Show Pact Magic slots (1st-5th level, all at same level)
+            const pactSpells = [];
+            for (let level = 1; level <= sc.pactSlotLevel; level++) {
+                const levelSpells = sc.spells[`level${level}`];
+                if (levelSpells && levelSpells.length > 0) {
+                    pactSpells.push(...levelSpells);
+                }
+            }
+            if (pactSpells.length > 0) {
+                const slotText = sc.pactSlots === 1 ? '1 slot' : `${sc.pactSlots} slots`;
+                spellLists.push(`<p class="spell-level"><span class="spell-level-name">1st-${Utils.ordinal(sc.pactSlotLevel)} level (${slotText}, ${Utils.ordinal(sc.pactSlotLevel)}-level):</span> <em>${pactSpells.join(', ')}</em></p>`);
+            }
 
-            if (levelSpells && levelSpells.length > 0 && slots > 0) {
-                const slotText = slots === 1 ? '1 slot' : `${slots} slots`;
-                spellLists.push(`<p class="spell-level"><span class="spell-level-name">${Utils.ordinal(level)} level (${slotText}):</span> <em>${levelSpells.join(', ')}</em></p>`);
+            // Mystic Arcanum (1/day each)
+            for (let level = 6; level <= 9; level++) {
+                if (sc.mysticArcanum && sc.mysticArcanum[level]) {
+                    const levelSpells = sc.spells[`level${level}`];
+                    if (levelSpells && levelSpells.length > 0) {
+                        spellLists.push(`<p class="spell-level"><span class="spell-level-name">${Utils.ordinal(level)} level (1/day):</span> <em>${levelSpells.join(', ')}</em></p>`);
+                    }
+                }
+            }
+        } else {
+            // Standard spell slot display
+            for (let level = 1; level <= 9; level++) {
+                const levelSpells = sc.spells[`level${level}`];
+                const slots = sc.slots ? sc.slots[level] : 0;
+
+                if (levelSpells && levelSpells.length > 0 && slots > 0) {
+                    const slotText = slots === 1 ? '1 slot' : `${slots} slots`;
+                    spellLists.push(`<p class="spell-level"><span class="spell-level-name">${Utils.ordinal(level)} level (${slotText}):</span> <em>${levelSpells.join(', ')}</em></p>`);
+                }
             }
         }
 

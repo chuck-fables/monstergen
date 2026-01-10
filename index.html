@@ -50,6 +50,104 @@
                 </select>
             </div>
 
+            <!-- Humanoid Options (conditionally shown, placed under monster type) -->
+            <div id="humanoid-options" class="humanoid-section" style="display: none;">
+                <div class="section-divider">
+                    <span>Humanoid Options</span>
+                </div>
+
+                <div class="control-section">
+                    <label for="humanoid-race">Race</label>
+                    <select id="humanoid-race">
+                        <option value="">Select Race...</option>
+                        <optgroup label="Common Races">
+                            <option value="human">Human</option>
+                            <option value="dwarf-hill">Dwarf (Hill)</option>
+                            <option value="dwarf-mountain">Dwarf (Mountain)</option>
+                            <option value="elf-high">Elf (High)</option>
+                            <option value="elf-wood">Elf (Wood)</option>
+                            <option value="elf-drow">Elf (Drow)</option>
+                            <option value="halfling-lightfoot">Halfling (Lightfoot)</option>
+                            <option value="halfling-stout">Halfling (Stout)</option>
+                            <option value="gnome-forest">Gnome (Forest)</option>
+                            <option value="gnome-rock">Gnome (Rock)</option>
+                            <option value="half-elf">Half-Elf</option>
+                            <option value="half-orc">Half-Orc</option>
+                            <option value="tiefling">Tiefling</option>
+                            <option value="dragonborn">Dragonborn</option>
+                        </optgroup>
+                        <optgroup label="Uncommon Races">
+                            <option value="aasimar">Aasimar</option>
+                            <option value="genasi-air">Genasi (Air)</option>
+                            <option value="genasi-earth">Genasi (Earth)</option>
+                            <option value="genasi-fire">Genasi (Fire)</option>
+                            <option value="genasi-water">Genasi (Water)</option>
+                            <option value="goliath">Goliath</option>
+                            <option value="firbolg">Firbolg</option>
+                            <option value="kenku">Kenku</option>
+                            <option value="lizardfolk">Lizardfolk</option>
+                            <option value="tabaxi">Tabaxi</option>
+                            <option value="triton">Triton</option>
+                            <option value="tortle">Tortle</option>
+                            <option value="aarakocra">Aarakocra</option>
+                            <option value="warforged">Warforged</option>
+                            <option value="changeling">Changeling</option>
+                            <option value="kalashtar">Kalashtar</option>
+                            <option value="shifter">Shifter</option>
+                        </optgroup>
+                        <optgroup label="Monstrous Races">
+                            <option value="gnoll">Gnoll</option>
+                            <option value="bugbear">Bugbear</option>
+                            <option value="goblin">Goblin</option>
+                            <option value="hobgoblin">Hobgoblin</option>
+                            <option value="kobold">Kobold</option>
+                            <option value="orc">Orc</option>
+                            <option value="yuan-ti">Yuan-ti</option>
+                            <option value="duergar">Duergar</option>
+                            <option value="githyanki">Githyanki</option>
+                            <option value="githzerai">Githzerai</option>
+                            <option value="kuo-toa">Kuo-toa</option>
+                            <option value="sahuagin">Sahuagin</option>
+                            <option value="thri-kreen">Thri-kreen</option>
+                            <option value="bullywug">Bullywug</option>
+                            <option value="grung">Grung</option>
+                            <option value="myconid">Myconid</option>
+                        </optgroup>
+                    </select>
+                </div>
+
+                <div class="control-section">
+                    <label for="humanoid-class">Class</label>
+                    <select id="humanoid-class">
+                        <option value="">No Class (Commoner)</option>
+                        <option value="barbarian">Barbarian</option>
+                        <option value="bard">Bard</option>
+                        <option value="cleric">Cleric</option>
+                        <option value="druid">Druid</option>
+                        <option value="fighter">Fighter</option>
+                        <option value="monk">Monk</option>
+                        <option value="paladin">Paladin</option>
+                        <option value="ranger">Ranger</option>
+                        <option value="rogue">Rogue</option>
+                        <option value="sorcerer">Sorcerer</option>
+                        <option value="warlock">Warlock</option>
+                        <option value="wizard">Wizard</option>
+                        <option value="artificer">Artificer</option>
+                    </select>
+                </div>
+
+                <div class="checkbox-grid">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="generate-inventory" checked>
+                        <span>Generate Inventory</span>
+                    </label>
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="include-magic-items">
+                        <span>Include Magic Items</span>
+                    </label>
+                </div>
+            </div>
+
             <div class="control-section">
                 <label for="challenge-rating">Challenge Rating</label>
                 <select id="challenge-rating">
@@ -166,104 +264,6 @@
                     </label>
                 </div>
             </fieldset>
-
-            <!-- Humanoid Options (conditionally shown) -->
-            <div id="humanoid-options" class="humanoid-section" style="display: none;">
-                <div class="section-divider">
-                    <span>Humanoid Options</span>
-                </div>
-
-                <div class="control-section">
-                    <label for="humanoid-race">Race</label>
-                    <select id="humanoid-race">
-                        <option value="">Select Race...</option>
-                        <optgroup label="Common Races">
-                            <option value="human">Human</option>
-                            <option value="dwarf-hill">Dwarf (Hill)</option>
-                            <option value="dwarf-mountain">Dwarf (Mountain)</option>
-                            <option value="elf-high">Elf (High)</option>
-                            <option value="elf-wood">Elf (Wood)</option>
-                            <option value="elf-drow">Elf (Drow)</option>
-                            <option value="halfling-lightfoot">Halfling (Lightfoot)</option>
-                            <option value="halfling-stout">Halfling (Stout)</option>
-                            <option value="gnome-forest">Gnome (Forest)</option>
-                            <option value="gnome-rock">Gnome (Rock)</option>
-                            <option value="half-elf">Half-Elf</option>
-                            <option value="half-orc">Half-Orc</option>
-                            <option value="tiefling">Tiefling</option>
-                            <option value="dragonborn">Dragonborn</option>
-                        </optgroup>
-                        <optgroup label="Uncommon Races">
-                            <option value="aasimar">Aasimar</option>
-                            <option value="genasi-air">Genasi (Air)</option>
-                            <option value="genasi-earth">Genasi (Earth)</option>
-                            <option value="genasi-fire">Genasi (Fire)</option>
-                            <option value="genasi-water">Genasi (Water)</option>
-                            <option value="goliath">Goliath</option>
-                            <option value="firbolg">Firbolg</option>
-                            <option value="kenku">Kenku</option>
-                            <option value="lizardfolk">Lizardfolk</option>
-                            <option value="tabaxi">Tabaxi</option>
-                            <option value="triton">Triton</option>
-                            <option value="tortle">Tortle</option>
-                            <option value="aarakocra">Aarakocra</option>
-                            <option value="warforged">Warforged</option>
-                            <option value="changeling">Changeling</option>
-                            <option value="kalashtar">Kalashtar</option>
-                            <option value="shifter">Shifter</option>
-                        </optgroup>
-                        <optgroup label="Monstrous Races">
-                            <option value="gnoll">Gnoll</option>
-                            <option value="bugbear">Bugbear</option>
-                            <option value="goblin">Goblin</option>
-                            <option value="hobgoblin">Hobgoblin</option>
-                            <option value="kobold">Kobold</option>
-                            <option value="orc">Orc</option>
-                            <option value="yuan-ti">Yuan-ti</option>
-                            <option value="duergar">Duergar</option>
-                            <option value="githyanki">Githyanki</option>
-                            <option value="githzerai">Githzerai</option>
-                            <option value="kuo-toa">Kuo-toa</option>
-                            <option value="sahuagin">Sahuagin</option>
-                            <option value="thri-kreen">Thri-kreen</option>
-                            <option value="bullywug">Bullywug</option>
-                            <option value="grung">Grung</option>
-                            <option value="myconid">Myconid</option>
-                        </optgroup>
-                    </select>
-                </div>
-
-                <div class="control-section">
-                    <label for="humanoid-class">Class</label>
-                    <select id="humanoid-class">
-                        <option value="">No Class (Commoner)</option>
-                        <option value="barbarian">Barbarian</option>
-                        <option value="bard">Bard</option>
-                        <option value="cleric">Cleric</option>
-                        <option value="druid">Druid</option>
-                        <option value="fighter">Fighter</option>
-                        <option value="monk">Monk</option>
-                        <option value="paladin">Paladin</option>
-                        <option value="ranger">Ranger</option>
-                        <option value="rogue">Rogue</option>
-                        <option value="sorcerer">Sorcerer</option>
-                        <option value="warlock">Warlock</option>
-                        <option value="wizard">Wizard</option>
-                        <option value="artificer">Artificer</option>
-                    </select>
-                </div>
-
-                <div class="checkbox-grid">
-                    <label class="checkbox-label">
-                        <input type="checkbox" id="generate-inventory" checked>
-                        <span>Generate Inventory</span>
-                    </label>
-                    <label class="checkbox-label">
-                        <input type="checkbox" id="include-magic-items">
-                        <span>Include Magic Items</span>
-                    </label>
-                </div>
-            </div>
 
             <div class="button-group">
                 <button type="button" id="randomize-btn" class="btn btn-secondary">
