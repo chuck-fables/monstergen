@@ -106,8 +106,8 @@ const Generator = {
             element: element
         };
 
-        // Generate traits based on type (pass hit dice for humanoid spellcasters)
-        monster.traits = this.generateTraits(type, cr, typeData, race, characterClass, monster.hitPoints.hitDice);
+        // Generate traits based on type (pass hit dice for humanoid spellcasters, and element for dragons/elementals)
+        monster.traits = this.generateTraits(type, cr, typeData, race, characterClass, monster.hitPoints.hitDice, element);
 
         // Generate actions based on attack types
         monster.actions = this.generateActions(monster, attackTypes, typeData);
@@ -426,19 +426,25 @@ const Generator = {
      * Dragons/elementals get immunities matching their element
      */
     generateDamageImmunities(type, typeData, race, element = null) {
-        let immunities = [...(typeData.commonDamageImmunities || [])];
+        // For dragons and elementals, start with empty immunities so they get element-based ones
+        let immunities = (type === 'dragon' || type === 'elemental')
+            ? []
+            : [...(typeData.commonDamageImmunities || [])];
 
         // Add element-based immunities for dragons and elementals
         if (element && (type === 'dragon' || type === 'elemental')) {
+            // Map element to its corresponding damage immunity
             const elementToImmunity = {
                 fire: 'fire',
-                water: 'cold',
                 cold: 'cold',
-                earth: 'acid',
-                air: 'lightning',
                 lightning: 'lightning',
                 acid: 'acid',
-                poison: 'poison'
+                poison: 'poison',
+                necrotic: 'necrotic',
+                radiant: 'radiant',
+                force: 'force',
+                thunder: 'thunder',
+                psychic: 'psychic'
             };
 
             const elementImmunity = elementToImmunity[element];
@@ -508,7 +514,7 @@ const Generator = {
      * @param {string} characterClass - Class (for humanoids)
      * @param {number} hitDice - Number of hit dice (for humanoid spellcasters)
      */
-    generateTraits(type, cr, typeData, race, characterClass, hitDice = null) {
+    generateTraits(type, cr, typeData, race, characterClass, hitDice = null, element = null) {
         const traits = [];
         const crNum = parseFloat(cr);
 
@@ -521,6 +527,12 @@ const Generator = {
                     description: this.formatAbilityDescription(ability, crNum)
                 });
             }
+        }
+
+        // Add element-themed traits for dragons and elementals
+        if (element && (type === 'dragon' || type === 'elemental')) {
+            const elementTraits = this.getElementTraits(element, type, crNum);
+            traits.push(...elementTraits);
         }
 
         // Add class features for humanoids
@@ -538,6 +550,76 @@ const Generator = {
         }
 
         return traits;
+    },
+
+    /**
+     * Get element-themed traits for dragons and elementals
+     */
+    getElementTraits(element, type, cr) {
+        const traits = [];
+
+        // Element-specific trait descriptions
+        const elementTraitData = {
+            fire: {
+                immunity: 'Immune to fire damage.',
+                trait: { name: 'Heated Body', description: 'A creature that touches this creature or hits it with a melee attack while within 5 feet of it takes ' + this.getElementalDamage(cr) + ' fire damage.' }
+            },
+            cold: {
+                immunity: 'Immune to cold damage.',
+                trait: { name: 'Freezing Presence', description: 'A creature that touches this creature or hits it with a melee attack while within 5 feet of it takes ' + this.getElementalDamage(cr) + ' cold damage.' }
+            },
+            lightning: {
+                immunity: 'Immune to lightning damage.',
+                trait: { name: 'Lightning Absorption', description: 'Whenever this creature is subjected to lightning damage, it takes no damage and instead regains a number of hit points equal to the lightning damage dealt.' }
+            },
+            acid: {
+                immunity: 'Immune to acid damage.',
+                trait: { name: 'Corrosive Form', description: 'A creature that touches this creature or hits it with a melee attack while within 5 feet of it takes ' + this.getElementalDamage(cr) + ' acid damage.' }
+            },
+            poison: {
+                immunity: 'Immune to poison damage and the poisoned condition.',
+                trait: { name: 'Toxic Body', description: 'A creature that touches this creature must succeed on a DC ' + (CRStats[cr]?.saveDC || 13) + ' Constitution saving throw or be poisoned for 1 minute.' }
+            },
+            necrotic: {
+                immunity: 'Immune to necrotic damage.',
+                trait: { name: 'Deathly Chill', description: 'A creature that starts its turn within 10 feet of this creature takes ' + this.getElementalDamage(cr) + ' necrotic damage and cannot regain hit points until the start of its next turn.' }
+            },
+            radiant: {
+                immunity: 'Immune to radiant damage.',
+                trait: { name: 'Blinding Radiance', description: 'A creature that starts its turn within 30 feet of this creature and can see it must succeed on a DC ' + (CRStats[cr]?.saveDC || 13) + ' Constitution saving throw or be blinded until the start of its next turn.' }
+            },
+            force: {
+                immunity: 'Immune to force damage.',
+                trait: { name: 'Unstoppable Force', description: 'This creature ignores difficult terrain, and magical effects cannot reduce its speed. It can also move through the space of any creature.' }
+            },
+            thunder: {
+                immunity: 'Immune to thunder damage.',
+                trait: { name: 'Thunderous Presence', description: 'When this creature moves, the ground trembles. Each creature within 10 feet must succeed on a DC ' + (CRStats[cr]?.saveDC || 13) + ' Strength saving throw or be knocked prone.' }
+            },
+            psychic: {
+                immunity: 'Immune to psychic damage.',
+                trait: { name: 'Mind Shield', description: 'This creature is immune to any effect that would sense its emotions or read its thoughts, as well as all divination spells.' }
+            }
+        };
+
+        const data = elementTraitData[element];
+        if (data && data.trait) {
+            traits.push(data.trait);
+        }
+
+        return traits;
+    },
+
+    /**
+     * Get elemental damage dice based on CR
+     */
+    getElementalDamage(cr) {
+        if (cr < 1) return '1d6';
+        if (cr < 5) return '2d6';
+        if (cr < 10) return '3d6';
+        if (cr < 15) return '4d6';
+        if (cr < 20) return '5d6';
+        return '6d6';
     },
 
     /**
@@ -884,32 +966,20 @@ const Generator = {
 
     /**
      * Generate breath weapon
-     * Uses the monster's element if set (for dragons/elementals) to match the name
+     * Uses the monster's element if set (for dragons/elementals) to match immunities
      */
     generateBreathWeapon(monster, typeData) {
         const cr = monster.cr;
 
-        // Map element to breath damage type
-        const elementToBreath = {
-            fire: 'fire',
-            water: 'cold',
-            earth: 'acid',
-            air: 'lightning',
-            cold: 'cold',
-            lightning: 'lightning',
-            acid: 'acid',
-            poison: 'poison'
-        };
-
-        // Use monster's element if set, otherwise select randomly based on type
+        // Use monster's element directly as breath type (they now match 1:1)
         let breathType;
-        if (monster.element && elementToBreath[monster.element]) {
-            breathType = elementToBreath[monster.element];
+        if (monster.element) {
+            breathType = monster.element;
         } else {
             // Fallback: select breath type based on monster type
             const breathTypes = {
-                dragon: ['fire', 'cold', 'lightning', 'acid', 'poison'],
-                elemental: ['fire', 'cold', 'lightning', 'thunder'],
+                dragon: ['fire', 'cold', 'lightning', 'acid', 'poison', 'necrotic', 'radiant', 'force', 'thunder', 'psychic'],
+                elemental: ['fire', 'cold', 'lightning', 'acid', 'thunder', 'force', 'necrotic', 'radiant'],
                 fiend: ['fire', 'necrotic'],
                 aberration: ['psychic', 'acid'],
                 monstrosity: ['fire', 'poison', 'acid']
@@ -928,9 +998,25 @@ const Generator = {
         const recharge = AttackData.getBreathRecharge(cr);
         const saveDC = CRStats[cr]?.saveDC || 13;
 
+        // Format the breath description based on damage type
+        const breathDescriptions = {
+            fire: 'exhales flames',
+            cold: 'exhales an icy blast',
+            lightning: 'exhales a bolt of lightning',
+            acid: 'spits a stream of acid',
+            poison: 'exhales poisonous gas',
+            necrotic: 'exhales a wave of deathly energy',
+            radiant: 'exhales a beam of brilliant light',
+            force: 'exhales a blast of pure force',
+            thunder: 'releases a thunderous roar',
+            psychic: 'projects a wave of psychic energy'
+        };
+
+        const breathDesc = breathDescriptions[breathType] || `exhales ${breathType}`;
+
         return {
             name: `${breathData.name} (Recharge ${recharge})`,
-            description: `The ${monster.name.toLowerCase()} exhales ${breathType === 'fire' ? 'fire' : breathType} in a ${shape}. Each creature in that area must make a DC ${saveDC} ${Utils.capitalize(breathData.saveType)} saving throw, taking ${damage} ${breathType} damage on a failed save, or half as much damage on a successful one.`
+            description: `The ${monster.name.toLowerCase()} ${breathDesc} in a ${shape}. Each creature in that area must make a DC ${saveDC} ${Utils.capitalize(breathData.saveType)} saving throw, taking ${damage} ${breathType} damage on a failed save, or half as much damage on a successful one.`
         };
     },
 
@@ -967,13 +1053,15 @@ const Generator = {
         if (monster.element && (monster.type === 'elemental' || monster.type === 'dragon')) {
             const elementAuraMap = {
                 fire: 'Heat Aura',
-                water: 'Cold Aura',
                 cold: 'Cold Aura',
-                earth: 'Earthen Tremor',
-                air: 'Buffeting Winds',
                 lightning: 'Lightning Aura',
                 acid: 'Corrosive Aura',
-                poison: 'Stench'
+                poison: 'Stench',
+                necrotic: 'Necrotic Aura',
+                radiant: 'Radiant Aura',
+                force: 'Buffeting Winds',
+                thunder: 'Buffeting Winds',
+                psychic: 'Psychic Disruption'
             };
 
             const preferredAuraName = elementAuraMap[monster.element];
@@ -1293,11 +1381,20 @@ const Generator = {
 
     /**
      * Determine element type for elementals and dragons
+     * Includes exotic damage types like necrotic, radiant, force, thunder, psychic
      */
     determineElement(type) {
         const elementsByType = {
-            dragon: ['fire', 'cold', 'lightning', 'acid', 'poison'],
-            elemental: ['fire', 'water', 'earth', 'air']
+            // Dragons can breathe many damage types including exotic ones
+            dragon: [
+                'fire', 'cold', 'lightning', 'acid', 'poison',
+                'necrotic', 'radiant', 'force', 'thunder', 'psychic'
+            ],
+            // Elementals represent various elemental forces
+            elemental: [
+                'fire', 'cold', 'lightning', 'acid',
+                'thunder', 'force', 'necrotic', 'radiant'
+            ]
         };
 
         const elements = elementsByType[type];

@@ -180,151 +180,104 @@ const MonsterNames = {
     },
 
     dragon: {
-        // Organized by element to match breath weapons
-        fire: [
-            'Infernothrax', 'Pyroclastus', 'Emberclaw', 'Blazeking', 'Volcanix',
-            'Magmawing', 'Ashscale', 'Cinderhorn', 'Flamelord', 'Scorchwing',
-            'Infernox', 'Pyrovex', 'Emberstorm', 'Blazethorn', 'Volcanus',
-            'Magmabreath', 'Ashenwing', 'Cinderscale', 'Flamehorn', 'Scorchtail',
-            'Fireking', 'Firelord', 'Firedrake', 'Firewyrm', 'Firedragon',
-            'Burningwrath', 'Blazingfury', 'Scorchingterror', 'Searingdoom', 'Flamingdeath',
-            'Redfang', 'Redscale', 'Redwing', 'Redclaw', 'Redhorn',
-            'Crimsonscale', 'Crimsonfang', 'Crimsonwing', 'Crimsonclaw', 'Crimsonhorn',
-            'Surtur\'s Spawn', 'Flame Emperor', 'Ash King', 'Cinder Lord', 'Ember Tyrant'
-        ],
-        cold: [
-            'Glaciuswing', 'Frostmourne', 'Icevein', 'Glacialus', 'Frostbite',
-            'Winterscale', 'Icehorn', 'Coldsnap', 'Frostlord', 'Chillfang',
-            'Glaciax', 'Frostyx', 'Icestorm', 'Coldwrath', 'Winterfury',
-            'Blizzardwing', 'Snowscale', 'Hailhorn', 'Permafrost', 'Absolutezero',
-            'Iceking', 'Icelord', 'Icedrake', 'Icewyrm', 'Icedragon',
-            'Freezingdeath', 'Frostingterror', 'Chillingdoom', 'Coldingfury', 'Winteringwrath',
-            'Whitefang', 'Whitescale', 'Whitewing', 'Whiteclaw', 'Whitehorn',
-            'Silverfrost', 'Silverbite', 'Silverchill', 'Silverwinter', 'Silverice',
-            'Thrym\'s Child', 'Frost Emperor', 'Ice King', 'Winter Lord', 'Cold Tyrant'
-        ],
-        lightning: [
-            'Tempestscale', 'Stormrend', 'Thunderwing', 'Cyclonix', 'Tempestus',
-            'Stormborn', 'Lightningfang', 'Thunderclaw', 'Boltscale', 'Sparkwing',
-            'Tempestyx', 'Stormyx', 'Thunderstorm', 'Cycloneus', 'Hurricanus',
-            'Galewing', 'Tornadoscale', 'Volthorn', 'Shockfang', 'Staticscale',
-            'Stormking', 'Stormlord', 'Stormdrake', 'Stormwyrm', 'Stormdragon',
-            'Thunderingdeath', 'Lightningfury', 'Boltingterror', 'Shockingdoom', 'Stormingwrath',
-            'Bluefang', 'Bluescale', 'Bluewing', 'Blueclaw', 'Bluehorn',
-            'Azurestorm', 'Azurebolt', 'Azureshock', 'Azurevolt', 'Azureflash',
-            'Thor\'s Fury', 'Storm Emperor', 'Thunder King', 'Lightning Lord', 'Tempest Tyrant'
-        ],
-        acid: [
-            'Venomfang', 'Acidmaw', 'Corrosix', 'Dissolvex', 'Toxiscale',
-            'Causticwing', 'Vitriolhorn', 'Corrodeclaw', 'Acidlord', 'Venomscale',
-            'Venomyx', 'Acidyx', 'Corrosive', 'Dissolver', 'Toxicus',
-            'Causticbreath', 'Vitriolscale', 'Corrodehorn', 'Acidfang', 'Venomwing',
-            'Acidking', 'Acidlord', 'Aciddrake', 'Acidwyrm', 'Aciddragon',
-            'Dissolvingdeath', 'Corrodingfury', 'Meltingterror', 'Eatingdoom', 'Acidingwrath',
-            'Greenfang', 'Greenscale', 'Greenwing', 'Greenclaw', 'Greenhorn',
-            'Viridianvenom', 'Viridiancorrosive', 'Viridianacid', 'Viridiantoxin', 'Viridianpoison',
-            'Venom Emperor', 'Acid King', 'Corrosive Lord', 'Caustic Tyrant', 'Toxic Sovereign'
-        ],
-        poison: [
-            'Poisonfang', 'Toxicmaw', 'Venomwing', 'Plaguescale', 'Blighthorn',
-            'Noxiouswing', 'Miasmabreath', 'Pestilentscale', 'Poisonlord', 'Toxicscale',
-            'Poisonyx', 'Toxicyx', 'Venomous', 'Plaguebringer', 'Blightbringer',
-            'Noxiousbreath', 'Miasmascale', 'Pestilenthorn', 'Poisonfang', 'Toxicwing',
-            'Poisonking', 'Poisonlord', 'Poisondrake', 'Poisonwyrm', 'Poisondragon',
-            'Plaguingdeath', 'Blightingfury', 'Poisoningterror', 'Toxicingdoom', 'Venomingwrath',
-            'Sickgreenfang', 'Sickgreenscale', 'Sickgreenwing', 'Sickgreenclaw', 'Sickgreenhorn',
-            'Plague Emperor', 'Blight King', 'Poison Lord', 'Toxic Tyrant', 'Venom Sovereign'
-        ],
-        // Generic/Chromatic
+        // Generic dragon names - element determined randomly at generation
         names: [
+            // Legendary/Mythological names
             'Ancalagon', 'Balerion', 'Smaug', 'Fafnir', 'Glaurung', 'Nidhogg',
-            'Tiamatrix', 'Bahamutian', 'Chromatus', 'Dracolich', 'Drakonid',
+            'Tiamatrix', 'Bahamutian', 'Chromatus', 'Drakonid', 'Ladon',
+            'Apophis', 'Vritra', 'Yamata', 'Zmey', 'Zilant', 'Wyverna',
+            'Quetzalcoatl', 'Kukulkan', 'Typhonix', 'Jormungandr', 'Ouroboros',
+            // Power/Title themed
             'Wyrmlord', 'Dragonking', 'Scalelord', 'Wingmaster', 'Clawtitan',
             'Fanglord', 'Tailmaster', 'Breathking', 'Hoardkeeper', 'Goldguard',
             'Elderdrake', 'Ancientwyrm', 'Primaldragon', 'Titanwyrm', 'Goddrake',
-            'Worldender', 'Realmburner', 'Planetscorcher', 'Stardevourer', 'Moonbane',
-            'Sunslayer', 'Skyrend', 'Earthshatter', 'Oceanboiler', 'Mountainmelter',
-            'Shadowdrake', 'Lightdragon', 'Voidwyrm', 'Chaosdrake', 'Orderdragon',
-            'Cataclysm', 'Devastation', 'Annihilation', 'Extinction', 'Oblivion',
-            'Armageddon', 'Apocalypse', 'Ragnarok', 'Doomsday', 'Judgement'
+            'Draconis', 'Dracomancer', 'Wyrmfather', 'Drakemother', 'Scalebane',
+            'Clawrender', 'Wingterror', 'Tailcrusher', 'Fangripper', 'Hornbreaker',
+            // Destruction themed
+            'Worldender', 'Realmburner', 'Cataclysm', 'Devastation', 'Annihilation',
+            'Extinction', 'Oblivion', 'Armageddon', 'Apocalypse', 'Ragnarok',
+            'Doomsday', 'Judgement', 'Ruination', 'Decimation', 'Desolation',
+            // Cosmic/Ethereal themed
+            'Voidwyrm', 'Chaosdrake', 'Orderdragon', 'Starweaver', 'Moonbane',
+            'Sunslayer', 'Skyrend', 'Nightwing', 'Dawnscale', 'Duskfang',
+            'Twilightclaw', 'Etherealwing', 'Spiritdrake', 'Phantomscale', 'Shadowmaw',
+            // Ancient/Wise themed
+            'Sagedrake', 'Wisdomwing', 'Oraclewyrm', 'Prophetscale', 'Lordragon',
+            'Chronicler', 'Remembrancer', 'Eternus', 'Aeonwing', 'Millennia',
+            // Fierce/Aggressive themed
+            'Terrorwing', 'Dreadscale', 'Fearfang', 'Nightmarehorn', 'Horrorwyrm',
+            'Wrathclaw', 'Furydrake', 'Ragewing', 'Maelstrom', 'Havoc',
+            'Ravager', 'Despoiler', 'Marauder', 'Pillager', 'Conqueror',
+            // Majestic/Noble themed
+            'Imperialwing', 'Sovereignscale', 'Regalclaw', 'Noblefang', 'Majestrix',
+            'Glorywing', 'Triumphant', 'Victorious', 'Exalted', 'Paramount',
+            // Size/Age themed
+            'Colossus', 'Leviathan', 'Behemoth', 'Titan', 'Primordial',
+            'Ancient One', 'Elder Wyrm', 'Great Drake', 'Alpha Draconis', 'Prime Wyrm',
+            // Abstract power names
+            'Dominus', 'Imperator', 'Tyrannus', 'Magnus', 'Maximus',
+            'Supremus', 'Ultimus', 'Primus', 'Omega', 'Alpha',
+            // Hunting/Predator themed
+            'Skyterror', 'Cloudstalker', 'Peakprowler', 'Valleyreaver', 'Cliffdweller',
+            'Cavernlord', 'Mountainking', 'Heightmaster', 'Aerialwyrm', 'Soarwing'
         ],
         titles: [
-            'the Ancient', 'of Fire', 'the Destroyer', 'of Ice',
-            'the Magnificent', 'of Lightning', 'the Terrible', 'of Acid',
-            'the Feared', 'of Shadow', 'the Mighty', 'of Light',
-            'the Dread', 'of the Mountain', 'the Great', 'of the Sky',
-            'the Covetous', 'of the Hoard', 'the Ravenous', 'of the Lair',
-            'World-Ender', 'Realm-Burner', 'City-Razer', 'Kingdom-Crusher', 'Empire-Breaker'
+            'the Ancient', 'the Destroyer', 'the Magnificent', 'the Terrible',
+            'the Feared', 'the Mighty', 'the Dread', 'the Great',
+            'the Covetous', 'the Ravenous', 'the Eternal', 'the Undying',
+            'the Primordial', 'the Legendary', 'the Mythical', 'the Fabled',
+            'World-Ender', 'Realm-Burner', 'City-Razer', 'Kingdom-Crusher', 'Empire-Breaker',
+            'of the Mountain', 'of the Sky', 'of the Hoard', 'of the Lair',
+            'the Wise', 'the Cunning', 'the Fierce', 'the Noble', 'the Savage',
+            'the Immortal', 'the Undefeated', 'the Unconquered', 'the Supreme'
         ]
     },
 
     elemental: {
-        // Fire elementals
-        fire: [
-            'Ignatius', 'Pyronus', 'Infernix', 'Blazeking', 'Emberlord',
-            'Flameheart', 'Magmanus', 'Volcanix', 'Scorchus', 'Cinderlord',
-            'Pyroclast', 'Inferno', 'Blazestorm', 'Embercore', 'Flameburst',
-            'Magmaflow', 'Volcanus', 'Scorchfire', 'Cinderfall', 'Ashlord',
-            'Fire Elemental', 'Fire Lord', 'Fire King', 'Fire Emperor', 'Fire Titan',
-            'Primal Fire', 'Living Flame', 'Fire Incarnate', 'Flame Elemental',
-            'Pyreling', 'Flameling', 'Emberling', 'Scorchling', 'Blazeling',
-            'Burning One', 'Scorching Terror', 'Searing Horror', 'Blazing Fury',
-            'Molten Core', 'Molten Lord', 'Molten King', 'Molten Heart', 'Molten Fury',
-            'Lavabeast', 'Lavaborn', 'Lavawalker', 'Lavaheart', 'Lavaking',
-            'Heatstorm', 'Heatwave', 'Heatblast', 'Heatpulse', 'Heatlord'
-        ],
-        water: [
-            'Aquaron', 'Hydrovex', 'Tidecaller', 'Wavemaster', 'Tsunamix',
-            'Maelstrom', 'Oceanix', 'Depthslord', 'Currentus', 'Riverbane',
-            'Aquaflow', 'Hydroblast', 'Tidestorm', 'Wavecrest', 'Tsunamus',
-            'Maelstromus', 'Oceanus', 'Depthsking', 'Currentlord', 'Rivertide',
-            'Water Elemental', 'Water Lord', 'Water King', 'Water Emperor', 'Water Titan',
-            'Primal Water', 'Living Wave', 'Water Incarnate', 'Wave Elemental',
-            'Aqualing', 'Waveling', 'Tideling', 'Currentling', 'Streamling',
-            'Drowning Horror', 'Crushing Depths', 'Raging Torrent', 'Endless Tide',
-            'Frostide', 'Glacierus', 'Icestorm', 'Frostwave', 'Chilltide',
-            'Seaspray', 'Seafoam', 'Seaborn', 'Seaheart', 'Seaking'
-        ],
-        earth: [
-            'Terravex', 'Geomancer', 'Stonelord', 'Earthshaker', 'Quartzian',
-            'Tremorus', 'Seismicus', 'Boulderlord', 'Rockheart', 'Mountainking',
-            'Terraflow', 'Geoblast', 'Stonestorm', 'Earthcrust', 'Quartzus',
-            'Tremorus', 'Seismuslord', 'Boulderking', 'Rockmaster', 'Mountainlord',
-            'Earth Elemental', 'Earth Lord', 'Earth King', 'Earth Emperor', 'Earth Titan',
-            'Primal Earth', 'Living Stone', 'Earth Incarnate', 'Stone Elemental',
-            'Terraling', 'Stoneling', 'Rockeling', 'Boulderling', 'Pebbeling',
-            'Crushing Stone', 'Grinding Earth', 'Rumbling Mountain', 'Shaking Ground',
-            'Crystallus', 'Crystalheart', 'Crystallord', 'Crystalking', 'Crystalborn',
-            'Sandstorm', 'Sandheart', 'Sandlord', 'Sandking', 'Sandborn',
-            'Mudflow', 'Mudlord', 'Mudking', 'Mudheart', 'Mudborn'
-        ],
-        air: [
-            'Aerolith', 'Windcaller', 'Stormborn', 'Galeforce', 'Zephyrus',
-            'Cycloneus', 'Hurricanus', 'Tornadolord', 'Gustmaster', 'Breezeling',
-            'Aeroflow', 'Windblast', 'Stormgust', 'Galewind', 'Zephyrborn',
-            'Cyclonelord', 'Hurricaneking', 'Tornadoking', 'Gustlord', 'Breezelord',
-            'Air Elemental', 'Air Lord', 'Air King', 'Air Emperor', 'Air Titan',
-            'Primal Air', 'Living Wind', 'Air Incarnate', 'Wind Elemental',
-            'Airling', 'Windling', 'Gustling', 'Breezling', 'Zephyrling',
-            'Howling Wind', 'Screaming Gale', 'Raging Storm', 'Endless Tempest',
-            'Cloudwalker', 'Cloudborn', 'Cloudlord', 'Cloudking', 'Cloudheart',
-            'Skyborn', 'Skylord', 'Skyking', 'Skyheart', 'Skymaster',
-            'Thunderborn', 'Thunderlord', 'Thunderking', 'Thunderheart', 'Thundermaster'
-        ],
-        // Generic elemental names
+        // Generic elemental names - element determined randomly at generation
         names: [
-            'Primordial', 'Elemental Lord', 'Elemental King', 'Elemental Emperor',
-            'Elemental Titan', 'Elemental Colossus', 'Elemental Prince', 'Elemental Duke',
-            'Essence Incarnate', 'Plane Walker', 'Chaos Elemental', 'Pure Element',
-            'The Raging', 'The Burning', 'The Freezing', 'The Crushing', 'The Howling',
-            'The Scorching', 'The Drowning', 'The Grinding', 'The Screaming'
+            // Primordial/Ancient themed
+            'Primordius', 'Ancientus', 'Elderling', 'Firstborn', 'Primalcore',
+            'Essence', 'Manifestation', 'Incarnation', 'Embodiment', 'Avatar',
+            'The Primordial', 'The Eternal', 'The Everlasting', 'The Timeless',
+            // Power/Title themed
+            'Elemental Lord', 'Elemental King', 'Elemental Emperor', 'Elemental Titan',
+            'Elemental Colossus', 'Elemental Prince', 'Elemental Duke', 'Elemental Baron',
+            'Plane Walker', 'Realm Shaper', 'World Molder', 'Reality Bender',
+            'Essence Incarnate', 'Pure Element', 'Living Force', 'Raw Power',
+            // Nature/Form themed
+            'Formless One', 'Shapeless Mass', 'Ever-Changing', 'Protean',
+            'Mutable', 'Transforming', 'Shifting', 'Flowing', 'Surging',
+            'The Unstoppable', 'The Relentless', 'The Inexorable', 'The Unending',
+            // Chaos/Order themed
+            'Chaos Elemental', 'Order Elemental', 'Balance Keeper', 'Harmony',
+            'Discord', 'Equilibrium', 'Entropy', 'Synthesis', 'Fusion',
+            // Rage/Fury themed
+            'The Raging', 'The Furious', 'The Wrathful', 'The Violent',
+            'Fury Incarnate', 'Wrath Manifest', 'Rage Embodied', 'Anger Made Flesh',
+            'The Tempest', 'The Maelstrom', 'The Cataclysm', 'The Catastrophe',
+            // Calm/Serene themed
+            'The Tranquil', 'The Serene', 'The Placid', 'The Still',
+            'Calm Before Storm', 'Eye of Chaos', 'Center of Power', 'Heart of Force',
+            // Size/Scale themed
+            'Colossus', 'Titan', 'Giant', 'Behemoth', 'Leviathan',
+            'Greater Being', 'Lesser Spirit', 'Minor Essence', 'Major Force',
+            // Abstract names
+            'Vortex', 'Nexus', 'Conduit', 'Catalyst', 'Fulcrum',
+            'Apex', 'Zenith', 'Nadir', 'Pinnacle', 'Foundation',
+            'The Convergence', 'The Divergence', 'The Singularity', 'The Plurality',
+            // Spirit/Soul themed
+            'Spiritus', 'Animus', 'Phantos', 'Spectrus', 'Aethos',
+            'Elemental Spirit', 'Primal Soul', 'Ancient Ghost', 'Elder Phantom',
+            'Bound Spirit', 'Free Essence', 'Wild Force', 'Tamed Power'
         ],
         titles: [
-            'the Burning', 'of Fire', 'the Raging', 'of Water',
-            'the Unyielding', 'of Earth', 'the Howling', 'of Air',
-            'the Scorching', 'of the Volcano', 'the Freezing', 'of the Ocean',
-            'the Crushing', 'of the Mountain', 'the Swift', 'of the Storm',
-            'the Primordial', 'of the Elements', 'the Eternal', 'of the Plane'
+            'the Raging', 'the Unyielding', 'the Howling', 'the Primordial',
+            'the Eternal', 'the Relentless', 'the Unstoppable', 'the Infinite',
+            'the Consuming', 'the Devouring', 'the Overwhelming', 'the All-Encompassing',
+            'of the Plane', 'of the Elements', 'of Power', 'of Fury',
+            'the Ancient', 'the Primal', 'the Pure', 'the Absolute',
+            'the Mighty', 'the Terrible', 'the Awesome', 'the Fearsome'
         ]
     },
 
@@ -628,28 +581,16 @@ const MonsterNames = {
 
     /**
      * Generate a random name for a monster type
-     * For elementals and dragons, can specify element for matching names
+     * Element parameter is ignored - names are now generic
      */
     generateName(type, includeTitle = true, element = null) {
         const typeData = this[type];
         if (!typeData) return 'Unknown Creature';
 
-        let namePool;
-
-        // Handle element-specific naming for dragons and elementals
-        if (element && typeData[element]) {
-            namePool = typeData[element];
-        } else if (typeData.names) {
-            namePool = typeData.names;
-        } else {
-            // Fallback for types with only element-specific arrays
-            const keys = Object.keys(typeData).filter(k => k !== 'titles' && Array.isArray(typeData[k]));
-            if (keys.length > 0) {
-                const randomKey = keys[Math.floor(Math.random() * keys.length)];
-                namePool = typeData[randomKey];
-            } else {
-                return 'Unknown Creature';
-            }
+        // Use the names array
+        const namePool = typeData.names;
+        if (!namePool || namePool.length === 0) {
+            return 'Unknown Creature';
         }
 
         const name = namePool[Math.floor(Math.random() * namePool.length)];
@@ -663,10 +604,10 @@ const MonsterNames = {
     },
 
     /**
-     * Get element-appropriate name for elementals/dragons
+     * Get a random name (element parameter kept for backwards compatibility but ignored)
      */
     getElementalName(type, element) {
-        return this.generateName(type, true, element);
+        return this.generateName(type, true);
     }
 };
 
