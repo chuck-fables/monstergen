@@ -1337,51 +1337,65 @@ const Generator = {
     },
 
     /**
-     * Get caster level for humanoid spellcasters based on CR
+     * Get caster level / hit dice for humanoid spellcasters based on CR
      * Spellcasters have higher effective levels to match their spell access
      * Example: Archmage is CR 12 with 18 hit dice (18th level caster, 9th level spells)
+     * At CR 13+, hit dice can scale beyond 20 (up to 80 at CR 30)
      */
     getHumanoidCasterLevel(cr) {
         const crNum = parseFloat(cr);
         // Full spellcasters get more hit dice than their CR would suggest
         // CR 12 Archmage has 18 HD, so roughly CR * 1.5 for high-level casters
-        // Scale: CR 1-4 = CR+2, CR 5-10 = CR*1.4, CR 11+ = CR*1.5
+        // CR 13+: Scale beyond 20 HD, reaching up to 80 HD at CR 30
         if (crNum <= 0.5) return 1;
-        if (crNum <= 4) return Math.min(20, Math.ceil(crNum + 2));
-        if (crNum <= 10) return Math.min(20, Math.ceil(crNum * 1.4));
-        return Math.min(20, Math.ceil(crNum * 1.5));
+        if (crNum <= 4) return Math.ceil(crNum + 2);
+        if (crNum <= 10) return Math.ceil(crNum * 1.4);
+        if (crNum <= 12) return Math.min(20, Math.ceil(crNum * 1.5));
+        // CR 13-30: Scale from ~20 HD to 80 HD
+        // Linear interpolation: CR 13 = ~20, CR 30 = 80
+        // Formula: 20 + ((crNum - 13) / 17) * 60
+        const scaledDice = Math.ceil(20 + ((crNum - 13) / 17) * 60);
+        return Math.min(80, scaledDice);
     },
 
     /**
-     * Get level for half-casters (Paladin, Ranger, Artificer)
+     * Get level / hit dice for half-casters (Paladin, Ranger, Artificer)
      * They get more hit dice since their spellcasting is limited to 5th level max
-     * More martial-oriented, so CR translates to higher level
+     * More martial-oriented, so CR translates to higher hit dice
+     * At CR 13+, can scale beyond 20 HD (up to 80 at CR 30)
      */
     getHalfCasterLevel(cr) {
         const crNum = parseFloat(cr);
         // Half-casters are more martial and can have more hit dice
         // They max at 5th level spells at level 17, so high CR means high level
         if (crNum <= 0.5) return 2; // Min level 2 for spellcasting
-        if (crNum <= 2) return Math.min(20, Math.ceil(crNum * 2 + 1));
-        if (crNum <= 5) return Math.min(20, Math.ceil(crNum * 2));
-        if (crNum <= 10) return Math.min(20, Math.ceil(crNum * 1.6));
-        return Math.min(20, Math.ceil(crNum * 1.4)); // CR 12 = ~17, CR 14 = ~20
+        if (crNum <= 2) return Math.ceil(crNum * 2 + 1);
+        if (crNum <= 5) return Math.ceil(crNum * 2);
+        if (crNum <= 10) return Math.ceil(crNum * 1.6);
+        if (crNum <= 12) return Math.min(20, Math.ceil(crNum * 1.5));
+        // CR 13-30: Scale from ~20 HD to 80 HD (same as full casters for HP)
+        const scaledDice = Math.ceil(20 + ((crNum - 13) / 17) * 60);
+        return Math.min(80, scaledDice);
     },
 
     /**
-     * Get level for Warlocks
+     * Get level / hit dice for Warlocks
      * Limited spell slots (only 2) but recover on short rest
      * Get more hit dice to compensate for fewer slots
+     * At CR 13+, can scale beyond 20 HD (up to 80 at CR 30)
      */
     getWarlockLevel(cr) {
         const crNum = parseFloat(cr);
         // Warlocks have very limited slots, more like martial in terms of resource
         // CR 5 = ~level 9 (5th level slots), CR 8+ can get Mystic Arcanum
         if (crNum <= 0.5) return 1;
-        if (crNum <= 2) return Math.min(20, Math.ceil(crNum * 2 + 1));
-        if (crNum <= 5) return Math.min(20, Math.ceil(crNum * 1.8));
-        if (crNum <= 10) return Math.min(20, Math.ceil(crNum * 1.5));
-        return Math.min(20, Math.ceil(crNum * 1.3));
+        if (crNum <= 2) return Math.ceil(crNum * 2 + 1);
+        if (crNum <= 5) return Math.ceil(crNum * 1.8);
+        if (crNum <= 10) return Math.ceil(crNum * 1.5);
+        if (crNum <= 12) return Math.min(20, Math.ceil(crNum * 1.4));
+        // CR 13-30: Scale from ~20 HD to 80 HD
+        const scaledDice = Math.ceil(20 + ((crNum - 13) / 17) * 60);
+        return Math.min(80, scaledDice);
     },
 
     /**

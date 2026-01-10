@@ -7,6 +7,12 @@ const App = {
     // Current generated monster data
     currentMonster: null,
 
+    // Current monster's saved ID (if loaded from library)
+    currentMonsterId: null,
+
+    // Monster being deleted (for confirmation)
+    pendingDeleteId: null,
+
     // DOM element references
     elements: {},
 
@@ -60,9 +66,42 @@ const App = {
             randomizeBtn: document.getElementById('randomize-btn'),
             generateBtn: document.getElementById('generate-btn'),
             downloadBtn: document.getElementById('download-btn'),
+            saveBtn: document.getElementById('save-btn'),
+            editBtn: document.getElementById('edit-btn'),
+            exportJsonBtn: document.getElementById('export-json-btn'),
+            libraryBtn: document.getElementById('library-btn'),
 
             // Statblock container
-            statblock: document.getElementById('statblock')
+            statblock: document.getElementById('statblock'),
+
+            // Library Modal
+            libraryModal: document.getElementById('library-modal'),
+            closeLibraryBtn: document.getElementById('close-library-btn'),
+            librarySearch: document.getElementById('library-search'),
+            libraryFilterType: document.getElementById('library-filter-type'),
+            librarySort: document.getElementById('library-sort'),
+            libraryList: document.getElementById('library-list'),
+            libraryCount: document.getElementById('library-count'),
+            importBtn: document.getElementById('import-btn'),
+            importFile: document.getElementById('import-file'),
+            exportLibraryBtn: document.getElementById('export-library-btn'),
+
+            // Edit Modal
+            editModal: document.getElementById('edit-modal'),
+            closeEditBtn: document.getElementById('close-edit-btn'),
+            cancelEditBtn: document.getElementById('cancel-edit-btn'),
+            saveEditBtn: document.getElementById('save-edit-btn'),
+            addTraitBtn: document.getElementById('add-trait-btn'),
+            addActionBtn: document.getElementById('add-action-btn'),
+            editTraitsContainer: document.getElementById('edit-traits-container'),
+            editActionsContainer: document.getElementById('edit-actions-container'),
+
+            // Delete Modal
+            deleteModal: document.getElementById('delete-modal'),
+            closeDeleteBtn: document.getElementById('close-delete-btn'),
+            cancelDeleteBtn: document.getElementById('cancel-delete-btn'),
+            confirmDeleteBtn: document.getElementById('confirm-delete-btn'),
+            deleteMonsterName: document.getElementById('delete-monster-name')
         };
     },
 
@@ -103,6 +142,107 @@ const App = {
         // Update attack types and size when class is selected
         this.elements.humanoidClass.addEventListener('change', () => {
             this.updateClassDefaults();
+        });
+
+        // Save monster to library
+        this.elements.saveBtn.addEventListener('click', () => {
+            this.saveMonster();
+        });
+
+        // Edit monster
+        this.elements.editBtn.addEventListener('click', () => {
+            this.openEditModal();
+        });
+
+        // Export JSON
+        this.elements.exportJsonBtn.addEventListener('click', () => {
+            this.exportJSON();
+        });
+
+        // Open library modal
+        this.elements.libraryBtn.addEventListener('click', () => {
+            this.openLibraryModal();
+        });
+
+        // Close library modal
+        this.elements.closeLibraryBtn.addEventListener('click', () => {
+            this.closeLibraryModal();
+        });
+
+        // Library modal backdrop click to close
+        this.elements.libraryModal.querySelector('.modal-backdrop').addEventListener('click', () => {
+            this.closeLibraryModal();
+        });
+
+        // Library search/filter/sort
+        this.elements.librarySearch.addEventListener('input', () => {
+            this.renderLibraryList();
+        });
+
+        this.elements.libraryFilterType.addEventListener('change', () => {
+            this.renderLibraryList();
+        });
+
+        this.elements.librarySort.addEventListener('change', () => {
+            this.renderLibraryList();
+        });
+
+        // Import button
+        this.elements.importBtn.addEventListener('click', () => {
+            this.elements.importFile.click();
+        });
+
+        // Import file change
+        this.elements.importFile.addEventListener('change', (e) => {
+            this.importJSON(e.target.files[0]);
+            e.target.value = ''; // Reset file input
+        });
+
+        // Export library button
+        this.elements.exportLibraryBtn.addEventListener('click', () => {
+            MonsterStorage.exportLibrary();
+        });
+
+        // Edit modal events
+        this.elements.closeEditBtn.addEventListener('click', () => {
+            this.closeEditModal();
+        });
+
+        this.elements.cancelEditBtn.addEventListener('click', () => {
+            this.closeEditModal();
+        });
+
+        this.elements.saveEditBtn.addEventListener('click', () => {
+            this.saveEdit();
+        });
+
+        this.elements.editModal.querySelector('.modal-backdrop').addEventListener('click', () => {
+            this.closeEditModal();
+        });
+
+        this.elements.addTraitBtn.addEventListener('click', () => {
+            this.addEditListItem('traits');
+        });
+
+        this.elements.addActionBtn.addEventListener('click', () => {
+            this.addEditListItem('actions');
+        });
+
+        // Delete modal events
+        this.elements.closeDeleteBtn.addEventListener('click', () => {
+            this.closeDeleteModal();
+        });
+
+        this.elements.cancelDeleteBtn.addEventListener('click', () => {
+            this.closeDeleteModal();
+        });
+
+        this.elements.confirmDeleteBtn.addEventListener('click', () => {
+            this.confirmDelete();
+        });
+
+        this.elements.deleteModal.querySelector('.modal-backdrop').addEventListener('click', () => {
+            this.closeDeleteModal();
         });
     },
 
@@ -398,8 +538,14 @@ const App = {
             // Render statblock
             this.renderStatblock();
 
-            // Enable download button
+            // Enable action buttons
             this.elements.downloadBtn.disabled = false;
+            this.elements.saveBtn.disabled = false;
+            this.elements.editBtn.disabled = false;
+            this.elements.exportJsonBtn.disabled = false;
+
+            // Clear the saved ID since this is a new/regenerated monster
+            this.currentMonsterId = null;
 
         } catch (error) {
             console.error('Generation failed:', error);
@@ -466,6 +612,591 @@ const App = {
 
         const filename = this.currentMonster.name || 'monster';
         await StatblockExporter.exportAsPNG(this.elements.statblock, filename);
+    },
+
+    // ==========================================
+    // Library Management Methods
+    // ==========================================
+
+    /**
+     * Save current monster to library
+     */
+    saveMonster() {
+        if (!this.currentMonster) return;
+
+        const entry = MonsterStorage.saveMonster(this.currentMonster);
+        if (entry) {
+            this.currentMonsterId = entry.id;
+            alert(`"${this.currentMonster.name}" saved to library!`);
+        } else {
+            alert('Failed to save monster. Please try again.');
+        }
+    },
+
+    /**
+     * Export current monster as JSON file
+     */
+    exportJSON() {
+        if (!this.currentMonster) return;
+        MonsterStorage.exportMonster(this.currentMonster);
+    },
+
+    /**
+     * Import JSON file
+     */
+    async importJSON(file) {
+        if (!file) return;
+
+        try {
+            const result = await MonsterStorage.importMonster(file);
+
+            if (result.type === 'library') {
+                const count = MonsterStorage.importLibrary(result.data);
+                alert(`Successfully imported ${count} monster(s) to library!`);
+                this.renderLibraryList();
+            } else {
+                // Single monster - load it directly
+                this.loadMonster(result.data);
+                alert(`Loaded "${result.data.name}" from file!`);
+            }
+        } catch (error) {
+            alert('Failed to import file: ' + error.message);
+        }
+    },
+
+    /**
+     * Open library modal
+     */
+    openLibraryModal() {
+        this.elements.libraryModal.classList.remove('hidden');
+        this.renderLibraryList();
+    },
+
+    /**
+     * Close library modal
+     */
+    closeLibraryModal() {
+        this.elements.libraryModal.classList.add('hidden');
+    },
+
+    /**
+     * Render the library list with current filters
+     */
+    renderLibraryList() {
+        const searchQuery = this.elements.librarySearch.value.toLowerCase();
+        const typeFilter = this.elements.libraryFilterType.value;
+        const sortBy = this.elements.librarySort.value;
+
+        let library = MonsterStorage.getLibrary();
+
+        // Filter by search query
+        if (searchQuery) {
+            library = library.filter(entry =>
+                entry.name.toLowerCase().includes(searchQuery)
+            );
+        }
+
+        // Filter by type
+        if (typeFilter) {
+            library = library.filter(entry => entry.type === typeFilter);
+        }
+
+        // Sort
+        library.sort((a, b) => {
+            switch (sortBy) {
+                case 'name':
+                    return a.name.localeCompare(b.name);
+                case 'cr':
+                    return parseFloat(a.cr) - parseFloat(b.cr);
+                case 'type':
+                    return a.type.localeCompare(b.type);
+                case 'date':
+                    return new Date(b.savedAt) - new Date(a.savedAt);
+                default:
+                    return 0;
+            }
+        });
+
+        // Update count
+        const totalCount = MonsterStorage.getLibrary().length;
+        this.elements.libraryCount.textContent = `${totalCount} monster${totalCount !== 1 ? 's' : ''} saved`;
+
+        // Render list
+        if (library.length === 0) {
+            if (searchQuery || typeFilter) {
+                this.elements.libraryList.innerHTML = '<p class="library-empty">No monsters match your search.</p>';
+            } else {
+                this.elements.libraryList.innerHTML = '<p class="library-empty">No saved monsters yet. Generate and save some!</p>';
+            }
+            return;
+        }
+
+        const html = library.map(entry => `
+            <div class="library-item" data-id="${entry.id}">
+                <div class="library-item-info">
+                    <div class="library-item-name">${this.escapeHtml(entry.name)}</div>
+                    <div class="library-item-meta">
+                        <span class="library-item-type">${entry.type}</span>
+                        <span class="library-item-cr">${this.formatCR(entry.cr)}</span>
+                    </div>
+                </div>
+                <div class="library-item-actions">
+                    <button class="btn btn-load" onclick="App.loadFromLibrary('${entry.id}')">Load</button>
+                    <button class="btn btn-delete" onclick="App.openDeleteModal('${entry.id}', '${this.escapeHtml(entry.name)}')">Delete</button>
+                </div>
+            </div>
+        `).join('');
+
+        this.elements.libraryList.innerHTML = html;
+    },
+
+    /**
+     * Load a monster from library by ID
+     */
+    loadFromLibrary(id) {
+        const monster = MonsterStorage.getMonster(id);
+        if (monster) {
+            this.currentMonsterId = id;
+            this.loadMonster(monster);
+            this.closeLibraryModal();
+        } else {
+            alert('Monster not found in library.');
+        }
+    },
+
+    /**
+     * Load a monster object and display it
+     */
+    loadMonster(monster) {
+        this.currentMonster = monster;
+
+        // Update name input
+        this.elements.monsterName.value = monster.name || '';
+
+        // Render statblock
+        this.renderStatblock();
+
+        // Enable action buttons
+        this.elements.downloadBtn.disabled = false;
+        this.elements.saveBtn.disabled = false;
+        this.elements.editBtn.disabled = false;
+        this.elements.exportJsonBtn.disabled = false;
+    },
+
+    /**
+     * Format CR for display
+     */
+    formatCR(cr) {
+        const crNum = parseFloat(cr);
+        if (crNum === 0.125) return '1/8';
+        if (crNum === 0.25) return '1/4';
+        if (crNum === 0.5) return '1/2';
+        return cr.toString();
+    },
+
+    /**
+     * Escape HTML to prevent XSS
+     */
+    escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    },
+
+    // ==========================================
+    // Delete Modal Methods
+    // ==========================================
+
+    /**
+     * Open delete confirmation modal
+     */
+    openDeleteModal(id, name) {
+        this.pendingDeleteId = id;
+        this.elements.deleteMonsterName.textContent = name;
+        this.elements.deleteModal.classList.remove('hidden');
+    },
+
+    /**
+     * Close delete modal
+     */
+    closeDeleteModal() {
+        this.elements.deleteModal.classList.add('hidden');
+        this.pendingDeleteId = null;
+    },
+
+    /**
+     * Confirm and execute delete
+     */
+    confirmDelete() {
+        if (!this.pendingDeleteId) return;
+
+        const success = MonsterStorage.deleteMonster(this.pendingDeleteId);
+        if (success) {
+            // If we deleted the currently loaded monster, clear its ID
+            if (this.currentMonsterId === this.pendingDeleteId) {
+                this.currentMonsterId = null;
+            }
+            this.renderLibraryList();
+        } else {
+            alert('Failed to delete monster.');
+        }
+
+        this.closeDeleteModal();
+    },
+
+    // ==========================================
+    // Edit Modal Methods
+    // ==========================================
+
+    /**
+     * Open edit modal with current monster data
+     */
+    openEditModal() {
+        if (!this.currentMonster) return;
+
+        const m = this.currentMonster;
+
+        // Populate basic info
+        document.getElementById('edit-name').value = m.name || '';
+        document.getElementById('edit-size').value = m.size || 'medium';
+        document.getElementById('edit-alignment').value = m.alignment || 'true neutral';
+
+        // Combat stats
+        document.getElementById('edit-ac').value = m.armorClass?.value || m.armorClass || 10;
+        document.getElementById('edit-ac-type').value = m.armorClass?.type || '';
+        document.getElementById('edit-hp-avg').value = m.hitPoints?.average || 0;
+        document.getElementById('edit-hp-dice').value = m.hitPoints?.notation || '';
+        document.getElementById('edit-speed').value = this.formatSpeed(m.speed);
+
+        // Ability scores
+        document.getElementById('edit-str').value = m.abilities?.str || 10;
+        document.getElementById('edit-dex').value = m.abilities?.dex || 10;
+        document.getElementById('edit-con').value = m.abilities?.con || 10;
+        document.getElementById('edit-int').value = m.abilities?.int || 10;
+        document.getElementById('edit-wis').value = m.abilities?.wis || 10;
+        document.getElementById('edit-cha').value = m.abilities?.cha || 10;
+
+        // Defenses
+        document.getElementById('edit-saves').value = this.formatSaves(m.savingThrows);
+        document.getElementById('edit-skills').value = this.formatSkills(m.skills);
+        document.getElementById('edit-resistances').value = (m.damageResistances || []).join(', ');
+        document.getElementById('edit-immunities').value = (m.damageImmunities || []).join(', ');
+        document.getElementById('edit-condition-immunities').value = (m.conditionImmunities || []).join(', ');
+
+        // Senses & Languages
+        document.getElementById('edit-senses').value = this.formatSenses(m.senses);
+        document.getElementById('edit-languages').value = (m.languages || []).join(', ');
+
+        // Populate traits
+        this.populateEditList('traits', m.traits || []);
+
+        // Populate actions
+        this.populateEditList('actions', m.actions || []);
+
+        this.elements.editModal.classList.remove('hidden');
+    },
+
+    /**
+     * Close edit modal
+     */
+    closeEditModal() {
+        this.elements.editModal.classList.add('hidden');
+    },
+
+    /**
+     * Populate an edit list (traits or actions)
+     */
+    populateEditList(type, items) {
+        const container = type === 'traits' ?
+            this.elements.editTraitsContainer :
+            this.elements.editActionsContainer;
+
+        container.innerHTML = items.map((item, index) => this.createEditListItemHTML(type, index, item)).join('');
+    },
+
+    /**
+     * Create HTML for an edit list item
+     */
+    createEditListItemHTML(type, index, item = { name: '', description: '' }) {
+        return `
+            <div class="edit-list-item" data-type="${type}" data-index="${index}">
+                <div class="edit-list-item-header">
+                    <input type="text" class="edit-item-name" value="${this.escapeHtml(item.name || '')}" placeholder="Name">
+                    <button type="button" class="btn btn-remove" onclick="App.removeEditListItem(this)">Remove</button>
+                </div>
+                <textarea class="edit-item-description" placeholder="Description">${this.escapeHtml(item.description || '')}</textarea>
+            </div>
+        `;
+    },
+
+    /**
+     * Add a new item to an edit list
+     */
+    addEditListItem(type) {
+        const container = type === 'traits' ?
+            this.elements.editTraitsContainer :
+            this.elements.editActionsContainer;
+
+        const index = container.children.length;
+        const html = this.createEditListItemHTML(type, index);
+
+        container.insertAdjacentHTML('beforeend', html);
+    },
+
+    /**
+     * Remove an item from edit list
+     */
+    removeEditListItem(button) {
+        const item = button.closest('.edit-list-item');
+        if (item) {
+            item.remove();
+        }
+    },
+
+    /**
+     * Save edits to current monster
+     */
+    saveEdit() {
+        if (!this.currentMonster) return;
+
+        // Update basic info
+        this.currentMonster.name = document.getElementById('edit-name').value;
+        this.currentMonster.size = document.getElementById('edit-size').value;
+        this.currentMonster.alignment = document.getElementById('edit-alignment').value;
+
+        // Update combat stats
+        const acValue = parseInt(document.getElementById('edit-ac').value) || 10;
+        const acType = document.getElementById('edit-ac-type').value;
+        this.currentMonster.armorClass = {
+            value: acValue,
+            type: acType
+        };
+
+        this.currentMonster.hitPoints = {
+            average: parseInt(document.getElementById('edit-hp-avg').value) || 0,
+            notation: document.getElementById('edit-hp-dice').value
+        };
+
+        this.currentMonster.speed = this.parseSpeed(document.getElementById('edit-speed').value);
+
+        // Update ability scores
+        this.currentMonster.abilities = {
+            str: parseInt(document.getElementById('edit-str').value) || 10,
+            dex: parseInt(document.getElementById('edit-dex').value) || 10,
+            con: parseInt(document.getElementById('edit-con').value) || 10,
+            int: parseInt(document.getElementById('edit-int').value) || 10,
+            wis: parseInt(document.getElementById('edit-wis').value) || 10,
+            cha: parseInt(document.getElementById('edit-cha').value) || 10
+        };
+
+        // Update defenses
+        this.currentMonster.savingThrows = this.parseSaves(document.getElementById('edit-saves').value);
+        this.currentMonster.skills = this.parseSkills(document.getElementById('edit-skills').value);
+        this.currentMonster.damageResistances = this.parseList(document.getElementById('edit-resistances').value);
+        this.currentMonster.damageImmunities = this.parseList(document.getElementById('edit-immunities').value);
+        this.currentMonster.conditionImmunities = this.parseList(document.getElementById('edit-condition-immunities').value);
+
+        // Update senses & languages
+        this.currentMonster.senses = this.parseSenses(document.getElementById('edit-senses').value);
+        this.currentMonster.languages = this.parseList(document.getElementById('edit-languages').value);
+
+        // Update traits
+        this.currentMonster.traits = this.collectEditListItems('traits');
+
+        // Update actions
+        this.currentMonster.actions = this.collectEditListItems('actions');
+
+        // Update name input field
+        this.elements.monsterName.value = this.currentMonster.name;
+
+        // Re-render statblock
+        this.renderStatblock();
+
+        // If this monster is in the library, update it
+        if (this.currentMonsterId) {
+            MonsterStorage.updateMonster(this.currentMonsterId, this.currentMonster);
+        }
+
+        this.closeEditModal();
+    },
+
+    /**
+     * Collect items from an edit list
+     */
+    collectEditListItems(type) {
+        const container = type === 'traits' ?
+            this.elements.editTraitsContainer :
+            this.elements.editActionsContainer;
+
+        const items = [];
+        container.querySelectorAll('.edit-list-item').forEach(item => {
+            const name = item.querySelector('.edit-item-name').value.trim();
+            const description = item.querySelector('.edit-item-description').value.trim();
+            if (name || description) {
+                items.push({ name, description });
+            }
+        });
+        return items;
+    },
+
+    // ==========================================
+    // Formatting Helper Methods
+    // ==========================================
+
+    /**
+     * Format speed object to string
+     */
+    formatSpeed(speed) {
+        if (!speed) return '30 ft.';
+        if (typeof speed === 'string') return speed;
+
+        const parts = [];
+        if (speed.walk) parts.push(`${speed.walk} ft.`);
+        if (speed.fly) parts.push(`fly ${speed.fly} ft.${speed.hover ? ' (hover)' : ''}`);
+        if (speed.swim) parts.push(`swim ${speed.swim} ft.`);
+        if (speed.climb) parts.push(`climb ${speed.climb} ft.`);
+        if (speed.burrow) parts.push(`burrow ${speed.burrow} ft.`);
+
+        return parts.join(', ') || '30 ft.';
+    },
+
+    /**
+     * Parse speed string to object
+     */
+    parseSpeed(speedStr) {
+        const speed = {};
+        const parts = speedStr.split(',').map(s => s.trim());
+
+        parts.forEach(part => {
+            const flyMatch = part.match(/fly\s+(\d+)\s*ft\.?\s*(\(hover\))?/i);
+            const swimMatch = part.match(/swim\s+(\d+)\s*ft\.?/i);
+            const climbMatch = part.match(/climb\s+(\d+)\s*ft\.?/i);
+            const burrowMatch = part.match(/burrow\s+(\d+)\s*ft\.?/i);
+            const walkMatch = part.match(/^(\d+)\s*ft\.?$/i);
+
+            if (flyMatch) {
+                speed.fly = parseInt(flyMatch[1]);
+                if (flyMatch[2]) speed.hover = true;
+            } else if (swimMatch) {
+                speed.swim = parseInt(swimMatch[1]);
+            } else if (climbMatch) {
+                speed.climb = parseInt(climbMatch[1]);
+            } else if (burrowMatch) {
+                speed.burrow = parseInt(burrowMatch[1]);
+            } else if (walkMatch) {
+                speed.walk = parseInt(walkMatch[1]);
+            }
+        });
+
+        if (Object.keys(speed).length === 0) {
+            speed.walk = 30;
+        }
+
+        return speed;
+    },
+
+    /**
+     * Format saving throws object to string
+     */
+    formatSaves(saves) {
+        if (!saves || Object.keys(saves).length === 0) return '';
+        return Object.entries(saves)
+            .map(([stat, value]) => `${stat.charAt(0).toUpperCase() + stat.slice(1)} ${value >= 0 ? '+' : ''}${value}`)
+            .join(', ');
+    },
+
+    /**
+     * Parse saving throws string to object
+     */
+    parseSaves(saveStr) {
+        if (!saveStr.trim()) return {};
+        const saves = {};
+        const parts = saveStr.split(',').map(s => s.trim());
+
+        parts.forEach(part => {
+            const match = part.match(/(\w+)\s*([+-]?\d+)/);
+            if (match) {
+                const stat = match[1].toLowerCase().substring(0, 3);
+                saves[stat] = parseInt(match[2]);
+            }
+        });
+
+        return saves;
+    },
+
+    /**
+     * Format skills object to string
+     */
+    formatSkills(skills) {
+        if (!skills || Object.keys(skills).length === 0) return '';
+        return Object.entries(skills)
+            .map(([skill, value]) => `${skill.charAt(0).toUpperCase() + skill.slice(1)} ${value >= 0 ? '+' : ''}${value}`)
+            .join(', ');
+    },
+
+    /**
+     * Parse skills string to object
+     */
+    parseSkills(skillStr) {
+        if (!skillStr.trim()) return {};
+        const skills = {};
+        const parts = skillStr.split(',').map(s => s.trim());
+
+        parts.forEach(part => {
+            const match = part.match(/([A-Za-z\s]+)\s*([+-]?\d+)/);
+            if (match) {
+                const skill = match[1].trim().toLowerCase();
+                skills[skill] = parseInt(match[2]);
+            }
+        });
+
+        return skills;
+    },
+
+    /**
+     * Format senses object to string
+     */
+    formatSenses(senses) {
+        if (!senses) return 'passive Perception 10';
+        if (typeof senses === 'string') return senses;
+
+        const parts = [];
+        if (senses.darkvision) parts.push(`darkvision ${senses.darkvision} ft.`);
+        if (senses.blindsight) parts.push(`blindsight ${senses.blindsight} ft.`);
+        if (senses.tremorsense) parts.push(`tremorsense ${senses.tremorsense} ft.`);
+        if (senses.truesight) parts.push(`truesight ${senses.truesight} ft.`);
+        parts.push(`passive Perception ${senses.passivePerception || 10}`);
+
+        return parts.join(', ');
+    },
+
+    /**
+     * Parse senses string to object
+     */
+    parseSenses(senseStr) {
+        const senses = {};
+
+        const darkvisionMatch = senseStr.match(/darkvision\s+(\d+)\s*ft/i);
+        const blindsightMatch = senseStr.match(/blindsight\s+(\d+)\s*ft/i);
+        const tremorsenseMatch = senseStr.match(/tremorsense\s+(\d+)\s*ft/i);
+        const truesightMatch = senseStr.match(/truesight\s+(\d+)\s*ft/i);
+        const passiveMatch = senseStr.match(/passive\s+Perception\s+(\d+)/i);
+
+        if (darkvisionMatch) senses.darkvision = parseInt(darkvisionMatch[1]);
+        if (blindsightMatch) senses.blindsight = parseInt(blindsightMatch[1]);
+        if (tremorsenseMatch) senses.tremorsense = parseInt(tremorsenseMatch[1]);
+        if (truesightMatch) senses.truesight = parseInt(truesightMatch[1]);
+        senses.passivePerception = passiveMatch ? parseInt(passiveMatch[1]) : 10;
+
+        return senses;
+    },
+
+    /**
+     * Parse comma-separated list
+     */
+    parseList(str) {
+        if (!str.trim()) return [];
+        return str.split(',').map(s => s.trim()).filter(s => s);
     }
 };
 
