@@ -131,7 +131,7 @@ const MonsterTypes = {
             cha: { min: 14, max: 26 }
         },
         commonDamageResistances: [],
-        commonDamageImmunities: ['fire', 'cold', 'lightning', 'acid', 'poison'],
+        commonDamageImmunities: [],  // Element-specific immunity added by generator based on breath weapon
         commonConditionImmunities: ['frightened', 'paralyzed', 'charmed'],
         typicalSenses: {
             darkvision: 120,

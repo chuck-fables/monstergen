@@ -405,10 +405,23 @@ const Generator = {
 
     /**
      * Generate damage resistances
-     * Dragons/elementals get resistances matching their element
+     * Dragons get 1-2 random elemental resistances (different from their immunity)
      */
     generateDamageResistances(type, typeData, race, element = null) {
         let resistances = [...(typeData.commonDamageResistances || [])];
+
+        // Dragons get 1-2 random elemental resistances (not their immunity element)
+        if (type === 'dragon' && element) {
+            const allElements = ['fire', 'cold', 'lightning', 'acid', 'poison', 'thunder'];
+            const availableElements = allElements.filter(e => e !== element);
+
+            // Pick 1-2 random resistances
+            const numResistances = Utils.randomInt(1, 2);
+            const shuffled = availableElements.sort(() => Math.random() - 0.5);
+            const selectedResistances = shuffled.slice(0, numResistances);
+
+            resistances = [...new Set([...resistances, ...selectedResistances])];
+        }
 
         // Add racial resistances
         if (race && typeof RacesData !== 'undefined' && RacesData[race]) {
