@@ -3,318 +3,768 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>D&D 5e Monster Stat Block Generator</title>
+    <title>D&D DM Toolkit</title>
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/statblock.css">
+    <link rel="stylesheet" href="css/npc-card.css">
+    <link rel="stylesheet" href="css/loot-card.css">
+    <link rel="stylesheet" href="css/hook-card.css">
+    <link rel="stylesheet" href="css/location-card.css">
+    <link rel="stylesheet" href="css/item-card.css">
     <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Scaly+Sans&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="app-container">
-        <!-- Left Panel - Generator Controls -->
-        <aside class="control-panel">
-            <header class="panel-header" id="panel-toggle">
-                <h1>Monster Generator</h1>
-                <p class="subtitle">D&D 5th Edition</p>
-                <span class="toggle-indicator">▼</span>
-            </header>
-
-            <div class="panel-content" id="panel-content">
-            <div class="button-group button-group-top">
-                <button type="button" id="randomize-btn" class="btn btn-secondary">
-                    <span class="dice-icon">&#9858;</span> Randomize
-                </button>
-                <button type="button" id="generate-btn" class="btn btn-primary">
-                    Generate
+    <div class="toolkit-container">
+        <!-- Sidebar Navigation -->
+        <nav class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h1 class="sidebar-title">DM Toolkit</h1>
+                <button type="button" class="sidebar-toggle" id="sidebar-toggle" title="Toggle Sidebar">
+                    <span>&#9776;</span>
                 </button>
             </div>
+            <ul class="sidebar-nav">
+                <li class="nav-item active" data-panel="monster">
+                    <span class="nav-icon">&#128009;</span>
+                    <span class="nav-label">Monster</span>
+                </li>
+                <li class="nav-item" data-panel="npc">
+                    <span class="nav-icon">&#128100;</span>
+                    <span class="nav-label">NPC</span>
+                </li>
+                <li class="nav-item" data-panel="loot">
+                    <span class="nav-icon">&#128176;</span>
+                    <span class="nav-label">Loot</span>
+                </li>
+                <li class="nav-item" data-panel="hooks">
+                    <span class="nav-icon">&#128220;</span>
+                    <span class="nav-label">Hooks</span>
+                </li>
+                <li class="nav-item" data-panel="location">
+                    <span class="nav-icon">&#127984;</span>
+                    <span class="nav-label">Location</span>
+                </li>
+                <li class="nav-item" data-panel="item">
+                    <span class="nav-icon">&#9876;</span>
+                    <span class="nav-label">Item</span>
+                </li>
+                <li class="nav-divider"></li>
+                <li class="nav-item" data-panel="campaign">
+                    <span class="nav-icon">&#128203;</span>
+                    <span class="nav-label">Campaign</span>
+                </li>
+            </ul>
+            <div class="sidebar-footer">
+                <span class="version">v2.0</span>
+            </div>
+        </nav>
 
-            <div class="control-section">
-                <label for="monster-name">Monster Name</label>
-                <div class="input-group">
-                    <input type="text" id="monster-name" placeholder="Enter name or generate...">
-                    <button type="button" id="auto-name-btn" class="btn-icon" title="Generate Name">
-                        <span class="dice-icon">&#9858;</span>
-                    </button>
+        <!-- Main Content Area -->
+        <div class="main-content">
+            <!-- ==================== MONSTER GENERATOR PANEL ==================== -->
+            <div id="panel-monster" class="generator-panel active">
+                <div class="app-container">
+                    <!-- Left Panel - Generator Controls -->
+                    <aside class="control-panel">
+                        <header class="panel-header" id="panel-toggle">
+                            <h1>Monster Generator</h1>
+                            <p class="subtitle">D&D 5th Edition</p>
+                            <span class="toggle-indicator">&#9660;</span>
+                        </header>
+
+                        <div class="panel-content" id="panel-content">
+                        <div class="button-group button-group-top">
+                            <button type="button" id="randomize-btn" class="btn btn-secondary">
+                                <span class="dice-icon">&#9858;</span> Randomize
+                            </button>
+                            <button type="button" id="generate-btn" class="btn btn-primary">
+                                Generate
+                            </button>
+                        </div>
+
+                        <div class="control-section">
+                            <label for="monster-name">Monster Name</label>
+                            <div class="input-group">
+                                <input type="text" id="monster-name" placeholder="Enter name or generate...">
+                                <button type="button" id="auto-name-btn" class="btn-icon" title="Generate Name">
+                                    <span class="dice-icon">&#9858;</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="control-section">
+                            <label for="monster-type">Monster Type</label>
+                            <div class="input-group">
+                                <select id="monster-type">
+                                    <option value="">Select Type...</option>
+                                    <option value="aberration">Aberration</option>
+                                    <option value="beast">Beast</option>
+                                    <option value="celestial">Celestial</option>
+                                    <option value="construct">Construct</option>
+                                    <option value="dragon">Dragon</option>
+                                    <option value="elemental">Elemental</option>
+                                    <option value="fey">Fey</option>
+                                    <option value="fiend">Fiend</option>
+                                    <option value="giant">Giant</option>
+                                    <option value="humanoid">Humanoid</option>
+                                    <option value="monstrosity">Monstrosity</option>
+                                    <option value="ooze">Ooze</option>
+                                    <option value="plant">Plant</option>
+                                    <option value="undead">Undead</option>
+                                </select>
+                                <button type="button" id="lock-type-btn" class="btn-icon btn-lock" title="Lock Monster Type">
+                                    <span class="lock-icon">&#128275;</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Humanoid Options (conditionally shown, placed under monster type) -->
+                        <div id="humanoid-options" class="humanoid-section" style="display: none;">
+                            <div class="section-divider">
+                                <span>Humanoid Options</span>
+                            </div>
+
+                            <div class="control-section">
+                                <label for="humanoid-race">Race</label>
+                                <select id="humanoid-race">
+                                    <option value="">Select Race...</option>
+                                    <optgroup label="Common Races">
+                                        <option value="human">Human</option>
+                                        <option value="dwarf-hill">Dwarf (Hill)</option>
+                                        <option value="dwarf-mountain">Dwarf (Mountain)</option>
+                                        <option value="elf-high">Elf (High)</option>
+                                        <option value="elf-wood">Elf (Wood)</option>
+                                        <option value="elf-drow">Elf (Drow)</option>
+                                        <option value="halfling-lightfoot">Halfling (Lightfoot)</option>
+                                        <option value="halfling-stout">Halfling (Stout)</option>
+                                        <option value="gnome-forest">Gnome (Forest)</option>
+                                        <option value="gnome-rock">Gnome (Rock)</option>
+                                        <option value="half-elf">Half-Elf</option>
+                                        <option value="half-orc">Half-Orc</option>
+                                        <option value="tiefling">Tiefling</option>
+                                        <option value="dragonborn">Dragonborn</option>
+                                    </optgroup>
+                                    <optgroup label="Uncommon Races">
+                                        <option value="aasimar">Aasimar</option>
+                                        <option value="genasi-air">Genasi (Air)</option>
+                                        <option value="genasi-earth">Genasi (Earth)</option>
+                                        <option value="genasi-fire">Genasi (Fire)</option>
+                                        <option value="genasi-water">Genasi (Water)</option>
+                                        <option value="goliath">Goliath</option>
+                                        <option value="firbolg">Firbolg</option>
+                                        <option value="kenku">Kenku</option>
+                                        <option value="lizardfolk">Lizardfolk</option>
+                                        <option value="tabaxi">Tabaxi</option>
+                                        <option value="triton">Triton</option>
+                                        <option value="tortle">Tortle</option>
+                                        <option value="aarakocra">Aarakocra</option>
+                                        <option value="warforged">Warforged</option>
+                                        <option value="changeling">Changeling</option>
+                                        <option value="kalashtar">Kalashtar</option>
+                                        <option value="shifter">Shifter</option>
+                                    </optgroup>
+                                    <optgroup label="Monstrous Races">
+                                        <option value="gnoll">Gnoll</option>
+                                        <option value="bugbear">Bugbear</option>
+                                        <option value="goblin">Goblin</option>
+                                        <option value="hobgoblin">Hobgoblin</option>
+                                        <option value="kobold">Kobold</option>
+                                        <option value="orc">Orc</option>
+                                        <option value="yuan-ti">Yuan-ti</option>
+                                        <option value="duergar">Duergar</option>
+                                        <option value="githyanki">Githyanki</option>
+                                        <option value="githzerai">Githzerai</option>
+                                        <option value="kuo-toa">Kuo-toa</option>
+                                        <option value="sahuagin">Sahuagin</option>
+                                        <option value="thri-kreen">Thri-kreen</option>
+                                        <option value="bullywug">Bullywug</option>
+                                        <option value="grung">Grung</option>
+                                        <option value="myconid">Myconid</option>
+                                    </optgroup>
+                                </select>
+                            </div>
+
+                            <div class="control-section">
+                                <label for="humanoid-class">Class</label>
+                                <select id="humanoid-class">
+                                    <option value="">No Class (Commoner)</option>
+                                    <option value="barbarian">Barbarian</option>
+                                    <option value="bard">Bard</option>
+                                    <option value="cleric">Cleric</option>
+                                    <option value="druid">Druid</option>
+                                    <option value="fighter">Fighter</option>
+                                    <option value="monk">Monk</option>
+                                    <option value="paladin">Paladin</option>
+                                    <option value="ranger">Ranger</option>
+                                    <option value="rogue">Rogue</option>
+                                    <option value="sorcerer">Sorcerer</option>
+                                    <option value="warlock">Warlock</option>
+                                    <option value="wizard">Wizard</option>
+                                    <option value="artificer">Artificer</option>
+                                </select>
+                            </div>
+
+                            <div class="checkbox-grid">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="generate-inventory" checked>
+                                    <span>Generate Inventory</span>
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="include-magic-items">
+                                    <span>Include Magic Items</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="control-section">
+                            <label for="challenge-rating">Challenge Rating</label>
+                            <div class="input-group">
+                                <select id="challenge-rating">
+                                    <option value="0">0 (10 XP)</option>
+                                    <option value="0.125">1/8 (25 XP)</option>
+                                    <option value="0.25">1/4 (50 XP)</option>
+                                    <option value="0.5">1/2 (100 XP)</option>
+                                    <option value="1">1 (200 XP)</option>
+                                    <option value="2">2 (450 XP)</option>
+                                    <option value="3">3 (700 XP)</option>
+                                    <option value="4">4 (1,100 XP)</option>
+                                    <option value="5" selected>5 (1,800 XP)</option>
+                                    <option value="6">6 (2,300 XP)</option>
+                                    <option value="7">7 (2,900 XP)</option>
+                                    <option value="8">8 (3,900 XP)</option>
+                                    <option value="9">9 (5,000 XP)</option>
+                                    <option value="10">10 (5,900 XP)</option>
+                                    <option value="11">11 (7,200 XP)</option>
+                                    <option value="12">12 (8,400 XP)</option>
+                                    <option value="13">13 (10,000 XP)</option>
+                                    <option value="14">14 (11,500 XP)</option>
+                                    <option value="15">15 (13,000 XP)</option>
+                                    <option value="16">16 (15,000 XP)</option>
+                                    <option value="17">17 (18,000 XP)</option>
+                                    <option value="18">18 (20,000 XP)</option>
+                                    <option value="19">19 (22,000 XP)</option>
+                                    <option value="20">20 (25,000 XP)</option>
+                                    <option value="21">21 (33,000 XP)</option>
+                                    <option value="22">22 (41,000 XP)</option>
+                                    <option value="23">23 (50,000 XP)</option>
+                                    <option value="24">24 (62,000 XP)</option>
+                                    <option value="25">25 (75,000 XP)</option>
+                                    <option value="26">26 (90,000 XP)</option>
+                                    <option value="27">27 (105,000 XP)</option>
+                                    <option value="28">28 (120,000 XP)</option>
+                                    <option value="29">29 (135,000 XP)</option>
+                                    <option value="30">30 (155,000 XP)</option>
+                                </select>
+                                <button type="button" id="lock-cr-btn" class="btn-icon btn-lock" title="Lock Challenge Rating">
+                                    <span class="lock-icon">&#128275;</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="control-section">
+                            <label for="size">Size</label>
+                            <select id="size">
+                                <option value="tiny">Tiny</option>
+                                <option value="small">Small</option>
+                                <option value="medium" selected>Medium</option>
+                                <option value="large">Large</option>
+                                <option value="huge">Huge</option>
+                                <option value="gargantuan">Gargantuan</option>
+                            </select>
+                        </div>
+
+                        <div class="control-section">
+                            <label for="alignment">Alignment</label>
+                            <select id="alignment">
+                                <option value="any">Any Alignment</option>
+                                <option value="unaligned">Unaligned</option>
+                                <option value="lawful good">Lawful Good</option>
+                                <option value="neutral good">Neutral Good</option>
+                                <option value="chaotic good">Chaotic Good</option>
+                                <option value="lawful neutral">Lawful Neutral</option>
+                                <option value="true neutral" selected>True Neutral</option>
+                                <option value="chaotic neutral">Chaotic Neutral</option>
+                                <option value="lawful evil">Lawful Evil</option>
+                                <option value="neutral evil">Neutral Evil</option>
+                                <option value="chaotic evil">Chaotic Evil</option>
+                            </select>
+                        </div>
+
+                        <fieldset class="control-section checkbox-group">
+                            <legend>Attack Types</legend>
+                            <div class="checkbox-grid">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="attack-melee" checked>
+                                    <span>Melee</span>
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="attack-ranged">
+                                    <span>Ranged</span>
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="attack-spells">
+                                    <span>Spellcasting</span>
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="attack-breath">
+                                    <span>Breath Weapon</span>
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="attack-gaze">
+                                    <span>Gaze Attack</span>
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="attack-aura">
+                                    <span>Aura Effect</span>
+                                </label>
+                            </div>
+                        </fieldset>
+
+                        <fieldset class="control-section checkbox-group">
+                            <legend>Special Actions</legend>
+                            <div class="checkbox-grid">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="legendary-actions">
+                                    <span>Legendary Actions</span>
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="mythic-actions">
+                                    <span>Mythic Actions</span>
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="lair-actions">
+                                    <span>Lair Actions</span>
+                                </label>
+                            </div>
+                        </fieldset>
+
+                        </div><!-- end panel-content -->
+                    </aside>
+
+                    <!-- Right Panel - Statblock Display -->
+                    <main class="statblock-panel">
+                        <div class="statblock-container">
+                            <div id="statblock" class="statblock">
+                                <div class="statblock-placeholder">
+                                    <p>Configure options and click <strong>Generate</strong> to create a monster stat block.</p>
+                                    <p>Or click <strong>Randomize</strong> for a random monster!</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="export-controls">
+                            <button type="button" id="save-btn" class="btn btn-save" disabled>
+                                Save Monster
+                            </button>
+                            <button type="button" id="edit-btn" class="btn btn-edit" disabled>
+                                Edit
+                            </button>
+                            <button type="button" id="export-json-btn" class="btn btn-export-json" disabled>
+                                Export JSON
+                            </button>
+                            <button type="button" id="download-btn" class="btn btn-export" disabled>
+                                Download PNG
+                            </button>
+                            <button type="button" id="library-btn" class="btn btn-library">
+                                Monster Library
+                            </button>
+                        </div>
+                    </main>
                 </div>
             </div>
 
-            <div class="control-section">
-                <label for="monster-type">Monster Type</label>
-                <div class="input-group">
-                    <select id="monster-type">
-                        <option value="">Select Type...</option>
-                        <option value="aberration">Aberration</option>
-                        <option value="beast">Beast</option>
-                        <option value="celestial">Celestial</option>
-                        <option value="construct">Construct</option>
-                        <option value="dragon">Dragon</option>
-                        <option value="elemental">Elemental</option>
-                        <option value="fey">Fey</option>
-                        <option value="fiend">Fiend</option>
-                        <option value="giant">Giant</option>
-                        <option value="humanoid">Humanoid</option>
-                        <option value="monstrosity">Monstrosity</option>
-                        <option value="ooze">Ooze</option>
-                        <option value="plant">Plant</option>
-                        <option value="undead">Undead</option>
-                    </select>
-                    <button type="button" id="lock-type-btn" class="btn-icon btn-lock" title="Lock Monster Type">
-                        <span class="lock-icon">&#128275;</span>
-                    </button>
-                </div>
-            </div>
+            <!-- ==================== NPC GENERATOR PANEL ==================== -->
+            <div id="panel-npc" class="generator-panel">
+                <div class="npc-panel-layout">
+                    <!-- NPC Controls -->
+                    <aside class="npc-controls">
+                        <h2 style="margin-bottom: 24px; font-size: 1.4rem; color: var(--primary-light);">NPC Generator</h2>
 
-            <!-- Humanoid Options (conditionally shown, placed under monster type) -->
-            <div id="humanoid-options" class="humanoid-section" style="display: none;">
-                <div class="section-divider">
-                    <span>Humanoid Options</span>
-                </div>
+                        <!-- Gender and Race Row -->
+                        <div class="npc-control-row">
+                            <div class="npc-control-group">
+                                <label for="npcGender">Gender</label>
+                                <select id="npcGender">
+                                    <option value="random">Random</option>
+                                </select>
+                            </div>
+                            <div class="npc-control-group">
+                                <label for="npcRaceSelect">Race</label>
+                                <select id="npcRaceSelect">
+                                    <option value="random">Random</option>
+                                </select>
+                            </div>
+                        </div>
 
-                <div class="control-section">
-                    <label for="humanoid-race">Race</label>
-                    <select id="humanoid-race">
-                        <option value="">Select Race...</option>
-                        <optgroup label="Common Races">
-                            <option value="human">Human</option>
-                            <option value="dwarf-hill">Dwarf (Hill)</option>
-                            <option value="dwarf-mountain">Dwarf (Mountain)</option>
-                            <option value="elf-high">Elf (High)</option>
-                            <option value="elf-wood">Elf (Wood)</option>
-                            <option value="elf-drow">Elf (Drow)</option>
-                            <option value="halfling-lightfoot">Halfling (Lightfoot)</option>
-                            <option value="halfling-stout">Halfling (Stout)</option>
-                            <option value="gnome-forest">Gnome (Forest)</option>
-                            <option value="gnome-rock">Gnome (Rock)</option>
-                            <option value="half-elf">Half-Elf</option>
-                            <option value="half-orc">Half-Orc</option>
-                            <option value="tiefling">Tiefling</option>
-                            <option value="dragonborn">Dragonborn</option>
-                        </optgroup>
-                        <optgroup label="Uncommon Races">
-                            <option value="aasimar">Aasimar</option>
-                            <option value="genasi-air">Genasi (Air)</option>
-                            <option value="genasi-earth">Genasi (Earth)</option>
-                            <option value="genasi-fire">Genasi (Fire)</option>
-                            <option value="genasi-water">Genasi (Water)</option>
-                            <option value="goliath">Goliath</option>
-                            <option value="firbolg">Firbolg</option>
-                            <option value="kenku">Kenku</option>
-                            <option value="lizardfolk">Lizardfolk</option>
-                            <option value="tabaxi">Tabaxi</option>
-                            <option value="triton">Triton</option>
-                            <option value="tortle">Tortle</option>
-                            <option value="aarakocra">Aarakocra</option>
-                            <option value="warforged">Warforged</option>
-                            <option value="changeling">Changeling</option>
-                            <option value="kalashtar">Kalashtar</option>
-                            <option value="shifter">Shifter</option>
-                        </optgroup>
-                        <optgroup label="Monstrous Races">
-                            <option value="gnoll">Gnoll</option>
-                            <option value="bugbear">Bugbear</option>
-                            <option value="goblin">Goblin</option>
-                            <option value="hobgoblin">Hobgoblin</option>
-                            <option value="kobold">Kobold</option>
-                            <option value="orc">Orc</option>
-                            <option value="yuan-ti">Yuan-ti</option>
-                            <option value="duergar">Duergar</option>
-                            <option value="githyanki">Githyanki</option>
-                            <option value="githzerai">Githzerai</option>
-                            <option value="kuo-toa">Kuo-toa</option>
-                            <option value="sahuagin">Sahuagin</option>
-                            <option value="thri-kreen">Thri-kreen</option>
-                            <option value="bullywug">Bullywug</option>
-                            <option value="grung">Grung</option>
-                            <option value="myconid">Myconid</option>
-                        </optgroup>
-                    </select>
-                </div>
+                        <!-- Wealth Level -->
+                        <div class="npc-control-group">
+                            <label for="npcWealth">Wealth / Social Class</label>
+                            <select id="npcWealth">
+                                <option value="random">Random</option>
+                            </select>
+                        </div>
 
-                <div class="control-section">
-                    <label for="humanoid-class">Class</label>
-                    <select id="humanoid-class">
-                        <option value="">No Class (Commoner)</option>
-                        <option value="barbarian">Barbarian</option>
-                        <option value="bard">Bard</option>
-                        <option value="cleric">Cleric</option>
-                        <option value="druid">Druid</option>
-                        <option value="fighter">Fighter</option>
-                        <option value="monk">Monk</option>
-                        <option value="paladin">Paladin</option>
-                        <option value="ranger">Ranger</option>
-                        <option value="rogue">Rogue</option>
-                        <option value="sorcerer">Sorcerer</option>
-                        <option value="warlock">Warlock</option>
-                        <option value="wizard">Wizard</option>
-                        <option value="artificer">Artificer</option>
-                    </select>
-                </div>
+                        <!-- Vocation Type and Specific Vocation -->
+                        <div class="npc-control-group">
+                            <label for="npcVocationType">Vocation Type</label>
+                            <select id="npcVocationType">
+                                <option value="random">Random</option>
+                            </select>
+                        </div>
 
-                <div class="checkbox-grid">
-                    <label class="checkbox-label">
-                        <input type="checkbox" id="generate-inventory" checked>
-                        <span>Generate Inventory</span>
-                    </label>
-                    <label class="checkbox-label">
-                        <input type="checkbox" id="include-magic-items">
-                        <span>Include Magic Items</span>
-                    </label>
-                </div>
-            </div>
+                        <div class="npc-control-group">
+                            <label for="npcVocation">Specific Vocation</label>
+                            <select id="npcVocation" disabled>
+                                <option value="random">Random</option>
+                            </select>
+                        </div>
 
-            <div class="control-section">
-                <label for="challenge-rating">Challenge Rating</label>
-                <div class="input-group">
-                    <select id="challenge-rating">
-                        <option value="0">0 (10 XP)</option>
-                        <option value="0.125">1/8 (25 XP)</option>
-                        <option value="0.25">1/4 (50 XP)</option>
-                        <option value="0.5">1/2 (100 XP)</option>
-                        <option value="1">1 (200 XP)</option>
-                        <option value="2">2 (450 XP)</option>
-                        <option value="3">3 (700 XP)</option>
-                        <option value="4">4 (1,100 XP)</option>
-                        <option value="5" selected>5 (1,800 XP)</option>
-                        <option value="6">6 (2,300 XP)</option>
-                        <option value="7">7 (2,900 XP)</option>
-                        <option value="8">8 (3,900 XP)</option>
-                        <option value="9">9 (5,000 XP)</option>
-                        <option value="10">10 (5,900 XP)</option>
-                        <option value="11">11 (7,200 XP)</option>
-                        <option value="12">12 (8,400 XP)</option>
-                        <option value="13">13 (10,000 XP)</option>
-                        <option value="14">14 (11,500 XP)</option>
-                        <option value="15">15 (13,000 XP)</option>
-                        <option value="16">16 (15,000 XP)</option>
-                        <option value="17">17 (18,000 XP)</option>
-                        <option value="18">18 (20,000 XP)</option>
-                        <option value="19">19 (22,000 XP)</option>
-                        <option value="20">20 (25,000 XP)</option>
-                        <option value="21">21 (33,000 XP)</option>
-                        <option value="22">22 (41,000 XP)</option>
-                        <option value="23">23 (50,000 XP)</option>
-                        <option value="24">24 (62,000 XP)</option>
-                        <option value="25">25 (75,000 XP)</option>
-                        <option value="26">26 (90,000 XP)</option>
-                        <option value="27">27 (105,000 XP)</option>
-                        <option value="28">28 (120,000 XP)</option>
-                        <option value="29">29 (135,000 XP)</option>
-                        <option value="30">30 (155,000 XP)</option>
-                    </select>
-                    <button type="button" id="lock-cr-btn" class="btn-icon btn-lock" title="Lock Challenge Rating">
-                        <span class="lock-icon">&#128275;</span>
-                    </button>
-                </div>
-            </div>
+                        <!-- Generate Buttons -->
+                        <button type="button" class="npc-generate-btn" onclick="NPCPanel.generate()">
+                            Generate NPC
+                        </button>
+                        <button type="button" class="npc-surprise-btn" onclick="NPCPanel.generateSurpriseMe()">
+                            Surprise Me
+                        </button>
 
-            <div class="control-section">
-                <label for="size">Size</label>
-                <select id="size">
-                    <option value="tiny">Tiny</option>
-                    <option value="small">Small</option>
-                    <option value="medium" selected>Medium</option>
-                    <option value="large">Large</option>
-                    <option value="huge">Huge</option>
-                    <option value="gargantuan">Gargantuan</option>
-                </select>
-            </div>
+                        <!-- NPC Library -->
+                        <div class="npc-library-section">
+                            <h3>Saved NPCs</h3>
+                            <div id="npcLibraryList" class="npc-library-list">
+                                <div class="npc-library-empty">
+                                    No saved NPCs yet
+                                </div>
+                            </div>
+                        </div>
+                    </aside>
 
-            <div class="control-section">
-                <label for="alignment">Alignment</label>
-                <select id="alignment">
-                    <option value="any">Any Alignment</option>
-                    <option value="unaligned">Unaligned</option>
-                    <option value="lawful good">Lawful Good</option>
-                    <option value="neutral good">Neutral Good</option>
-                    <option value="chaotic good">Chaotic Good</option>
-                    <option value="lawful neutral">Lawful Neutral</option>
-                    <option value="true neutral" selected>True Neutral</option>
-                    <option value="chaotic neutral">Chaotic Neutral</option>
-                    <option value="lawful evil">Lawful Evil</option>
-                    <option value="neutral evil">Neutral Evil</option>
-                    <option value="chaotic evil">Chaotic Evil</option>
-                </select>
-            </div>
-
-            <fieldset class="control-section checkbox-group">
-                <legend>Attack Types</legend>
-                <div class="checkbox-grid">
-                    <label class="checkbox-label">
-                        <input type="checkbox" id="attack-melee" checked>
-                        <span>Melee</span>
-                    </label>
-                    <label class="checkbox-label">
-                        <input type="checkbox" id="attack-ranged">
-                        <span>Ranged</span>
-                    </label>
-                    <label class="checkbox-label">
-                        <input type="checkbox" id="attack-spells">
-                        <span>Spellcasting</span>
-                    </label>
-                    <label class="checkbox-label">
-                        <input type="checkbox" id="attack-breath">
-                        <span>Breath Weapon</span>
-                    </label>
-                    <label class="checkbox-label">
-                        <input type="checkbox" id="attack-gaze">
-                        <span>Gaze Attack</span>
-                    </label>
-                    <label class="checkbox-label">
-                        <input type="checkbox" id="attack-aura">
-                        <span>Aura Effect</span>
-                    </label>
-                </div>
-            </fieldset>
-
-            <fieldset class="control-section checkbox-group">
-                <legend>Special Actions</legend>
-                <div class="checkbox-grid">
-                    <label class="checkbox-label">
-                        <input type="checkbox" id="legendary-actions">
-                        <span>Legendary Actions</span>
-                    </label>
-                    <label class="checkbox-label">
-                        <input type="checkbox" id="mythic-actions">
-                        <span>Mythic Actions</span>
-                    </label>
-                    <label class="checkbox-label">
-                        <input type="checkbox" id="lair-actions">
-                        <span>Lair Actions</span>
-                    </label>
-                </div>
-            </fieldset>
-
-            </div><!-- end panel-content -->
-        </aside>
-
-        <!-- Right Panel - Statblock Display -->
-        <main class="statblock-panel">
-            <div class="statblock-container">
-                <div id="statblock" class="statblock">
-                    <div class="statblock-placeholder">
-                        <p>Configure options and click <strong>Generate</strong> to create a monster stat block.</p>
-                        <p>Or click <strong>Randomize</strong> for a random monster!</p>
+                    <!-- NPC Output -->
+                    <div class="npc-output">
+                        <div id="npcOutput" class="npc-output-inner">
+                            <div class="npc-empty-state">
+                                <div class="icon">&#128100;</div>
+                                <h3>No NPC Generated</h3>
+                                <p>Click "Generate NPC" to create a new character</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
-            <div class="export-controls">
-                <button type="button" id="save-btn" class="btn btn-save" disabled>
-                    Save Monster
-                </button>
-                <button type="button" id="edit-btn" class="btn btn-edit" disabled>
-                    Edit
-                </button>
-                <button type="button" id="export-json-btn" class="btn btn-export-json" disabled>
-                    Export JSON
-                </button>
-                <button type="button" id="download-btn" class="btn btn-export" disabled>
-                    Download PNG
-                </button>
-                <button type="button" id="library-btn" class="btn btn-library">
-                    Monster Library
-                </button>
+
+            <!-- ==================== LOOT GENERATOR PANEL ==================== -->
+            <div id="panel-loot" class="generator-panel">
+                <div class="loot-panel-layout">
+                    <!-- Loot Controls -->
+                    <div class="loot-controls">
+                        <div class="loot-control-group">
+                            <label for="lootHoardType">Hoard Type</label>
+                            <select id="lootHoardType">
+                                <!-- Populated by JS -->
+                            </select>
+                        </div>
+
+                        <div class="loot-control-row">
+                            <div class="loot-control-group">
+                                <label for="lootPartyLevel">Party Level</label>
+                                <input type="number" id="lootPartyLevel" min="1" max="20" value="5">
+                            </div>
+                            <div class="loot-control-group">
+                                <label for="lootPartySize">Party Size</label>
+                                <input type="number" id="lootPartySize" min="1" max="10" value="4">
+                            </div>
+                        </div>
+
+                        <button type="button" class="loot-generate-btn" onclick="LootPanel.generate()">
+                            Generate Loot
+                        </button>
+
+                        <div class="loot-options">
+                            <label class="loot-option">
+                                <input type="checkbox" id="lootShowTags" checked onchange="LootPanel.updateOptions()">
+                                <span>Show item tags</span>
+                            </label>
+                            <label class="loot-option">
+                                <input type="checkbox" id="lootShowValues" checked onchange="LootPanel.updateOptions()">
+                                <span>Show gold values</span>
+                            </label>
+                        </div>
+
+                        <!-- Saved Loot Library -->
+                        <div class="loot-library-section">
+                            <h3>Saved Loot</h3>
+                            <div id="lootLibraryList" class="loot-library-list">
+                                <div class="loot-library-empty">No saved loot yet</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Loot Output -->
+                    <div class="loot-output">
+                        <div id="lootOutput" class="loot-output-inner">
+                            <div class="loot-empty-state">
+                                <div class="icon">&#128176;</div>
+                                <h3>No Loot Generated</h3>
+                                <p>Choose a hoard type and click "Generate Loot" to create treasure</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-        </main>
+
+            <!-- ==================== HOOKS GENERATOR PANEL ==================== -->
+            <div id="panel-hooks" class="generator-panel">
+                <div class="hook-panel-layout">
+                    <!-- Hook Controls -->
+                    <div class="hook-controls">
+                        <div class="hook-control-group">
+                            <label for="hookBiome">Biome</label>
+                            <select id="hookBiome">
+                                <option value="random">Random</option>
+                                <!-- Populated by JS -->
+                            </select>
+                        </div>
+
+                        <div class="hook-control-group">
+                            <label for="hookMonsterType">Monster Type</label>
+                            <select id="hookMonsterType">
+                                <option value="random">Random</option>
+                                <!-- Populated by JS -->
+                            </select>
+                        </div>
+
+                        <div class="hook-control-group">
+                            <label for="hookTheme">Encounter Theme</label>
+                            <select id="hookTheme">
+                                <option value="random">Random</option>
+                                <!-- Populated by JS -->
+                            </select>
+                        </div>
+
+                        <div class="hook-control-group">
+                            <label for="hookQuantity">Quantity</label>
+                            <input type="number" id="hookQuantity" min="1" max="15" value="5">
+                            <div class="hook-quantity-hint">Generate 1-15 hooks per batch</div>
+                        </div>
+
+                        <button type="button" class="hook-generate-btn" onclick="HookPanel.generate()">
+                            Generate Hooks
+                        </button>
+
+                        <div class="hook-options">
+                            <label class="hook-option">
+                                <input type="checkbox" id="hookShowEnvironment" checked onchange="HookPanel.updateOptions()">
+                                <span>Show environmental hazards</span>
+                            </label>
+                            <label class="hook-option">
+                                <input type="checkbox" id="hookShowLoot" checked onchange="HookPanel.updateOptions()">
+                                <span>Show loot teasers</span>
+                            </label>
+                            <label class="hook-option">
+                                <input type="checkbox" id="hookShowMoral" checked onchange="HookPanel.updateOptions()">
+                                <span>Show moral dilemmas</span>
+                            </label>
+                        </div>
+
+                        <!-- Saved Hooks Library -->
+                        <div class="hook-library-section">
+                            <h3>Saved Hooks</h3>
+                            <div id="hookLibraryList" class="hook-library-list">
+                                <div class="hook-library-empty">No saved hooks yet</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Hook Output -->
+                    <div class="hook-output">
+                        <div id="hookOutput" class="hook-output-inner">
+                            <div class="hook-empty-state">
+                                <div class="icon">&#128220;</div>
+                                <h3>No Hooks Generated</h3>
+                                <p>Choose your settings and click "Generate Hooks" to create quest seeds</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ==================== LOCATION GENERATOR PANEL ==================== -->
+            <div id="panel-location" class="generator-panel">
+                <div class="location-panel-layout">
+                    <!-- Location Controls -->
+                    <div class="location-controls">
+                        <div class="location-control-group">
+                            <label for="locationScale">Scale</label>
+                            <select id="locationScale">
+                                <!-- Populated by JS -->
+                            </select>
+                        </div>
+
+                        <!-- Settlement subtype -->
+                        <div id="settlementSubtype" class="location-subtype-group" style="display: none;">
+                            <label for="locationSettlementScale">Settlement Size</label>
+                            <select id="locationSettlementScale">
+                                <!-- Populated by JS -->
+                            </select>
+                        </div>
+
+                        <!-- District subtype -->
+                        <div id="districtSubtype" class="location-subtype-group" style="display: none;">
+                            <label for="locationDistrictType">District Type</label>
+                            <select id="locationDistrictType">
+                                <!-- Populated by JS -->
+                            </select>
+                        </div>
+
+                        <!-- Shop subtype -->
+                        <div id="shopSubtype" class="location-subtype-group">
+                            <label for="locationShopType">Shop Type</label>
+                            <select id="locationShopType">
+                                <!-- Populated by JS -->
+                            </select>
+                        </div>
+
+                        <!-- Landmark subtype -->
+                        <div id="landmarkSubtype" class="location-subtype-group" style="display: none;">
+                            <label for="locationLandmarkScale">Landmark Scale</label>
+                            <select id="locationLandmarkScale">
+                                <!-- Populated by JS -->
+                            </select>
+                        </div>
+
+                        <!-- Biome (for wilderness) -->
+                        <div id="biomeGroup" class="location-control-group" style="display: none;">
+                            <label for="locationBiome">Biome</label>
+                            <select id="locationBiome">
+                                <!-- Populated by JS -->
+                            </select>
+                        </div>
+
+                        <div class="location-control-group">
+                            <label for="locationWealth">Wealth Tier</label>
+                            <select id="locationWealth">
+                                <!-- Populated by JS -->
+                            </select>
+                        </div>
+
+                        <div class="location-control-group">
+                            <label for="locationQuantity">Quantity</label>
+                            <input type="number" id="locationQuantity" min="1" max="15" value="1">
+                        </div>
+
+                        <button type="button" class="location-generate-btn" onclick="LocationPanel.generate()">
+                            Generate Locations
+                        </button>
+
+                        <!-- Saved Locations Library -->
+                        <div class="location-library-section">
+                            <h3>Saved Locations</h3>
+                            <div id="locationLibraryList" class="location-library-list">
+                                <div class="location-library-empty">No saved locations yet</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Location Output -->
+                    <div class="location-output">
+                        <div id="locationOutput" class="location-output-inner">
+                            <div class="location-empty-state">
+                                <div class="icon">&#127968;</div>
+                                <h3>No Locations Generated</h3>
+                                <p>Choose a scale and click "Generate Locations" to create places</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ==================== ITEM GENERATOR PANEL ==================== -->
+            <div id="panel-item" class="generator-panel">
+                <div class="item-panel-layout">
+                    <!-- Item Controls -->
+                    <div class="item-controls">
+                        <div class="item-control-group">
+                            <label for="itemType">Item Type</label>
+                            <select id="itemType">
+                                <!-- Populated by JS -->
+                            </select>
+                        </div>
+
+                        <div class="item-control-group">
+                            <label for="itemSubtype">Subtype</label>
+                            <select id="itemSubtype">
+                                <!-- Populated by JS -->
+                            </select>
+                        </div>
+
+                        <div class="item-control-group">
+                            <label for="itemRarity">Rarity</label>
+                            <select id="itemRarity">
+                                <!-- Populated by JS -->
+                            </select>
+                        </div>
+
+                        <div class="item-control-group">
+                            <label for="itemBiome">Biome</label>
+                            <select id="itemBiome">
+                                <!-- Populated by JS -->
+                            </select>
+                        </div>
+
+                        <div class="item-control-group">
+                            <label for="itemQuantity">Quantity</label>
+                            <input type="number" id="itemQuantity" min="1" max="15" value="3">
+                        </div>
+
+                        <div class="item-generate-buttons">
+                            <button type="button" class="item-btn-generate" onclick="ItemPanel.generate()">
+                                Generate Items
+                            </button>
+                            <button type="button" class="item-btn-secondary" onclick="ItemPanel.generateIncludeAll()">
+                                Include All Biomes
+                            </button>
+                            <button type="button" class="item-btn-secondary" onclick="ItemPanel.generateSurpriseMe()">
+                                Surprise Me!
+                            </button>
+                        </div>
+
+                        <div class="item-action-row">
+                            <button type="button" class="item-btn-action" onclick="ItemPanel.saveAll()">Save All</button>
+                            <button type="button" class="item-btn-action" onclick="ItemPanel.copyAll()">Copy All</button>
+                        </div>
+
+                        <!-- Saved Items Library -->
+                        <div class="item-library-section">
+                            <div class="item-library-header">
+                                <h4>Saved Items</h4>
+                            </div>
+                            <div id="itemLibraryList" class="item-library-list">
+                                <div class="item-library-empty">No saved items yet</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Item Output -->
+                    <div class="item-output">
+                        <div id="itemOutput" class="item-output-inner">
+                            <div class="item-empty-state">
+                                <div class="icon">&#9876;</div>
+                                <h3>No Items Generated</h3>
+                                <p>Choose your settings and click "Generate Items" to create magic items</p>
+                                <p class="subtitle">Try "Surprise Me!" for completely random items</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ==================== CAMPAIGN CANVAS PANEL ==================== -->
+            <div id="panel-campaign" class="generator-panel">
+                <div class="coming-soon">
+                    <h2>Campaign Prep Canvas</h2>
+                    <p>Coming Soon!</p>
+                    <p class="subtitle">A free-form canvas to organize all your generated content.</p>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- Monster Library Modal -->
@@ -558,6 +1008,52 @@
     <script src="js/statblock.js"></script>
     <script src="js/export.js"></script>
     <script src="js/storage.js"></script>
+    <script src="js/sidebar.js"></script>
+
+    <!-- NPC Generator -->
+    <script src="data/npc/races.js"></script>
+    <script src="data/npc/shared.js"></script>
+    <script src="data/npc/vocations.js"></script>
+    <script src="data/npc/traits.js"></script>
+    <script src="js/generators/npc.js"></script>
+    <script src="js/renderers/npc-card.js"></script>
+    <script src="js/npc-panel.js"></script>
+
+    <!-- Loot Generator -->
+    <script src="data/loot/treasure-tables.js"></script>
+    <script src="data/loot/mundane-items.js"></script>
+    <script src="data/loot/consumables.js"></script>
+    <script src="data/loot/magic-items-loot.js"></script>
+    <script src="js/generators/loot.js"></script>
+    <script src="js/renderers/loot-card.js"></script>
+    <script src="js/loot-panel.js"></script>
+
+    <!-- Hook Generator -->
+    <script src="data/hooks/biomes.js"></script>
+    <script src="data/hooks/components.js"></script>
+    <script src="data/hooks/themes.js"></script>
+    <script src="js/generators/hooks.js"></script>
+    <script src="js/renderers/hook-card.js"></script>
+    <script src="js/hook-panel.js"></script>
+
+    <!-- Location Generator -->
+    <script src="data/locations/settlements.js"></script>
+    <script src="data/locations/shops.js"></script>
+    <script src="data/locations/landmarks.js"></script>
+    <script src="data/locations/names.js"></script>
+    <script src="js/generators/location.js"></script>
+    <script src="js/renderers/location-card.js"></script>
+    <script src="js/location-panel.js"></script>
+
+    <!-- Item Generator -->
+    <script src="data/items/types.js"></script>
+    <script src="data/items/biomes.js"></script>
+    <script src="data/items/effects.js"></script>
+    <script src="data/items/names.js"></script>
+    <script src="js/generators/item.js"></script>
+    <script src="js/renderers/item-card.js"></script>
+    <script src="js/item-panel.js"></script>
+
     <script src="js/app.js"></script>
 </body>
 </html>

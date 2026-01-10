@@ -1,0 +1,697 @@
+/* Loot Card Styles */
+
+/* Main Loot Card */
+.loot-card {
+    background: linear-gradient(135deg, #2a2a2a 0%, #1a1a1a 100%);
+    border: 2px solid var(--primary-dark);
+    border-radius: 12px;
+    max-width: 600px;
+    margin: 0 auto;
+    overflow: hidden;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+}
+
+.loot-header {
+    background: linear-gradient(135deg, #4a3c00, #6b5700);
+    padding: 20px;
+    text-align: center;
+    border-bottom: 2px solid #8b7000;
+}
+
+.loot-type {
+    font-family: 'Cinzel', 'Georgia', serif;
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #ffd700;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    margin-bottom: 8px;
+}
+
+.loot-meta {
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.8);
+    margin-bottom: 8px;
+}
+
+.loot-description {
+    font-size: 0.9rem;
+    font-style: italic;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.loot-body {
+    padding: 20px;
+}
+
+/* Sections */
+.loot-section {
+    margin-bottom: 24px;
+}
+
+.loot-section:last-child {
+    margin-bottom: 0;
+}
+
+.loot-section-title {
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: #ffd700;
+    margin-bottom: 12px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid rgba(255, 215, 0, 0.3);
+}
+
+/* Loot Items */
+.loot-item {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+    padding: 12px 16px;
+    margin-bottom: 8px;
+}
+
+.loot-item:last-child {
+    margin-bottom: 0;
+}
+
+/* Gold Section */
+.gold-item {
+    text-align: center;
+}
+
+.gold-coins {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-bottom: 8px;
+}
+
+.coin {
+    font-size: 1.1rem;
+    font-weight: 600;
+    padding: 4px 12px;
+    border-radius: 20px;
+}
+
+.coin.pp { background: #e5e4e2; color: #1a1a1a; }
+.coin.gp { background: #ffd700; color: #1a1a1a; }
+.coin.sp { background: #c0c0c0; color: #1a1a1a; }
+.coin.cp { background: #b87333; color: #1a1a1a; }
+
+.gold-flavor {
+    font-size: 0.85rem;
+    font-style: italic;
+    color: var(--text-muted);
+}
+
+/* Gem and Art Items */
+.gem-item,
+.art-item {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 8px;
+}
+
+.item-name {
+    font-weight: 600;
+    color: var(--text-color);
+}
+
+.item-desc {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    flex: 1;
+}
+
+.item-value {
+    font-size: 0.85rem;
+    color: #ffd700;
+    font-weight: 500;
+}
+
+/* Mundane Items */
+.mundane-item {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.mundane-item .item-name {
+    color: #b8860b;
+}
+
+.item-hook {
+    font-size: 0.85rem;
+    font-style: italic;
+    color: var(--text-muted);
+    padding-left: 16px;
+    border-left: 2px solid var(--border-color);
+}
+
+.item-tag {
+    display: inline-block;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding: 2px 8px;
+    border-radius: 10px;
+    background: rgba(255, 215, 0, 0.2);
+    color: #ffd700;
+    margin-top: 4px;
+}
+
+/* Magic Items */
+.magic-item {
+    border-left: 3px solid #888;
+}
+
+.magic-item.rarity-common { border-left-color: #888; }
+.magic-item.rarity-uncommon { border-left-color: #1eff00; }
+.magic-item.rarity-rare { border-left-color: #0070dd; }
+.magic-item.rarity-veryRare { border-left-color: #a335ee; }
+.magic-item.rarity-legendary { border-left-color: #ff8000; }
+
+.magic-item-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 4px;
+}
+
+.magic-item-header .item-name {
+    font-size: 1rem;
+}
+
+.item-badges {
+    display: flex;
+    gap: 6px;
+}
+
+.attunement-badge,
+.consumable-badge {
+    font-size: 0.9rem;
+    cursor: help;
+}
+
+.attunement-badge { color: #a335ee; }
+.consumable-badge { color: #ffd700; }
+
+.magic-item-details {
+    display: flex;
+    gap: 12px;
+    font-size: 0.8rem;
+    margin-bottom: 6px;
+}
+
+.item-type {
+    color: var(--text-muted);
+    text-transform: capitalize;
+}
+
+.item-rarity {
+    font-weight: 500;
+}
+
+.rarity-common .item-rarity { color: #888; }
+.rarity-uncommon .item-rarity { color: #1eff00; }
+.rarity-rare .item-rarity { color: #0070dd; }
+.rarity-veryRare .item-rarity { color: #a335ee; }
+.rarity-legendary .item-rarity { color: #ff8000; }
+
+.magic-item .item-desc {
+    font-size: 0.85rem;
+    color: var(--text-color);
+    line-height: 1.4;
+}
+
+/* Footer */
+.loot-footer {
+    background: rgba(0, 0, 0, 0.3);
+    padding: 16px 20px;
+    border-top: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.loot-total {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+}
+
+.total-label {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+}
+
+.total-value {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #ffd700;
+}
+
+.loot-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.btn-loot {
+    padding: 8px 16px;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    background: var(--card-bg);
+    color: var(--text-color);
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-loot:hover {
+    background: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+/* Loot Panel Layout */
+.loot-panel-layout {
+    display: flex;
+    height: 100%;
+}
+
+.loot-controls {
+    width: 320px;
+    min-width: 320px;
+    padding: 24px;
+    background: var(--panel-bg);
+    border-right: 1px solid var(--border-color);
+    overflow-y: auto;
+}
+
+.loot-output {
+    flex: 1;
+    padding: 24px;
+    overflow-y: auto;
+}
+
+.loot-output-inner {
+    width: 100%;
+    max-width: 650px;
+    margin: 0 auto;
+}
+
+/* Control Groups */
+.loot-control-group {
+    margin-bottom: 20px;
+}
+
+.loot-control-group label {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.loot-control-group select,
+.loot-control-group input[type="number"] {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    background: var(--input-bg);
+    color: var(--text-color);
+    font-size: 1rem;
+}
+
+.loot-control-group select:focus,
+.loot-control-group input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+}
+
+.loot-control-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+.loot-generate-btn {
+    width: 100%;
+    padding: 14px 20px;
+    background: linear-gradient(135deg, #6b5700, #4a3c00);
+    border: none;
+    border-radius: 8px;
+    color: #ffd700;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.loot-generate-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(107, 87, 0, 0.4);
+}
+
+/* Options */
+.loot-options {
+    margin-top: 20px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border-color);
+}
+
+.loot-option {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+    cursor: pointer;
+}
+
+.loot-option input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--primary-color);
+}
+
+.loot-option span {
+    font-size: 0.9rem;
+    color: var(--text-color);
+}
+
+/* Library Section */
+.loot-library-section {
+    margin-top: 32px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border-color);
+}
+
+.loot-library-section h3 {
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--text-muted);
+    margin-bottom: 16px;
+}
+
+.loot-library-list {
+    max-height: 250px;
+    overflow-y: auto;
+}
+
+.loot-library-empty {
+    text-align: center;
+    padding: 20px;
+    color: var(--text-muted);
+    font-style: italic;
+}
+
+/* Compact Card */
+.loot-card-compact {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    margin-bottom: 8px;
+    transition: all 0.2s;
+}
+
+.loot-card-compact:hover {
+    border-color: #ffd700;
+    background: rgba(255, 215, 0, 0.05);
+}
+
+.loot-compact-header {
+    flex: 1;
+}
+
+.loot-compact-name {
+    font-weight: 600;
+    color: #ffd700;
+    margin-bottom: 2px;
+}
+
+.loot-compact-info {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+}
+
+.loot-compact-actions {
+    display: flex;
+    gap: 8px;
+}
+
+/* Empty State */
+.loot-empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--text-muted);
+}
+
+.loot-empty-state .icon {
+    font-size: 4rem;
+    margin-bottom: 20px;
+    opacity: 0.5;
+}
+
+.loot-empty-state h3 {
+    font-size: 1.2rem;
+    margin-bottom: 8px;
+    color: var(--text-color);
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+    .loot-panel-layout {
+        flex-direction: column;
+    }
+
+    .loot-controls {
+        width: 100%;
+        min-width: auto;
+        border-right: none;
+        border-bottom: 1px solid var(--border-color);
+        max-height: 45vh;
+    }
+
+    .loot-output {
+        padding: 16px;
+    }
+}
+
+@media (max-width: 500px) {
+    .loot-card {
+        border-radius: 8px;
+    }
+
+    .loot-header {
+        padding: 16px;
+    }
+
+    .loot-type {
+        font-size: 1.2rem;
+    }
+
+    .loot-control-row {
+        grid-template-columns: 1fr;
+    }
+
+    .loot-footer {
+        flex-direction: column;
+        text-align: center;
+    }
+}
+
+/* ===============================
+   Edit Mode Styles
+   =============================== */
+
+.loot-card-editing {
+    box-shadow: 0 8px 32px rgba(255, 215, 0, 0.3);
+    border-color: #ffd700;
+}
+
+/* Name edit input */
+.loot-name-edit {
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid #ffd700;
+    border-radius: 6px;
+    padding: 8px 12px;
+    color: #ffd700;
+    font-size: 1.5rem;
+    font-weight: 700;
+    width: 100%;
+    max-width: 400px;
+    box-sizing: border-box;
+}
+
+.loot-name-edit:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(255, 215, 0, 0.3);
+}
+
+/* General edit inputs */
+.loot-edit-input {
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 215, 0, 0.4);
+    border-radius: 6px;
+    padding: 8px 12px;
+    color: var(--text-color);
+    font-size: 0.9rem;
+    width: 100%;
+    box-sizing: border-box;
+    margin-bottom: 8px;
+}
+
+.loot-edit-input:focus {
+    outline: none;
+    border-color: #ffd700;
+    box-shadow: 0 0 0 2px rgba(255, 215, 0, 0.2);
+}
+
+/* Coin inputs */
+.loot-edit-coin {
+    width: 80px;
+    display: inline-block;
+    margin-right: 4px;
+    margin-bottom: 0;
+}
+
+/* Value inputs */
+.loot-edit-value {
+    width: 80px;
+    display: inline-block;
+    margin-bottom: 0;
+}
+
+/* Select inputs */
+.loot-edit-select {
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 215, 0, 0.4);
+    border-radius: 6px;
+    padding: 8px 12px;
+    color: var(--text-color);
+    font-size: 0.9rem;
+    box-sizing: border-box;
+}
+
+.loot-edit-select:focus {
+    outline: none;
+    border-color: #ffd700;
+}
+
+/* Textareas */
+.loot-edit-textarea {
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 215, 0, 0.4);
+    border-radius: 6px;
+    padding: 10px 12px;
+    color: var(--text-color);
+    font-size: 0.9rem;
+    width: 100%;
+    min-height: 80px;
+    resize: vertical;
+    line-height: 1.5;
+    font-family: inherit;
+    box-sizing: border-box;
+}
+
+.loot-edit-textarea:focus {
+    outline: none;
+    border-color: #ffd700;
+    box-shadow: 0 0 0 2px rgba(255, 215, 0, 0.2);
+}
+
+.loot-edit-textarea-small {
+    min-height: 50px;
+}
+
+/* Edit mode buttons */
+.btn-loot-primary {
+    background: linear-gradient(135deg, #6b5a00, #4a3f00);
+    border: 1px solid #ffd700;
+    color: #ffd700;
+    font-weight: 600;
+}
+
+.btn-loot-primary:hover {
+    background: linear-gradient(135deg, #8b7a00, #6b5a00);
+    box-shadow: 0 4px 12px rgba(255, 215, 0, 0.3);
+}
+
+/* Gold coins edit */
+.gold-item-edit {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.gold-coins-edit {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: center;
+}
+
+.gold-coins-edit label {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+}
+
+/* Item edit rows */
+.gem-item-edit,
+.art-item-edit,
+.mundane-item-edit {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 12px;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+    margin-bottom: 8px;
+}
+
+.magic-item-edit {
+    padding: 12px;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+    margin-bottom: 8px;
+}
+
+.magic-item-edit-row {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 8px;
+}
+
+.magic-item-edit-row .loot-edit-input {
+    flex: 1;
+    margin-bottom: 0;
+}
+
+.magic-item-edit-row .loot-edit-select {
+    width: 150px;
+}
+
+/* Edit mode sections */
+.loot-card-editing .loot-section {
+    background: rgba(0, 0, 0, 0.15);
+    border-radius: 8px;
+    padding: 12px;
+    margin-bottom: 16px;
+}

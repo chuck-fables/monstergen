@@ -1,0 +1,677 @@
+/* Quest Hook Card Styles */
+
+/* Main Hook Card */
+.hook-card {
+    background: linear-gradient(135deg, #2a2a2a 0%, #1a1a1a 100%);
+    border: 2px solid var(--primary-dark);
+    border-radius: 12px;
+    margin-bottom: 24px;
+    overflow: hidden;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+}
+
+.hook-header {
+    background: linear-gradient(135deg, #4a2800, #6b3a00);
+    padding: 20px;
+    border-bottom: 2px solid #8b4800;
+    position: relative;
+}
+
+.hook-number {
+    position: absolute;
+    top: 12px;
+    right: 16px;
+    font-size: 0.85rem;
+    color: rgba(255, 150, 50, 0.6);
+    font-weight: 600;
+}
+
+.hook-title {
+    font-family: 'Cinzel', 'Georgia', serif;
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #ff9632;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    margin: 0 0 12px 0;
+}
+
+.hook-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.hook-tag {
+    font-size: 0.75rem;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.tag-biome {
+    background: rgba(100, 200, 100, 0.2);
+    color: #8fbc8f;
+    border: 1px solid rgba(100, 200, 100, 0.3);
+}
+
+.tag-monster {
+    background: rgba(200, 100, 100, 0.2);
+    color: #cd5c5c;
+    border: 1px solid rgba(200, 100, 100, 0.3);
+}
+
+.tag-theme {
+    background: rgba(100, 150, 255, 0.2);
+    color: #87ceeb;
+    border: 1px solid rgba(100, 150, 255, 0.3);
+}
+
+.hook-body {
+    padding: 20px;
+}
+
+/* Hook Sections */
+.hook-section {
+    display: flex;
+    gap: 16px;
+    padding: 16px;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+    margin-bottom: 12px;
+}
+
+.hook-section:last-child {
+    margin-bottom: 0;
+}
+
+.hook-section-icon {
+    font-size: 1.5rem;
+    width: 40px;
+    text-align: center;
+    flex-shrink: 0;
+}
+
+.hook-section-content {
+    flex: 1;
+}
+
+.hook-section-title {
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #ff9632;
+    margin-bottom: 8px;
+}
+
+.hook-section p {
+    margin: 0;
+    line-height: 1.5;
+    color: var(--text-color);
+}
+
+/* Setting Section */
+.hook-setting .hook-atmosphere {
+    font-style: italic;
+    color: rgba(255, 255, 255, 0.7);
+    margin-bottom: 4px;
+}
+
+.hook-setting .hook-landmark {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+}
+
+.hook-setting .hook-landmark em {
+    color: #8fbc8f;
+}
+
+/* Catalyst Section */
+.hook-catalyst-type {
+    margin-top: 8px;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* Stake Section */
+.hook-stake {
+    border-left: 3px solid #cd5c5c;
+}
+
+.hook-stake-type {
+    margin-top: 8px;
+    font-size: 0.75rem;
+    color: #cd5c5c;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* Hazard Section */
+.hook-hazard {
+    background: rgba(255, 100, 0, 0.1);
+    border-left: 3px solid #ff6400;
+}
+
+.hazard-name {
+    font-weight: 600;
+    color: #ff6400;
+    margin-bottom: 4px;
+}
+
+.hazard-effect {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    font-style: italic;
+}
+
+/* Loot Section */
+.hook-loot {
+    background: rgba(255, 215, 0, 0.05);
+    border-left: 3px solid #ffd700;
+}
+
+.loot-teaser {
+    color: #ffd700;
+    font-style: italic;
+}
+
+/* Moral Dilemma Section */
+.hook-dilemma {
+    background: rgba(147, 112, 219, 0.1);
+    border-left: 3px solid #9370db;
+}
+
+.dilemma-situation {
+    margin-bottom: 12px;
+    line-height: 1.5;
+}
+
+.dilemma-choice,
+.dilemma-consequence {
+    font-size: 0.9rem;
+    margin-top: 8px;
+    color: var(--text-muted);
+}
+
+.dilemma-choice strong,
+.dilemma-consequence strong {
+    color: #9370db;
+}
+
+/* Hook Footer */
+.hook-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    padding: 12px 20px;
+    background: rgba(0, 0, 0, 0.3);
+    border-top: 1px solid var(--border-color);
+}
+
+.btn-hook-small {
+    padding: 6px 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    background: var(--card-bg);
+    color: var(--text-color);
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-hook-small:hover {
+    background: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+/* Batch Header */
+.hook-batch-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+    padding: 16px 20px;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 8px;
+    margin-bottom: 24px;
+}
+
+.hook-batch-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.hook-count {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #ff9632;
+}
+
+.hook-settings {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.setting-item {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+}
+
+.hook-batch-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.btn-hook {
+    padding: 10px 16px;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    background: var(--card-bg);
+    color: var(--text-color);
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-hook:hover {
+    background: #4a2800;
+    border-color: #ff9632;
+    color: #ff9632;
+}
+
+/* Hook Panel Layout */
+.hook-panel-layout {
+    display: flex;
+    height: 100%;
+}
+
+.hook-controls {
+    width: 320px;
+    min-width: 320px;
+    padding: 24px;
+    background: var(--panel-bg);
+    border-right: 1px solid var(--border-color);
+    overflow-y: auto;
+}
+
+.hook-output {
+    flex: 1;
+    padding: 24px;
+    overflow-y: auto;
+}
+
+.hook-output-inner {
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+/* Control Groups */
+.hook-control-group {
+    margin-bottom: 20px;
+}
+
+.hook-control-group label {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.hook-control-group select,
+.hook-control-group input[type="number"] {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    background: var(--input-bg);
+    color: var(--text-color);
+    font-size: 1rem;
+}
+
+.hook-control-group select:focus,
+.hook-control-group input:focus {
+    outline: none;
+    border-color: #ff9632;
+}
+
+.hook-generate-btn {
+    width: 100%;
+    padding: 14px 20px;
+    background: linear-gradient(135deg, #6b3a00, #4a2800);
+    border: none;
+    border-radius: 8px;
+    color: #ff9632;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.hook-generate-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(107, 58, 0, 0.4);
+}
+
+/* Options */
+.hook-options {
+    margin-top: 20px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border-color);
+}
+
+.hook-option {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+    cursor: pointer;
+}
+
+.hook-option input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    accent-color: #ff9632;
+}
+
+.hook-option span {
+    font-size: 0.9rem;
+    color: var(--text-color);
+}
+
+/* Library Section */
+.hook-library-section {
+    margin-top: 32px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border-color);
+}
+
+.hook-library-section h3 {
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--text-muted);
+    margin-bottom: 16px;
+}
+
+.hook-library-list {
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.hook-library-empty {
+    text-align: center;
+    padding: 20px;
+    color: var(--text-muted);
+    font-style: italic;
+}
+
+/* Compact Card */
+.hook-card-compact {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    margin-bottom: 8px;
+    transition: all 0.2s;
+}
+
+.hook-card-compact:hover {
+    border-color: #ff9632;
+    background: rgba(255, 150, 50, 0.05);
+}
+
+.hook-compact-header {
+    flex: 1;
+    overflow: hidden;
+}
+
+.hook-compact-title {
+    font-weight: 600;
+    color: #ff9632;
+    margin-bottom: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.hook-compact-tags {
+    display: flex;
+    gap: 6px;
+}
+
+.tag-mini {
+    font-size: 0.7rem;
+    padding: 2px 6px;
+    border-radius: 8px;
+    background: rgba(255, 150, 50, 0.1);
+    color: var(--text-muted);
+}
+
+.hook-compact-actions {
+    display: flex;
+    gap: 8px;
+    flex-shrink: 0;
+}
+
+/* Empty State */
+.hook-empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--text-muted);
+}
+
+.hook-empty-state .icon {
+    font-size: 4rem;
+    margin-bottom: 20px;
+    opacity: 0.5;
+}
+
+.hook-empty-state h3 {
+    font-size: 1.2rem;
+    margin-bottom: 8px;
+    color: var(--text-color);
+}
+
+/* Quantity Row */
+.hook-quantity-row {
+    display: flex;
+    gap: 12px;
+    align-items: flex-end;
+}
+
+.hook-quantity-row .hook-control-group {
+    flex: 1;
+}
+
+.hook-quantity-hint {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin-top: 4px;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+    .hook-panel-layout {
+        flex-direction: column;
+    }
+
+    .hook-controls {
+        width: 100%;
+        min-width: auto;
+        border-right: none;
+        border-bottom: 1px solid var(--border-color);
+        max-height: 45vh;
+    }
+
+    .hook-output {
+        padding: 16px;
+    }
+}
+
+@media (max-width: 500px) {
+    .hook-card {
+        border-radius: 8px;
+    }
+
+    .hook-header {
+        padding: 16px;
+    }
+
+    .hook-title {
+        font-size: 1.2rem;
+    }
+
+    .hook-section {
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .hook-section-icon {
+        width: auto;
+        text-align: left;
+    }
+
+    .hook-batch-header {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .hook-batch-actions {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+/* Hook List */
+.hook-list {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+/* ===============================
+   Edit Mode Styles
+   =============================== */
+
+.hook-card-editing {
+    box-shadow: 0 8px 32px rgba(255, 150, 50, 0.3);
+    border-color: #ff9632;
+}
+
+/* Title edit input */
+.hook-title-edit {
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid #ff9632;
+    border-radius: 6px;
+    padding: 8px 12px;
+    color: #ff9632;
+    font-size: 1.4rem;
+    font-family: 'Cinzel', 'Georgia', serif;
+    font-weight: 700;
+    width: 100%;
+    max-width: 500px;
+    box-sizing: border-box;
+}
+
+.hook-title-edit:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(255, 150, 50, 0.3);
+}
+
+/* General edit inputs */
+.hook-edit-input {
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 150, 50, 0.4);
+    border-radius: 6px;
+    padding: 8px 12px;
+    color: var(--text-color);
+    font-size: 0.9rem;
+    width: 100%;
+    box-sizing: border-box;
+    margin-bottom: 8px;
+}
+
+.hook-edit-input:focus {
+    outline: none;
+    border-color: #ff9632;
+    box-shadow: 0 0 0 2px rgba(255, 150, 50, 0.2);
+}
+
+/* Inline edit input */
+.hook-edit-inline {
+    width: auto;
+    display: inline-block;
+    padding: 4px 8px;
+    margin-left: 4px;
+}
+
+/* Textareas */
+.hook-edit-textarea {
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 150, 50, 0.4);
+    border-radius: 6px;
+    padding: 10px 12px;
+    color: var(--text-color);
+    font-size: 0.9rem;
+    width: 100%;
+    min-height: 80px;
+    resize: vertical;
+    line-height: 1.5;
+    font-family: inherit;
+    box-sizing: border-box;
+}
+
+.hook-edit-textarea:focus {
+    outline: none;
+    border-color: #ff9632;
+    box-shadow: 0 0 0 2px rgba(255, 150, 50, 0.2);
+}
+
+.hook-edit-textarea-small {
+    min-height: 50px;
+}
+
+/* Edit mode footer buttons */
+.btn-hook-primary {
+    background: linear-gradient(135deg, #6b3a00, #4a2800);
+    border-color: #ff9632;
+    color: #ff9632;
+    font-weight: 600;
+}
+
+.btn-hook-primary:hover {
+    background: linear-gradient(135deg, #8b5000, #6b3a00);
+    box-shadow: 0 4px 12px rgba(255, 150, 50, 0.3);
+}
+
+/* Edit mode adjustments for sections */
+.hook-card-editing .hook-section {
+    background: rgba(0, 0, 0, 0.25);
+}
+
+.hook-card-editing .dilemma-choice,
+.hook-card-editing .dilemma-consequence {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.hook-card-editing .dilemma-choice strong,
+.hook-card-editing .dilemma-consequence strong {
+    margin-bottom: 4px;
+}

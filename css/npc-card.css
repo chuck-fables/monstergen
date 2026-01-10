@@ -1,0 +1,669 @@
+/* NPC Card Styles */
+
+/* CSS Variables for NPC Cards */
+:root {
+    --npc-primary: #dc3545;
+    --npc-primary-dark: #b02a37;
+    --npc-primary-light: #e35d6a;
+    --wealth-squalid: #6c757d;
+    --wealth-commoner: #795548;
+    --wealth-modest: #2196f3;
+    --wealth-wealthy: #ffc107;
+    --wealth-noble: #9c27b0;
+}
+
+/* Main NPC Card */
+.npc-card {
+    background: linear-gradient(135deg, #2a2a2a 0%, #1a1a1a 100%);
+    border: 2px solid var(--npc-primary-dark);
+    border-radius: 12px;
+    max-width: 500px;
+    margin: 0 auto;
+    overflow: hidden;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+}
+
+/* Card Header */
+.npc-card-header {
+    background: linear-gradient(135deg, var(--npc-primary-dark), var(--npc-primary));
+    padding: 16px 20px;
+    border-bottom: 2px solid var(--npc-primary-dark);
+}
+
+.npc-header-main {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.npc-race {
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: rgba(255, 255, 255, 0.85);
+    font-weight: 600;
+}
+
+.npc-separator {
+    color: rgba(255, 255, 255, 0.5);
+    font-weight: 300;
+}
+
+.npc-name {
+    font-family: 'Cinzel', 'Georgia', serif;
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: white;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.npc-name-edit {
+    font-family: 'Cinzel', 'Georgia', serif;
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: white;
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 4px;
+    padding: 4px 8px;
+    text-align: center;
+    min-width: 150px;
+}
+
+.npc-vocation {
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.9);
+    font-style: italic;
+}
+
+.npc-vocation.adventurer {
+    color: #ffd700;
+    font-weight: 600;
+    font-style: normal;
+}
+
+.npc-vocation.civilian {
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.npc-header-meta {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    font-size: 0.8rem;
+}
+
+.npc-gender {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.npc-wealth {
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.wealth-squalid {
+    background: var(--wealth-squalid);
+    color: white;
+}
+
+.wealth-commoner {
+    background: var(--wealth-commoner);
+    color: white;
+}
+
+.wealth-modest {
+    background: var(--wealth-modest);
+    color: white;
+}
+
+.wealth-wealthy {
+    background: var(--wealth-wealthy);
+    color: #333;
+}
+
+.wealth-noble {
+    background: var(--wealth-noble);
+    color: white;
+}
+
+/* Card Body */
+.npc-card-body {
+    padding: 20px;
+}
+
+/* Physical Traits Section */
+.npc-physical {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 20px;
+}
+
+.npc-traits-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.npc-trait {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.npc-trait-full {
+    grid-column: 1 / -1;
+}
+
+.npc-trait .trait-label {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text-muted);
+    font-weight: 600;
+}
+
+.npc-trait .trait-value {
+    font-size: 0.9rem;
+    color: var(--text-color);
+    line-height: 1.4;
+}
+
+/* Edit mode inputs */
+.trait-edit {
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    padding: 6px 8px;
+    color: var(--text-color);
+    font-size: 0.9rem;
+    width: 100%;
+}
+
+.trait-edit:focus {
+    outline: none;
+    border-color: var(--npc-primary);
+}
+
+.trait-edit-wide {
+    min-height: 60px;
+    resize: vertical;
+}
+
+/* Sections */
+.npc-section {
+    margin-bottom: 16px;
+}
+
+.npc-section:last-child {
+    margin-bottom: 0;
+}
+
+.npc-section-title {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--npc-primary-light);
+    margin-bottom: 6px;
+    padding-bottom: 4px;
+    border-bottom: 1px solid var(--border-color);
+    font-weight: 600;
+}
+
+.npc-section-content {
+    font-size: 0.9rem;
+    line-height: 1.6;
+    color: var(--text-color);
+}
+
+.npc-section-edit {
+    width: 100%;
+    min-height: 60px;
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    padding: 8px 10px;
+    color: var(--text-color);
+    font-size: 0.9rem;
+    line-height: 1.5;
+    resize: vertical;
+}
+
+.npc-section-edit:focus {
+    outline: none;
+    border-color: var(--npc-primary);
+}
+
+/* Improv Keywords */
+.npc-keywords {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.npc-keyword {
+    background: var(--npc-primary-dark);
+    color: white;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+.npc-keyword-edit {
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid var(--border-color);
+    border-radius: 20px;
+    padding: 4px 12px;
+    color: var(--text-color);
+    font-size: 0.8rem;
+    width: 100px;
+    text-align: center;
+}
+
+.npc-keyword-edit:focus {
+    outline: none;
+    border-color: var(--npc-primary);
+}
+
+/* Card Footer */
+.npc-card-footer {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    padding: 16px;
+    background: rgba(0, 0, 0, 0.2);
+    border-top: 1px solid var(--border-color);
+}
+
+.btn-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 1px solid var(--border-color);
+    background: var(--card-bg);
+    color: var(--text-color);
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-icon:hover {
+    background: var(--npc-primary);
+    border-color: var(--npc-primary);
+    transform: scale(1.1);
+}
+
+.btn-icon svg {
+    width: 18px;
+    height: 18px;
+}
+
+/* Small buttons for edit mode */
+.btn-small {
+    padding: 8px 16px;
+    font-size: 0.85rem;
+    border-radius: 6px;
+}
+
+.btn-primary {
+    background: var(--npc-primary);
+    border: none;
+    color: white;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-primary:hover {
+    background: var(--npc-primary-dark);
+}
+
+.btn-secondary {
+    background: transparent;
+    border: 1px solid var(--border-color);
+    color: var(--text-color);
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-secondary:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+/* Compact Card for Library */
+.npc-card-compact {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-left: 3px solid var(--wealth-commoner);
+    border-radius: 8px;
+    margin-bottom: 8px;
+    transition: all 0.2s;
+}
+
+.npc-card-compact[data-wealth="squalid"] {
+    border-left-color: var(--wealth-squalid);
+}
+
+.npc-card-compact[data-wealth="commoner"] {
+    border-left-color: var(--wealth-commoner);
+}
+
+.npc-card-compact[data-wealth="modest"] {
+    border-left-color: var(--wealth-modest);
+}
+
+.npc-card-compact[data-wealth="wealthy"] {
+    border-left-color: var(--wealth-wealthy);
+}
+
+.npc-card-compact[data-wealth="noble"] {
+    border-left-color: var(--wealth-noble);
+}
+
+.npc-card-compact:hover {
+    border-color: var(--npc-primary);
+    background: rgba(220, 53, 69, 0.1);
+}
+
+.npc-compact-header {
+    flex: 1;
+    min-width: 0;
+}
+
+.npc-compact-name {
+    font-weight: 600;
+    color: var(--text-color);
+    margin-bottom: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.npc-compact-info {
+    display: flex;
+    gap: 8px;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin-bottom: 4px;
+}
+
+.npc-compact-race {
+    color: var(--text-muted);
+}
+
+.npc-compact-vocation {
+    color: var(--npc-primary-light);
+}
+
+.npc-compact-meta {
+    display: flex;
+    gap: 8px;
+    font-size: 0.75rem;
+}
+
+.npc-compact-gender {
+    color: var(--text-muted);
+}
+
+.npc-compact-wealth {
+    padding: 1px 6px;
+    border-radius: 8px;
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.npc-compact-actions {
+    display: flex;
+    gap: 8px;
+    flex-shrink: 0;
+}
+
+.btn-compact {
+    padding: 6px 12px;
+    border-radius: 4px;
+    border: 1px solid var(--border-color);
+    background: transparent;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 0.8rem;
+}
+
+.btn-compact:hover {
+    background: var(--npc-primary);
+    border-color: var(--npc-primary);
+    color: white;
+}
+
+.btn-compact-danger:hover {
+    background: #dc3545;
+    border-color: #dc3545;
+}
+
+/* NPC Panel Layout */
+.npc-panel-layout {
+    display: flex;
+    height: 100%;
+}
+
+.npc-controls {
+    width: 320px;
+    min-width: 320px;
+    padding: 24px;
+    background: var(--panel-bg);
+    border-right: 1px solid var(--border-color);
+    overflow-y: auto;
+}
+
+.npc-output {
+    flex: 1;
+    padding: 24px;
+    overflow-y: auto;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+}
+
+.npc-output-inner {
+    width: 100%;
+    max-width: 550px;
+}
+
+/* NPC Controls */
+.npc-control-group {
+    margin-bottom: 16px;
+}
+
+.npc-control-group label {
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.npc-control-group select {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    background: var(--input-bg);
+    color: var(--text-color);
+    font-size: 0.95rem;
+    cursor: pointer;
+}
+
+.npc-control-group select:focus {
+    outline: none;
+    border-color: var(--npc-primary);
+}
+
+.npc-control-group select:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Control row for side-by-side selects */
+.npc-control-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+.npc-generate-btn {
+    width: 100%;
+    padding: 14px 20px;
+    background: linear-gradient(135deg, var(--npc-primary), var(--npc-primary-dark));
+    border: none;
+    border-radius: 8px;
+    color: white;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+}
+
+.npc-generate-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(220, 53, 69, 0.4);
+}
+
+.npc-surprise-btn {
+    width: 100%;
+    padding: 10px 16px;
+    background: transparent;
+    border: 1px solid var(--npc-primary);
+    border-radius: 8px;
+    color: var(--npc-primary);
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.npc-surprise-btn:hover {
+    background: var(--npc-primary);
+    color: white;
+}
+
+/* Library Section */
+.npc-library-section {
+    margin-top: 24px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border-color);
+}
+
+.npc-library-section h3 {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--text-muted);
+    margin-bottom: 12px;
+}
+
+.npc-library-list {
+    max-height: 280px;
+    overflow-y: auto;
+}
+
+.npc-library-empty {
+    text-align: center;
+    padding: 20px;
+    color: var(--text-muted);
+    font-style: italic;
+    font-size: 0.9rem;
+}
+
+/* Empty State */
+.npc-empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--text-muted);
+}
+
+.npc-empty-state .icon {
+    font-size: 4rem;
+    margin-bottom: 20px;
+    opacity: 0.5;
+}
+
+.npc-empty-state h3 {
+    font-size: 1.2rem;
+    margin-bottom: 8px;
+    color: var(--text-color);
+}
+
+.npc-empty-state p {
+    font-size: 0.9rem;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+    .npc-panel-layout {
+        flex-direction: column;
+    }
+
+    .npc-controls {
+        width: 100%;
+        min-width: auto;
+        border-right: none;
+        border-bottom: 1px solid var(--border-color);
+        max-height: 45vh;
+    }
+
+    .npc-output {
+        padding: 16px;
+    }
+}
+
+@media (max-width: 500px) {
+    .npc-card {
+        border-radius: 8px;
+    }
+
+    .npc-card-header {
+        padding: 14px 16px;
+    }
+
+    .npc-header-main {
+        flex-direction: column;
+        gap: 4px;
+    }
+
+    .npc-separator {
+        display: none;
+    }
+
+    .npc-name {
+        font-size: 1.2rem;
+    }
+
+    .npc-traits-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .npc-control-row {
+        grid-template-columns: 1fr;
+    }
+}
