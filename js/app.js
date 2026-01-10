@@ -732,7 +732,7 @@ const App = {
         }
 
         const html = library.map(entry => `
-            <div class="library-item" data-id="${entry.id}">
+            <div class="library-item" data-id="${entry.id}" data-name="${this.escapeHtml(entry.name).replace(/"/g, '&quot;')}">
                 <div class="library-item-info">
                     <div class="library-item-name">${this.escapeHtml(entry.name)}</div>
                     <div class="library-item-meta">
@@ -741,13 +741,28 @@ const App = {
                     </div>
                 </div>
                 <div class="library-item-actions">
-                    <button class="btn btn-load" onclick="App.loadFromLibrary('${entry.id}')">Load</button>
-                    <button class="btn btn-delete" onclick="App.openDeleteModal('${entry.id}', '${this.escapeHtml(entry.name)}')">Delete</button>
+                    <button class="btn btn-load" data-action="load">Load</button>
+                    <button class="btn btn-delete" data-action="delete">Delete</button>
                 </div>
             </div>
         `).join('');
 
         this.elements.libraryList.innerHTML = html;
+
+        // Add event delegation for library item buttons
+        this.elements.libraryList.querySelectorAll('.btn-load').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const item = e.target.closest('.library-item');
+                if (item) this.loadFromLibrary(item.dataset.id);
+            });
+        });
+
+        this.elements.libraryList.querySelectorAll('.btn-delete').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const item = e.target.closest('.library-item');
+                if (item) this.openDeleteModal(item.dataset.id, item.dataset.name);
+            });
+        });
     },
 
     /**
