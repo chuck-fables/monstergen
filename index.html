@@ -377,8 +377,11 @@
                 <div class="npc-panel-layout">
                     <!-- NPC Controls -->
                     <aside class="npc-controls">
-                        <h2 style="margin-bottom: 24px; font-size: 1.4rem; color: var(--primary-light);">NPC Generator</h2>
-
+                        <header class="controls-header" id="npc-panel-toggle">
+                            <h2>NPC Generator</h2>
+                            <span class="toggle-indicator">&#9660;</span>
+                        </header>
+                        <div class="controls-content" id="npc-panel-content">
                         <!-- Gender and Race Row -->
                         <div class="npc-control-row">
                             <div class="npc-control-group">
@@ -435,6 +438,7 @@
                                 </div>
                             </div>
                         </div>
+                        </div><!-- /.controls-content -->
                     </aside>
 
                     <!-- NPC Output -->
@@ -455,6 +459,11 @@
                 <div class="loot-panel-layout">
                     <!-- Loot Controls -->
                     <div class="loot-controls">
+                        <header class="controls-header" id="loot-panel-toggle">
+                            <h2>Loot Generator</h2>
+                            <span class="toggle-indicator">&#9660;</span>
+                        </header>
+                        <div class="controls-content" id="loot-panel-content">
                         <div class="loot-control-group">
                             <label for="lootHoardType">Hoard Type</label>
                             <select id="lootHoardType">
@@ -495,6 +504,7 @@
                                 <div class="loot-library-empty">No saved loot yet</div>
                             </div>
                         </div>
+                        </div><!-- /.controls-content -->
                     </div>
 
                     <!-- Loot Output -->
@@ -515,6 +525,11 @@
                 <div class="hook-panel-layout">
                     <!-- Hook Controls -->
                     <div class="hook-controls">
+                        <header class="controls-header" id="hook-panel-toggle">
+                            <h2>Hook Generator</h2>
+                            <span class="toggle-indicator">&#9660;</span>
+                        </header>
+                        <div class="controls-content" id="hook-panel-content">
                         <div class="hook-control-group">
                             <label for="hookBiome">Biome</label>
                             <select id="hookBiome">
@@ -571,6 +586,7 @@
                                 <div class="hook-library-empty">No saved hooks yet</div>
                             </div>
                         </div>
+                        </div><!-- /.controls-content -->
                     </div>
 
                     <!-- Hook Output -->
@@ -591,6 +607,11 @@
                 <div class="location-panel-layout">
                     <!-- Location Controls -->
                     <div class="location-controls">
+                        <header class="controls-header" id="location-panel-toggle">
+                            <h2>Location Generator</h2>
+                            <span class="toggle-indicator">&#9660;</span>
+                        </header>
+                        <div class="controls-content" id="location-panel-content">
                         <div class="location-control-group">
                             <label for="locationScale">Scale</label>
                             <select id="locationScale">
@@ -661,6 +682,7 @@
                                 <div class="location-library-empty">No saved locations yet</div>
                             </div>
                         </div>
+                        </div><!-- /.controls-content -->
                     </div>
 
                     <!-- Location Output -->
@@ -681,6 +703,11 @@
                 <div class="item-panel-layout">
                     <!-- Item Controls -->
                     <div class="item-controls">
+                        <header class="controls-header" id="item-panel-toggle">
+                            <h2>Item Generator</h2>
+                            <span class="toggle-indicator">&#9660;</span>
+                        </header>
+                        <div class="controls-content" id="item-panel-content">
                         <div class="item-control-group">
                             <label for="itemType">Item Type</label>
                             <select id="itemType">
@@ -740,6 +767,7 @@
                                 <div class="item-library-empty">No saved items yet</div>
                             </div>
                         </div>
+                        </div><!-- /.controls-content -->
                     </div>
 
                     <!-- Item Output -->

@@ -17,6 +17,10 @@ const Sidebar = {
         this.loadState();
     },
 
+    isMobile() {
+        return window.innerWidth <= 768;
+    },
+
     bindEvents() {
         // Panel switching
         this.navItems.forEach(item => {
@@ -32,6 +36,15 @@ const Sidebar = {
                 this.toggleSidebar();
             });
         }
+
+        // Handle resize - remove collapsed state when switching to mobile
+        window.addEventListener('resize', () => {
+            if (this.isMobile() && this.isCollapsed) {
+                // On mobile, clear collapsed classes (CSS handles the rest)
+                this.sidebar.classList.remove('collapsed');
+                document.querySelector('.main-content')?.classList.remove('sidebar-collapsed');
+            }
+        });
 
         // Keyboard navigation
         document.addEventListener('keydown', (e) => {
@@ -76,6 +89,9 @@ const Sidebar = {
     },
 
     toggleSidebar() {
+        // Don't toggle on mobile - sidebar is always visible as horizontal bar
+        if (this.isMobile()) return;
+
         this.isCollapsed = !this.isCollapsed;
         this.sidebar.classList.toggle('collapsed', this.isCollapsed);
         document.querySelector('.main-content')?.classList.toggle('sidebar-collapsed', this.isCollapsed);
@@ -100,7 +116,8 @@ const Sidebar = {
                 if (state.currentPanel) {
                     this.switchPanel(state.currentPanel);
                 }
-                if (state.isCollapsed) {
+                // Only apply collapsed state on desktop/tablet, not mobile
+                if (state.isCollapsed && !this.isMobile()) {
                     this.isCollapsed = true;
                     this.sidebar.classList.add('collapsed');
                     document.querySelector('.main-content')?.classList.add('sidebar-collapsed');

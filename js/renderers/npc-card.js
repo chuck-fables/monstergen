@@ -19,46 +19,40 @@ const NPCCardRenderer = {
         const editable = options.editable === true;
 
         return `
-            <div class="npc-card" data-npc-id="${npc.id}" data-wealth="${npc.wealth}">
+            <div class="npc-card${editable ? ' npc-card-editing' : ''}" data-npc-id="${npc.id}" data-wealth="${npc.wealth}">
                 <div class="npc-card-header">
-                    <div class="npc-header-main">
-                        <span class="npc-race">${npc.raceName}</span>
-                        <span class="npc-separator">-</span>
-                        ${editable
-                            ? `<input type="text" class="npc-name-edit" data-field="name" value="${this.escapeHtml(npc.name)}" />`
-                            : `<span class="npc-name">${npc.name}</span>`
-                        }
-                        <span class="npc-separator">-</span>
-                        <span class="npc-vocation ${npc.vocation.type}">${npc.vocation.name}</span>
-                    </div>
+                    ${editable
+                        ? `<input type="text" class="npc-name-edit" data-field="name" value="${this.escapeHtml(npc.name)}" />`
+                        : `<div class="npc-name">${npc.name}</div>`
+                    }
+                    <div class="npc-vocation ${npc.vocation.type}">${npc.raceName} ${npc.vocation.name}</div>
                     <div class="npc-header-meta">
                         <span class="npc-gender">${npc.genderDisplay}</span>
                         <span class="npc-wealth wealth-${npc.wealth}">${npc.wealthDisplay}</span>
                     </div>
                 </div>
 
+                <div class="npc-tapered-rule"></div>
+
                 <div class="npc-card-body">
                     <!-- Physical Traits -->
                     <div class="npc-section npc-physical">
-                        <div class="npc-section-title">Physical Traits</div>
-                        <div class="npc-traits-grid">
-                            <div class="npc-trait">
-                                <span class="trait-label">Hair:</span>
-                                ${editable
-                                    ? `<input type="text" class="trait-edit" data-field="hairColor" value="${this.escapeHtml(npc.hairColor)}" />`
-                                    : `<span class="trait-value">${npc.hairColor}</span>`
-                                }
-                            </div>
-                            <div class="npc-trait">
-                                <span class="trait-label">Eyes:</span>
-                                ${editable
-                                    ? `<input type="text" class="trait-edit" data-field="eyeColor" value="${this.escapeHtml(npc.eyeColor)}" />`
-                                    : `<span class="trait-value">${npc.eyeColor}</span>`
-                                }
-                            </div>
+                        <div class="npc-property-line">
+                            <span class="npc-property-name">Hair.</span>
+                            ${editable
+                                ? `<input type="text" class="trait-edit" data-field="hairColor" value="${this.escapeHtml(npc.hairColor)}" />`
+                                : `<span class="trait-value">${npc.hairColor}</span>`
+                            }
                         </div>
-                        <div class="npc-trait npc-trait-full">
-                            <span class="trait-label">Clothing:</span>
+                        <div class="npc-property-line">
+                            <span class="npc-property-name">Eyes.</span>
+                            ${editable
+                                ? `<input type="text" class="trait-edit" data-field="eyeColor" value="${this.escapeHtml(npc.eyeColor)}" />`
+                                : `<span class="trait-value">${npc.eyeColor}</span>`
+                            }
+                        </div>
+                        <div class="npc-property-line">
+                            <span class="npc-property-name">Clothing.</span>
                             ${editable
                                 ? `<textarea class="trait-edit trait-edit-wide" data-field="clothing">${this.escapeHtml(npc.clothing)}</textarea>`
                                 : `<span class="trait-value">${npc.clothing}</span>`
@@ -152,12 +146,14 @@ const NPCCardRenderer = {
                     </div>
                 </div>
 
+                <div class="npc-tapered-rule reverse"></div>
+
                 <div class="npc-card-footer">
                     ${editable ? `
-                    <button type="button" class="btn btn-primary btn-small" onclick="NPCPanel.saveEdits()">
+                    <button type="button" class="btn-small btn-npc-primary" onclick="NPCPanel.saveEdits()">
                         Save Changes
                     </button>
-                    <button type="button" class="btn btn-secondary btn-small" onclick="NPCPanel.cancelEdits()">
+                    <button type="button" class="btn-small btn-npc-secondary" onclick="NPCPanel.cancelEdits()">
                         Cancel
                     </button>
                     ` : `

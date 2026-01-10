@@ -29,6 +29,32 @@ const App = {
         this.cacheElements();
         this.bindEvents();
         this.updateHumanoidVisibility();
+        this.initControlsToggle();
+    },
+
+    /**
+     * Initialize collapsible controls for all generator panels (mobile)
+     */
+    initControlsToggle() {
+        const togglePairs = [
+            { toggle: 'npc-panel-toggle', content: 'npc-panel-content' },
+            { toggle: 'loot-panel-toggle', content: 'loot-panel-content' },
+            { toggle: 'hook-panel-toggle', content: 'hook-panel-content' },
+            { toggle: 'location-panel-toggle', content: 'location-panel-content' },
+            { toggle: 'item-panel-toggle', content: 'item-panel-content' }
+        ];
+
+        togglePairs.forEach(({ toggle, content }) => {
+            const toggleEl = document.getElementById(toggle);
+            const contentEl = document.getElementById(content);
+
+            if (toggleEl && contentEl) {
+                toggleEl.addEventListener('click', () => {
+                    toggleEl.classList.toggle('collapsed');
+                    contentEl.classList.toggle('collapsed');
+                });
+            }
+        });
     },
 
     /**
