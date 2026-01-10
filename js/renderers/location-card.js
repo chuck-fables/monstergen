@@ -576,6 +576,9 @@ const LocationCardRenderer = {
                 <button type="button" class="btn-location-small" onclick="LocationPanel.copyLocation('${id}')" title="Copy">
                     &#128203;
                 </button>
+                <button type="button" class="btn-location-small" onclick="LocationPanel.sendToCanvas('${id}')" title="Send to Canvas">
+                    &#127912;
+                </button>
             </div>
         `;
     },

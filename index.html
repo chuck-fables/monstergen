@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="css/hook-card.css">
     <link rel="stylesheet" href="css/location-card.css">
     <link rel="stylesheet" href="css/item-card.css">
+    <link rel="stylesheet" href="css/canvas.css">
     <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Scaly+Sans&display=swap" rel="stylesheet">
 </head>
 <body>
@@ -363,6 +364,9 @@
                             </button>
                             <button type="button" id="download-btn" class="btn btn-export" disabled>
                                 Download PNG
+                            </button>
+                            <button type="button" id="canvas-btn" class="btn btn-canvas" disabled>
+                                Send to Canvas
                             </button>
                             <button type="button" id="library-btn" class="btn btn-library">
                                 Monster Library
@@ -786,10 +790,52 @@
 
             <!-- ==================== CAMPAIGN CANVAS PANEL ==================== -->
             <div id="panel-campaign" class="generator-panel">
-                <div class="coming-soon">
-                    <h2>Campaign Prep Canvas</h2>
-                    <p>Coming Soon!</p>
-                    <p class="subtitle">A free-form canvas to organize all your generated content.</p>
+                <div class="canvas-container">
+                    <!-- Canvas Toolbar -->
+                    <div class="canvas-toolbar">
+                        <div class="canvas-toolbar-section">
+                            <span id="canvas-board-name">My Campaign</span>
+                            <select id="canvas-board-select" onchange="CampaignCanvas.loadBoard(this.value)">
+                            </select>
+                        </div>
+
+                        <div class="canvas-toolbar-divider"></div>
+
+                        <div class="canvas-toolbar-section">
+                            <button class="canvas-btn" onclick="CampaignCanvas.createBoard(prompt('Board name:') || 'New Board')">New Board</button>
+                            <button class="canvas-btn" onclick="CampaignCanvas.renameBoard()">Rename</button>
+                            <button class="canvas-btn canvas-btn-danger" onclick="CampaignCanvas.deleteBoard()">Delete</button>
+                        </div>
+
+                        <div class="canvas-toolbar-divider"></div>
+
+                        <div class="canvas-toolbar-section">
+                            <button class="canvas-btn canvas-btn-icon" onclick="CampaignCanvas.zoomToFit()" title="Zoom to fit">&#128269;</button>
+                            <button class="canvas-btn canvas-btn-icon" onclick="CampaignCanvas.resetView()" title="Reset view">&#127968;</button>
+                            <span id="canvas-zoom-level">100%</span>
+                        </div>
+
+                        <div class="canvas-toolbar-divider"></div>
+
+                        <div class="canvas-toolbar-section">
+                            <button class="canvas-btn" onclick="CampaignCanvas.clearBoard()">Clear</button>
+                            <button class="canvas-btn" onclick="CampaignCanvas.exportBoard()">Export</button>
+                            <input type="file" id="canvas-import-file" accept=".json" style="display:none" onchange="CampaignCanvas.importBoard(this.files[0])">
+                            <button class="canvas-btn" onclick="document.getElementById('canvas-import-file').click()">Import</button>
+                        </div>
+                    </div>
+
+                    <!-- Main Canvas -->
+                    <div id="campaign-canvas">
+                        <svg id="canvas-svg-layer"></svg>
+                        <div id="canvas-viewport"></div>
+                        <div class="canvas-empty-state" id="canvas-empty-state">
+                            <div class="icon">&#128203;</div>
+                            <h3>Campaign Canvas</h3>
+                            <p>Drag to pan, scroll to zoom. Right-click to add notes.<br>
+                            Use "Send to Canvas" from any generator to add cards here.</p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -1081,6 +1127,11 @@
     <script src="js/generators/item.js"></script>
     <script src="js/renderers/item-card.js"></script>
     <script src="js/item-panel.js"></script>
+
+    <!-- Campaign Canvas -->
+    <script src="js/canvas.js"></script>
+    <script src="js/canvas-cards.js"></script>
+    <script src="js/canvas-connections.js"></script>
 
     <script src="js/app.js"></script>
 </body>

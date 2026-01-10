@@ -391,6 +391,27 @@ const NPCPanel = {
     },
 
     /**
+     * Send current NPC to campaign canvas
+     */
+    sendToCanvas() {
+        if (!this.currentNPC) {
+            this.showNotification('No NPC to send', 'error');
+            return;
+        }
+
+        if (typeof CanvasCards !== 'undefined') {
+            CanvasCards.addCard('npc', this.currentNPC);
+
+            // Switch to campaign panel
+            if (typeof SidebarController !== 'undefined') {
+                SidebarController.switchPanel('campaign');
+            }
+        } else {
+            this.showNotification('Campaign canvas not available', 'error');
+        }
+    },
+
+    /**
      * Show a notification message
      */
     showNotification(message, type = 'info') {

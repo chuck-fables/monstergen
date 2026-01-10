@@ -313,6 +313,30 @@ const HookPanel = {
     },
 
     /**
+     * Send a hook to the campaign canvas
+     */
+    sendToCanvas(hookId) {
+        if (!this.currentResult || !this.currentResult.hooks) {
+            this.showNotification('No hook to send', 'error');
+            return;
+        }
+
+        const hook = this.currentResult.hooks.find(h => h.id === hookId);
+        if (!hook) return;
+
+        if (typeof CanvasCards !== 'undefined') {
+            CanvasCards.addCard('hook', hook);
+
+            // Switch to campaign panel
+            if (typeof SidebarController !== 'undefined') {
+                SidebarController.switchPanel('campaign');
+            }
+        } else {
+            this.showNotification('Campaign canvas not available', 'error');
+        }
+    },
+
+    /**
      * Get stored hooks from localStorage
      */
     getStoredHooks() {

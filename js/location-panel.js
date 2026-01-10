@@ -416,6 +416,30 @@ const LocationPanel = {
     },
 
     /**
+     * Send a location to the campaign canvas
+     */
+    sendToCanvas(locationId) {
+        if (!this.currentResult || !this.currentResult.locations) {
+            this.showNotification('No location to send', 'error');
+            return;
+        }
+
+        const location = this.currentResult.locations.find(l => l.id === locationId);
+        if (!location) return;
+
+        if (typeof CanvasCards !== 'undefined') {
+            CanvasCards.addCard('location', location);
+
+            // Switch to campaign panel
+            if (typeof SidebarController !== 'undefined') {
+                SidebarController.switchPanel('campaign');
+            }
+        } else {
+            this.showNotification('Campaign canvas not available', 'error');
+        }
+    },
+
+    /**
      * Get stored locations from localStorage
      */
     getStoredLocations() {

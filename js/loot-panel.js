@@ -345,6 +345,27 @@ const LootPanel = {
     },
 
     /**
+     * Send current loot to campaign canvas
+     */
+    sendToCanvas() {
+        if (!this.currentLoot) {
+            this.showNotification('No loot to send', 'error');
+            return;
+        }
+
+        if (typeof CanvasCards !== 'undefined') {
+            CanvasCards.addCard('loot', this.currentLoot);
+
+            // Switch to campaign panel
+            if (typeof SidebarController !== 'undefined') {
+                SidebarController.switchPanel('campaign');
+            }
+        } else {
+            this.showNotification('Campaign canvas not available', 'error');
+        }
+    },
+
+    /**
      * Show notification
      */
     showNotification(message, type = 'info') {

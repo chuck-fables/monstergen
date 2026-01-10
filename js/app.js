@@ -105,6 +105,7 @@ const App = {
             saveBtn: document.getElementById('save-btn'),
             editBtn: document.getElementById('edit-btn'),
             exportJsonBtn: document.getElementById('export-json-btn'),
+            canvasBtn: document.getElementById('canvas-btn'),
             libraryBtn: document.getElementById('library-btn'),
 
             // Statblock container
@@ -202,6 +203,11 @@ const App = {
         // Export JSON
         this.elements.exportJsonBtn.addEventListener('click', () => {
             this.exportJSON();
+        });
+
+        // Send to Canvas
+        this.elements.canvasBtn.addEventListener('click', () => {
+            this.sendToCanvas();
         });
 
         // Open library modal
@@ -620,6 +626,7 @@ const App = {
             this.elements.saveBtn.disabled = false;
             this.elements.editBtn.disabled = false;
             this.elements.exportJsonBtn.disabled = false;
+            this.elements.canvasBtn.disabled = false;
 
             // Clear the saved ID since this is a new/regenerated monster
             this.currentMonsterId = null;
@@ -716,6 +723,31 @@ const App = {
     exportJSON() {
         if (!this.currentMonster) return;
         MonsterStorage.exportMonster(this.currentMonster);
+    },
+
+    /**
+     * Send current monster to campaign canvas
+     */
+    sendToCanvas() {
+        if (!this.currentMonster) return;
+
+        // Ensure the monster has an id for referencing
+        const monsterData = {
+            ...this.currentMonster,
+            id: this.currentMonster.id || 'monster_' + Date.now()
+        };
+
+        // Add card to canvas
+        if (typeof CanvasCards !== 'undefined') {
+            CanvasCards.addCard('monster', monsterData);
+
+            // Switch to campaign panel
+            if (typeof SidebarController !== 'undefined') {
+                SidebarController.switchPanel('campaign');
+            }
+        } else {
+            alert('Campaign canvas not available');
+        }
     },
 
     /**
@@ -873,6 +905,7 @@ const App = {
         this.elements.saveBtn.disabled = false;
         this.elements.editBtn.disabled = false;
         this.elements.exportJsonBtn.disabled = false;
+        this.elements.canvasBtn.disabled = false;
     },
 
     /**

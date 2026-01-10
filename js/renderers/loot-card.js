@@ -64,6 +64,9 @@ const LootCardRenderer = {
                             <button type="button" class="btn-loot" onclick="LootPanel.copyLoot()" title="Copy to Clipboard">
                                 &#128203; Copy
                             </button>
+                            <button type="button" class="btn-loot" onclick="LootPanel.sendToCanvas()" title="Send to Canvas">
+                                &#128203; Canvas
+                            </button>
                         `}
                     </div>
                 </div>

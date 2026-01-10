@@ -326,6 +326,30 @@ const ItemPanel = {
     },
 
     /**
+     * Send an item to the campaign canvas
+     */
+    sendToCanvas(itemId) {
+        if (!this.currentResult || !this.currentResult.items) {
+            this.showNotification('No item to send', 'error');
+            return;
+        }
+
+        const item = this.currentResult.items.find(i => i.id === itemId);
+        if (!item) return;
+
+        if (typeof CanvasCards !== 'undefined') {
+            CanvasCards.addCard('item', item);
+
+            // Switch to campaign panel
+            if (typeof SidebarController !== 'undefined') {
+                SidebarController.switchPanel('campaign');
+            }
+        } else {
+            this.showNotification('Campaign canvas not available', 'error');
+        }
+    },
+
+    /**
      * Get stored items from localStorage
      */
     getStoredItems() {

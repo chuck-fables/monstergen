@@ -189,6 +189,9 @@ const HookCardRenderer = {
                         <button type="button" class="btn-hook-small" onclick="HookPanel.copyHook('${hook.id}')" title="Copy">
                             &#128203;
                         </button>
+                        <button type="button" class="btn-hook-small" onclick="HookPanel.sendToCanvas('${hook.id}')" title="Send to Canvas">
+                            &#127912;
+                        </button>
                     `}
                 </div>
             </div>
