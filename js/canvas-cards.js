@@ -128,7 +128,6 @@ const CanvasCards = {
                         </svg>
                     </button>
                     <button class="canvas-card-btn collapse-btn" title="Collapse/Expand">&#9660;</button>
-                    <button class="canvas-card-btn connect-btn" title="Connect to another card">${this.icons.connect}</button>
                     <button class="canvas-card-btn delete-btn" title="Remove from canvas">&times;</button>
                 </div>
             </div>
@@ -210,12 +209,6 @@ const CanvasCards = {
             el.classList.toggle('collapsed', card.collapsed);
             CampaignCanvas.saveState();
             CanvasConnections.updateAllConnections();
-        });
-
-        // Connect button
-        el.querySelector('.connect-btn').addEventListener('click', (e) => {
-            e.stopPropagation();
-            CanvasConnections.startDrawing(card.id);
         });
 
         // Delete button

@@ -88,6 +88,11 @@
     text-align: center;
 }
 
+/* Mobile zoom buttons - hidden on desktop */
+.mobile-zoom-btn {
+    display: none;
+}
+
 /* ==================== MAIN CANVAS ==================== */
 
 #campaign-canvas {
@@ -1169,6 +1174,11 @@
 
     .canvas-toolbar-divider {
         display: none;
+    }
+
+    /* Show mobile zoom buttons */
+    .mobile-zoom-btn {
+        display: flex;
     }
 
     .canvas-card {

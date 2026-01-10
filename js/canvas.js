@@ -297,6 +297,44 @@ const CampaignCanvas = {
     },
 
     /**
+     * Zoom in (for mobile button)
+     */
+    zoomIn() {
+        const rect = this.canvas.getBoundingClientRect();
+        const centerX = rect.width / 2;
+        const centerY = rect.height / 2;
+
+        const newScale = Math.min(this.maxScale, this.scale * 1.25);
+        if (newScale !== this.scale) {
+            const scaleChange = newScale / this.scale;
+            this.offsetX = centerX - (centerX - this.offsetX) * scaleChange;
+            this.offsetY = centerY - (centerY - this.offsetY) * scaleChange;
+            this.scale = newScale;
+            this.updateTransform();
+            this.saveState();
+        }
+    },
+
+    /**
+     * Zoom out (for mobile button)
+     */
+    zoomOut() {
+        const rect = this.canvas.getBoundingClientRect();
+        const centerX = rect.width / 2;
+        const centerY = rect.height / 2;
+
+        const newScale = Math.max(this.minScale, this.scale * 0.8);
+        if (newScale !== this.scale) {
+            const scaleChange = newScale / this.scale;
+            this.offsetX = centerX - (centerX - this.offsetX) * scaleChange;
+            this.offsetY = centerY - (centerY - this.offsetY) * scaleChange;
+            this.scale = newScale;
+            this.updateTransform();
+            this.saveState();
+        }
+    },
+
+    /**
      * Zoom to fit all content
      */
     zoomToFit() {
