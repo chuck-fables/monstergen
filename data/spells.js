@@ -84,7 +84,9 @@ const SpellsData = {
 
     /**
      * Warlock Pact Magic progression
-     * All slots are the same level, recharge on short rest
+     * Very few slots (1-2), all cast at highest available level, recharge on short rest
+     * Level 1: 1 slot, Level 2+: 2 slots
+     * Slot level: 1st at 1-2, 2nd at 3-4, 3rd at 5-6, 4th at 7-8, 5th at 9+
      */
     warlockSlotTable: {
         1: { slots: 1, slotLevel: 1 },
@@ -97,16 +99,16 @@ const SpellsData = {
         8: { slots: 2, slotLevel: 4 },
         9: { slots: 2, slotLevel: 5 },
         10: { slots: 2, slotLevel: 5 },
-        11: { slots: 3, slotLevel: 5 },
-        12: { slots: 3, slotLevel: 5 },
-        13: { slots: 3, slotLevel: 5 },
-        14: { slots: 3, slotLevel: 5 },
-        15: { slots: 3, slotLevel: 5 },
-        16: { slots: 3, slotLevel: 5 },
-        17: { slots: 4, slotLevel: 5 },
-        18: { slots: 4, slotLevel: 5 },
-        19: { slots: 4, slotLevel: 5 },
-        20: { slots: 4, slotLevel: 5 }
+        11: { slots: 2, slotLevel: 5 },
+        12: { slots: 2, slotLevel: 5 },
+        13: { slots: 2, slotLevel: 5 },
+        14: { slots: 2, slotLevel: 5 },
+        15: { slots: 2, slotLevel: 5 },
+        16: { slots: 2, slotLevel: 5 },
+        17: { slots: 2, slotLevel: 5 },
+        18: { slots: 2, slotLevel: 5 },
+        19: { slots: 2, slotLevel: 5 },
+        20: { slots: 2, slotLevel: 5 }
     },
 
     /**

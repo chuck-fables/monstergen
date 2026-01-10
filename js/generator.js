@@ -249,8 +249,21 @@ const Generator = {
         // Humanoid spellcasters get more hit dice to match their caster level
         // Example: Archmage is CR 12 with 18 hit dice (18th level caster)
         if (type === 'humanoid' && hasSpellcasting && this.isSpellcaster(characterClass)) {
-            // Hit dice = caster level for humanoid spellcasters
-            numDice = this.getHumanoidCasterLevel(crNum);
+            // Different hit dice scaling based on caster type
+            const isHalfCaster = ['paladin', 'ranger', 'artificer'].includes(characterClass);
+            const isWarlock = characterClass === 'warlock';
+
+            if (isHalfCaster) {
+                // Half-casters are more martial, get more hit dice at same CR
+                // They max at 5th level spells, so they need more HP to compensate
+                numDice = this.getHalfCasterLevel(crNum);
+            } else if (isWarlock) {
+                // Warlocks have limited spell slots, also get more hit dice
+                numDice = this.getWarlockLevel(crNum);
+            } else {
+                // Full casters: hit dice = caster level
+                numDice = this.getHumanoidCasterLevel(crNum);
+            }
         } else {
             // Normal HP calculation for non-spellcasters
             const targetHP = Utils.randomInt(crData.hpMin, crData.hpMax);
@@ -1330,13 +1343,45 @@ const Generator = {
      */
     getHumanoidCasterLevel(cr) {
         const crNum = parseFloat(cr);
-        // Spellcasters get more hit dice than their CR would suggest
+        // Full spellcasters get more hit dice than their CR would suggest
         // CR 12 Archmage has 18 HD, so roughly CR * 1.5 for high-level casters
-        // Scale: CR 1-4 = CR+2, CR 5-10 = CR*1.3, CR 11+ = CR*1.5
+        // Scale: CR 1-4 = CR+2, CR 5-10 = CR*1.4, CR 11+ = CR*1.5
         if (crNum <= 0.5) return 1;
         if (crNum <= 4) return Math.min(20, Math.ceil(crNum + 2));
         if (crNum <= 10) return Math.min(20, Math.ceil(crNum * 1.4));
         return Math.min(20, Math.ceil(crNum * 1.5));
+    },
+
+    /**
+     * Get level for half-casters (Paladin, Ranger, Artificer)
+     * They get more hit dice since their spellcasting is limited to 5th level max
+     * More martial-oriented, so CR translates to higher level
+     */
+    getHalfCasterLevel(cr) {
+        const crNum = parseFloat(cr);
+        // Half-casters are more martial and can have more hit dice
+        // They max at 5th level spells at level 17, so high CR means high level
+        if (crNum <= 0.5) return 2; // Min level 2 for spellcasting
+        if (crNum <= 2) return Math.min(20, Math.ceil(crNum * 2 + 1));
+        if (crNum <= 5) return Math.min(20, Math.ceil(crNum * 2));
+        if (crNum <= 10) return Math.min(20, Math.ceil(crNum * 1.6));
+        return Math.min(20, Math.ceil(crNum * 1.4)); // CR 12 = ~17, CR 14 = ~20
+    },
+
+    /**
+     * Get level for Warlocks
+     * Limited spell slots (only 2) but recover on short rest
+     * Get more hit dice to compensate for fewer slots
+     */
+    getWarlockLevel(cr) {
+        const crNum = parseFloat(cr);
+        // Warlocks have very limited slots, more like martial in terms of resource
+        // CR 5 = ~level 9 (5th level slots), CR 8+ can get Mystic Arcanum
+        if (crNum <= 0.5) return 1;
+        if (crNum <= 2) return Math.min(20, Math.ceil(crNum * 2 + 1));
+        if (crNum <= 5) return Math.min(20, Math.ceil(crNum * 1.8));
+        if (crNum <= 10) return Math.min(20, Math.ceil(crNum * 1.5));
+        return Math.min(20, Math.ceil(crNum * 1.3));
     },
 
     /**

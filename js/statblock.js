@@ -338,6 +338,8 @@ const StatblockRenderer = {
             header = `<span class="trait-name">Pact Magic.</span> The ${monster.name.toLowerCase()} is a ${Utils.ordinal(sc.level)}-level spellcaster. Its spellcasting ability is ${abilityName} (spell save DC ${sc.saveDC}, ${Utils.formatModifier(sc.attackBonus)} to hit with spell attacks). It regains its expended spell slots when it finishes a short or long rest. It knows the following warlock spells:`;
         } else if (sc.innate) {
             header = `<span class="trait-name">Innate Spellcasting.</span> The ${monster.name.toLowerCase()}'s innate spellcasting ability is ${abilityName} (spell save DC ${sc.saveDC}, ${Utils.formatModifier(sc.attackBonus)} to hit with spell attacks). It can innately cast the following spells, requiring no material components:`;
+        } else if (sc.isHalfCaster) {
+            header = `<span class="trait-name">Spellcasting.</span> The ${monster.name.toLowerCase()} is a ${Utils.ordinal(sc.level)}-level spellcaster (${Utils.ordinal(sc.maxSpellLevel)}-level spells max). Its spellcasting ability is ${abilityName} (spell save DC ${sc.saveDC}, ${Utils.formatModifier(sc.attackBonus)} to hit with spell attacks). The ${monster.name.toLowerCase()} has the following spells prepared:`;
         } else {
             header = `<span class="trait-name">Spellcasting.</span> The ${monster.name.toLowerCase()} is a ${Utils.ordinal(sc.level)}-level spellcaster. Its spellcasting ability is ${abilityName} (spell save DC ${sc.saveDC}, ${Utils.formatModifier(sc.attackBonus)} to hit with spell attacks). The ${monster.name.toLowerCase()} has the following spells prepared:`;
         }
@@ -375,7 +377,9 @@ const StatblockRenderer = {
             }
         } else {
             // Standard spell slot display
-            for (let level = 1; level <= 9; level++) {
+            // Use maxSpellLevel to cap spell levels for half-casters
+            const maxLevel = sc.maxSpellLevel || 9;
+            for (let level = 1; level <= maxLevel; level++) {
                 const levelSpells = sc.spells[`level${level}`];
                 const slots = sc.slots ? sc.slots[level] : 0;
 
