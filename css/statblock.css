@@ -1,0 +1,395 @@
+/* D&D 5e Statblock - PHB Style */
+
+.statblock {
+    font-family: 'Libre Baskerville', 'Georgia', serif;
+    font-size: 13px;
+    line-height: 1.4;
+    background: #FDF1DC;
+    background-image:
+        linear-gradient(to bottom,
+            rgba(0, 0, 0, 0.03) 0%,
+            transparent 50%,
+            rgba(0, 0, 0, 0.03) 100%);
+    color: #000;
+    padding: 0;
+    width: 400px;
+    box-shadow:
+        0 0 0 1px #9E2A2B,
+        0 0 0 4px #E6D5B8,
+        0 0 0 5px #9E2A2B,
+        0 4px 20px rgba(0, 0, 0, 0.4);
+    position: relative;
+}
+
+/* Top and bottom decorative bars */
+.statblock::before,
+.statblock::after {
+    content: '';
+    display: block;
+    height: 6px;
+    background: linear-gradient(to right,
+        #9E2A2B 0%,
+        #D4A76A 15%,
+        #9E2A2B 30%,
+        #D4A76A 50%,
+        #9E2A2B 70%,
+        #D4A76A 85%,
+        #9E2A2B 100%);
+}
+
+.statblock-content {
+    padding: 12px 16px;
+}
+
+/* Monster Name */
+.statblock-name {
+    font-family: 'Libre Baskerville', Georgia, serif;
+    font-size: 24px;
+    font-weight: 700;
+    color: #7A200D;
+    margin: 0 0 2px 0;
+    letter-spacing: 1px;
+    line-height: 1.2;
+}
+
+/* Type/Size/Alignment line */
+.statblock-type {
+    font-style: italic;
+    font-size: 12px;
+    color: #000;
+    margin-bottom: 8px;
+}
+
+/* Section dividers (tapered red lines) */
+.tapered-rule {
+    height: 5px;
+    background: linear-gradient(to right,
+        #9E2A2B 0%,
+        #9E2A2B 40%,
+        transparent 100%);
+    margin: 8px 0;
+    border: none;
+}
+
+.tapered-rule.reverse {
+    background: linear-gradient(to left,
+        #9E2A2B 0%,
+        #9E2A2B 40%,
+        transparent 100%);
+}
+
+/* Top Stats Section (AC, HP, Speed) */
+.top-stats {
+    padding: 8px 0;
+}
+
+.property-line {
+    margin: 0;
+    line-height: 1.5;
+}
+
+.property-name {
+    font-weight: 700;
+    color: #7A200D;
+}
+
+.property-value {
+    color: #000;
+}
+
+/* Ability Scores Table */
+.abilities-table {
+    width: 100%;
+    text-align: center;
+    border-collapse: collapse;
+    margin: 8px 0;
+}
+
+.abilities-table th {
+    font-weight: 700;
+    color: #7A200D;
+    font-size: 13px;
+    padding: 4px 2px;
+    text-transform: uppercase;
+}
+
+.abilities-table td {
+    font-size: 12px;
+    padding: 4px 2px;
+}
+
+.ability-score {
+    font-weight: 400;
+}
+
+.ability-modifier {
+    color: #666;
+}
+
+/* Properties section (saves, skills, etc.) */
+.properties-section {
+    padding: 4px 0;
+}
+
+.properties-section .property-line {
+    margin-bottom: 2px;
+}
+
+/* Traits and Actions Sections */
+.traits-section,
+.actions-section,
+.legendary-section,
+.mythic-section,
+.lair-section,
+.reactions-section {
+    padding: 4px 0;
+}
+
+/* Section Headers */
+.section-header {
+    font-family: 'Libre Baskerville', Georgia, serif;
+    font-size: 18px;
+    font-weight: 400;
+    color: #7A200D;
+    border-bottom: 2px solid #7A200D;
+    padding-bottom: 2px;
+    margin: 12px 0 8px 0;
+    letter-spacing: 1px;
+}
+
+/* Trait/Action Blocks */
+.trait-block,
+.action-block {
+    margin-bottom: 10px;
+}
+
+.trait-name,
+.action-name {
+    font-weight: 700;
+    font-style: italic;
+    color: #000;
+}
+
+.trait-description,
+.action-description {
+    display: inline;
+}
+
+/* Attack notation */
+.attack-type {
+    font-style: italic;
+}
+
+.attack-hit {
+    font-style: italic;
+}
+
+/* Spellcasting */
+.spellcasting-block {
+    margin-bottom: 10px;
+}
+
+.spell-level {
+    margin: 4px 0 4px 16px;
+}
+
+.spell-level-name {
+    font-style: italic;
+}
+
+/* Legendary Actions */
+.legendary-description {
+    margin-bottom: 8px;
+    font-style: italic;
+}
+
+.legendary-action {
+    margin-bottom: 6px;
+    margin-left: 16px;
+}
+
+/* Mythic Actions */
+.mythic-trait {
+    margin-bottom: 10px;
+    padding: 8px;
+    background: rgba(158, 42, 43, 0.1);
+    border-left: 3px solid #9E2A2B;
+}
+
+/* Lair Actions */
+.lair-description {
+    margin-bottom: 8px;
+    font-style: italic;
+}
+
+.lair-action {
+    margin-bottom: 6px;
+    margin-left: 16px;
+    position: relative;
+}
+
+.lair-action::before {
+    content: '\2022';
+    position: absolute;
+    left: -16px;
+    color: #7A200D;
+}
+
+/* Inventory Section */
+.inventory-section {
+    padding: 8px 0;
+}
+
+.inventory-item {
+    margin-bottom: 4px;
+}
+
+.inventory-item-name {
+    font-weight: 700;
+}
+
+.magic-item {
+    color: #7A200D;
+}
+
+.magic-item-description {
+    font-style: italic;
+    font-size: 11px;
+    color: #444;
+    display: block;
+    margin-left: 16px;
+}
+
+/* Challenge Rating */
+.challenge-line {
+    margin-top: 8px;
+}
+
+/* Damage/Condition Immunities - multi-line support */
+.long-property {
+    display: block;
+}
+
+/* Two-column layout for wider statblocks */
+.statblock.wide {
+    width: 800px;
+    min-width: 800px;
+}
+
+.statblock.wide .statblock-content {
+    column-count: 2;
+    column-gap: 24px;
+    column-rule: 1px solid #9E2A2B;
+    column-fill: balance;
+}
+
+/* Three-column layout for very long statblocks */
+.statblock.extra-wide {
+    width: 1200px;
+    min-width: 1200px;
+}
+
+.statblock.extra-wide .statblock-content {
+    column-count: 3;
+    column-gap: 24px;
+    column-rule: 1px solid #9E2A2B;
+    column-fill: balance;
+}
+
+/* Prevent breaks inside sections */
+.trait-block,
+.action-block,
+.legendary-action,
+.lair-action,
+.mythic-trait,
+.spellcasting-block,
+.property-line,
+.top-stats,
+.abilities-block,
+.properties-section {
+    break-inside: avoid;
+}
+
+/* Keep section headers with their content */
+.section-header {
+    break-after: avoid;
+}
+
+.traits-section,
+.actions-section,
+.legendary-section,
+.mythic-section,
+.lair-section,
+.reactions-section,
+.inventory-section {
+    break-inside: avoid-column;
+}
+
+/* Print styles */
+@media print {
+    .statblock {
+        box-shadow: none;
+        border: 2px solid #9E2A2B;
+        page-break-inside: avoid;
+    }
+}
+
+/* Racial traits indicator */
+.racial-trait {
+    background: rgba(212, 167, 106, 0.3);
+    padding: 2px 4px;
+    border-radius: 2px;
+}
+
+/* Class feature indicator */
+.class-feature {
+    background: rgba(158, 42, 43, 0.1);
+    padding: 2px 4px;
+    border-radius: 2px;
+}
+
+/* Proficiency indicator */
+.proficient {
+    font-weight: 700;
+}
+
+/* Notes and flavor text */
+.flavor-text {
+    font-style: italic;
+    color: #444;
+    font-size: 11px;
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px dotted #9E2A2B;
+}
+
+/* Multiattack emphasis */
+.multiattack {
+    font-weight: 700;
+}
+
+/* Recharge notation */
+.recharge {
+    font-weight: 400;
+}
+
+/* Damage types */
+.damage-type {
+    font-style: normal;
+}
+
+/* Save DC */
+.save-dc {
+    font-weight: 700;
+}
+
+/* Range notation */
+.range {
+    font-style: normal;
+}
+
+/* Component costs */
+.component-cost {
+    font-style: italic;
+    color: #666;
+}

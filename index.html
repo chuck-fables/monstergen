@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>D&D 5e Monster Stat Block Generator</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/statblock.css">
+    <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Scaly+Sans&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Left Panel - Generator Controls -->
+        <aside class="control-panel">
+            <header class="panel-header" id="panel-toggle">
+                <h1>Monster Generator</h1>
+                <p class="subtitle">D&D 5th Edition</p>
+                <span class="toggle-indicator">▼</span>
+            </header>
+
+            <div class="panel-content" id="panel-content">
+            <div class="control-section">
+                <label for="monster-name">Monster Name</label>
+                <div class="input-group">
+                    <input type="text" id="monster-name" placeholder="Enter name or generate...">
+                    <button type="button" id="auto-name-btn" class="btn-icon" title="Generate Name">
+                        <span class="dice-icon">&#9858;</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="control-section">
+                <label for="monster-type">Monster Type</label>
+                <select id="monster-type">
+                    <option value="">Select Type...</option>
+                    <option value="aberration">Aberration</option>
+                    <option value="beast">Beast</option>
+                    <option value="celestial">Celestial</option>
+                    <option value="construct">Construct</option>
+                    <option value="dragon">Dragon</option>
+                    <option value="elemental">Elemental</option>
+                    <option value="fey">Fey</option>
+                    <option value="fiend">Fiend</option>
+                    <option value="giant">Giant</option>
+                    <option value="humanoid">Humanoid</option>
+                    <option value="monstrosity">Monstrosity</option>
+                    <option value="ooze">Ooze</option>
+                    <option value="plant">Plant</option>
+                    <option value="undead">Undead</option>
+                </select>
+            </div>
+
+            <div class="control-section">
+                <label for="challenge-rating">Challenge Rating</label>
+                <select id="challenge-rating">
+                    <option value="0">0 (10 XP)</option>
+                    <option value="0.125">1/8 (25 XP)</option>
+                    <option value="0.25">1/4 (50 XP)</option>
+                    <option value="0.5">1/2 (100 XP)</option>
+                    <option value="1">1 (200 XP)</option>
+                    <option value="2">2 (450 XP)</option>
+                    <option value="3">3 (700 XP)</option>
+                    <option value="4">4 (1,100 XP)</option>
+                    <option value="5" selected>5 (1,800 XP)</option>
+                    <option value="6">6 (2,300 XP)</option>
+                    <option value="7">7 (2,900 XP)</option>
+                    <option value="8">8 (3,900 XP)</option>
+                    <option value="9">9 (5,000 XP)</option>
+                    <option value="10">10 (5,900 XP)</option>
+                    <option value="11">11 (7,200 XP)</option>
+                    <option value="12">12 (8,400 XP)</option>
+                    <option value="13">13 (10,000 XP)</option>
+                    <option value="14">14 (11,500 XP)</option>
+                    <option value="15">15 (13,000 XP)</option>
+                    <option value="16">16 (15,000 XP)</option>
+                    <option value="17">17 (18,000 XP)</option>
+                    <option value="18">18 (20,000 XP)</option>
+                    <option value="19">19 (22,000 XP)</option>
+                    <option value="20">20 (25,000 XP)</option>
+                    <option value="21">21 (33,000 XP)</option>
+                    <option value="22">22 (41,000 XP)</option>
+                    <option value="23">23 (50,000 XP)</option>
+                    <option value="24">24 (62,000 XP)</option>
+                    <option value="25">25 (75,000 XP)</option>
+                    <option value="26">26 (90,000 XP)</option>
+                    <option value="27">27 (105,000 XP)</option>
+                    <option value="28">28 (120,000 XP)</option>
+                    <option value="29">29 (135,000 XP)</option>
+                    <option value="30">30 (155,000 XP)</option>
+                </select>
+            </div>
+
+            <div class="control-section">
+                <label for="size">Size</label>
+                <select id="size">
+                    <option value="tiny">Tiny</option>
+                    <option value="small">Small</option>
+                    <option value="medium" selected>Medium</option>
+                    <option value="large">Large</option>
+                    <option value="huge">Huge</option>
+                    <option value="gargantuan">Gargantuan</option>
+                </select>
+            </div>
+
+            <div class="control-section">
+                <label for="alignment">Alignment</label>
+                <select id="alignment">
+                    <option value="any">Any Alignment</option>
+                    <option value="unaligned">Unaligned</option>
+                    <option value="lawful good">Lawful Good</option>
+                    <option value="neutral good">Neutral Good</option>
+                    <option value="chaotic good">Chaotic Good</option>
+                    <option value="lawful neutral">Lawful Neutral</option>
+                    <option value="true neutral" selected>True Neutral</option>
+                    <option value="chaotic neutral">Chaotic Neutral</option>
+                    <option value="lawful evil">Lawful Evil</option>
+                    <option value="neutral evil">Neutral Evil</option>
+                    <option value="chaotic evil">Chaotic Evil</option>
+                </select>
+            </div>
+
+            <fieldset class="control-section checkbox-group">
+                <legend>Attack Types</legend>
+                <div class="checkbox-grid">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="attack-melee" checked>
+                        <span>Melee</span>
+                    </label>
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="attack-ranged">
+                        <span>Ranged</span>
+                    </label>
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="attack-spells">
+                        <span>Spellcasting</span>
+                    </label>
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="attack-breath">
+                        <span>Breath Weapon</span>
+                    </label>
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="attack-gaze">
+                        <span>Gaze Attack</span>
+                    </label>
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="attack-aura">
+                        <span>Aura Effect</span>
+                    </label>
+                </div>
+            </fieldset>
+
+            <fieldset class="control-section checkbox-group">
+                <legend>Special Actions</legend>
+                <div class="checkbox-grid">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="legendary-actions">
+                        <span>Legendary Actions</span>
+                    </label>
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="mythic-actions">
+                        <span>Mythic Actions</span>
+                    </label>
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="lair-actions">
+                        <span>Lair Actions</span>
+                    </label>
+                </div>
+            </fieldset>
+
+            <!-- Humanoid Options (conditionally shown) -->
+            <div id="humanoid-options" class="humanoid-section" style="display: none;">
+                <div class="section-divider">
+                    <span>Humanoid Options</span>
+                </div>
+
+                <div class="control-section">
+                    <label for="humanoid-race">Race</label>
+                    <select id="humanoid-race">
+                        <option value="">Select Race...</option>
+                        <optgroup label="Common Races">
+                            <option value="human">Human</option>
+                            <option value="dwarf-hill">Dwarf (Hill)</option>
+                            <option value="dwarf-mountain">Dwarf (Mountain)</option>
+                            <option value="elf-high">Elf (High)</option>
+                            <option value="elf-wood">Elf (Wood)</option>
+                            <option value="elf-drow">Elf (Drow)</option>
+                            <option value="halfling-lightfoot">Halfling (Lightfoot)</option>
+                            <option value="halfling-stout">Halfling (Stout)</option>
+                            <option value="gnome-forest">Gnome (Forest)</option>
+                            <option value="gnome-rock">Gnome (Rock)</option>
+                            <option value="half-elf">Half-Elf</option>
+                            <option value="half-orc">Half-Orc</option>
+                            <option value="tiefling">Tiefling</option>
+                            <option value="dragonborn">Dragonborn</option>
+                        </optgroup>
+                        <optgroup label="Uncommon Races">
+                            <option value="aasimar">Aasimar</option>
+                            <option value="genasi-air">Genasi (Air)</option>
+                            <option value="genasi-earth">Genasi (Earth)</option>
+                            <option value="genasi-fire">Genasi (Fire)</option>
+                            <option value="genasi-water">Genasi (Water)</option>
+                            <option value="goliath">Goliath</option>
+                            <option value="firbolg">Firbolg</option>
+                            <option value="kenku">Kenku</option>
+                            <option value="lizardfolk">Lizardfolk</option>
+                            <option value="tabaxi">Tabaxi</option>
+                            <option value="triton">Triton</option>
+                            <option value="tortle">Tortle</option>
+                            <option value="aarakocra">Aarakocra</option>
+                            <option value="warforged">Warforged</option>
+                            <option value="changeling">Changeling</option>
+                            <option value="kalashtar">Kalashtar</option>
+                            <option value="shifter">Shifter</option>
+                        </optgroup>
+                        <optgroup label="Monstrous Races">
+                            <option value="gnoll">Gnoll</option>
+                            <option value="bugbear">Bugbear</option>
+                            <option value="goblin">Goblin</option>
+                            <option value="hobgoblin">Hobgoblin</option>
+                            <option value="kobold">Kobold</option>
+                            <option value="orc">Orc</option>
+                            <option value="yuan-ti">Yuan-ti</option>
+                            <option value="duergar">Duergar</option>
+                            <option value="githyanki">Githyanki</option>
+                            <option value="githzerai">Githzerai</option>
+                            <option value="kuo-toa">Kuo-toa</option>
+                            <option value="sahuagin">Sahuagin</option>
+                            <option value="thri-kreen">Thri-kreen</option>
+                            <option value="bullywug">Bullywug</option>
+                            <option value="grung">Grung</option>
+                            <option value="myconid">Myconid</option>
+                        </optgroup>
+                    </select>
+                </div>
+
+                <div class="control-section">
+                    <label for="humanoid-class">Class</label>
+                    <select id="humanoid-class">
+                        <option value="">No Class (Commoner)</option>
+                        <option value="barbarian">Barbarian</option>
+                        <option value="bard">Bard</option>
+                        <option value="cleric">Cleric</option>
+                        <option value="druid">Druid</option>
+                        <option value="fighter">Fighter</option>
+                        <option value="monk">Monk</option>
+                        <option value="paladin">Paladin</option>
+                        <option value="ranger">Ranger</option>
+                        <option value="rogue">Rogue</option>
+                        <option value="sorcerer">Sorcerer</option>
+                        <option value="warlock">Warlock</option>
+                        <option value="wizard">Wizard</option>
+                        <option value="artificer">Artificer</option>
+                    </select>
+                </div>
+
+                <div class="checkbox-grid">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="generate-inventory" checked>
+                        <span>Generate Inventory</span>
+                    </label>
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="include-magic-items">
+                        <span>Include Magic Items</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="button-group">
+                <button type="button" id="randomize-btn" class="btn btn-secondary">
+                    <span class="dice-icon">&#9858;</span> Randomize
+                </button>
+                <button type="button" id="generate-btn" class="btn btn-primary">
+                    Generate
+                </button>
+            </div>
+            </div><!-- end panel-content -->
+        </aside>
+
+        <!-- Right Panel - Statblock Display -->
+        <main class="statblock-panel">
+            <div class="statblock-container">
+                <div id="statblock" class="statblock">
+                    <div class="statblock-placeholder">
+                        <p>Configure options and click <strong>Generate</strong> to create a monster stat block.</p>
+                        <p>Or click <strong>Randomize</strong> for a random monster!</p>
+                    </div>
+                </div>
+            </div>
+            <div class="export-controls">
+                <button type="button" id="download-btn" class="btn btn-export" disabled>
+                    Download PNG
+                </button>
+            </div>
+        </main>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <!-- Load utilities first -->
+    <script src="js/utils.js"></script>
+    <!-- Data files -->
+    <script src="data/monster-types.js"></script>
+    <script src="data/attacks.js"></script>
+    <script src="data/abilities.js"></script>
+    <script src="data/legendary.js"></script>
+    <script src="data/spells.js"></script>
+    <script src="data/races.js"></script>
+    <script src="data/names/monster-names.js"></script>
+    <script src="data/names/humanoid-names.js"></script>
+    <script src="data/classes.js"></script>
+    <script src="data/inventory.js"></script>
+    <script src="data/magic-items.js"></script>
+    <!-- Application files -->
+    <script src="js/generator.js"></script>
+    <script src="js/statblock.js"></script>
+    <script src="js/export.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
