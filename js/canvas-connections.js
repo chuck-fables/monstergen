@@ -27,96 +27,38 @@ const CanvasConnections = {
         { id: 'dotted', label: 'Dotted', dashArray: '2,4' }
     ],
 
-    // Store bound handlers for cleanup
-    cardClickHandlers: new Map(),
-
     /**
-     * Start drawing a connection from a card
+     * Handle connector button click - start or complete connection
      */
-    startDrawing(cardId) {
-        // Cancel any existing drawing operation first
+    handleConnectorClick(cardId, side) {
         if (this.isDrawing) {
-            this.cancelDrawing();
-        }
-
-        this.isDrawing = true;
-        this.drawingFromCard = cardId;
-        this.drawingFromSide = null;
-
-        // Highlight the source card
-        const el = document.querySelector(`[data-canvas-id="${cardId}"]`);
-        if (el) el.classList.add('connecting');
-
-        // Create temp line
-        this.createTempLine();
-
-        // Add drawing mode class to canvas
-        if (CampaignCanvas.canvas) {
-            CampaignCanvas.canvas.classList.add('drawing-mode');
-        }
-
-        // Add click handlers to all other cards
-        this.addCardClickHandlers();
-
-        // Also listen for Escape key and background clicks to cancel
-        this.escapeHandler = (e) => {
-            if (e.key === 'Escape') this.cancelDrawing();
-        };
-        this.backgroundHandler = (e) => {
-            if (e.target === CampaignCanvas.canvas || e.target === CampaignCanvas.viewport) {
-                this.cancelDrawing();
-            }
-        };
-        document.addEventListener('keydown', this.escapeHandler);
-        CampaignCanvas.canvas.addEventListener('click', this.backgroundHandler);
-    },
-
-    /**
-     * Add click handlers to all cards for connection drawing
-     */
-    addCardClickHandlers() {
-        const cards = document.querySelectorAll('.canvas-card');
-        cards.forEach(cardEl => {
-            const cardId = cardEl.dataset.canvasId;
-            if (cardId === this.drawingFromCard) return; // Skip source card
-
-            const handler = (e) => {
-                e.stopPropagation();
-                e.preventDefault();
-                const targetSide = e.target.closest('.connector')?.dataset.side || null;
+            // Complete the connection if clicking on a different card
+            if (cardId !== this.drawingFromCard) {
                 this.createConnection(
                     this.drawingFromCard,
                     cardId,
                     this.drawingFromSide,
-                    targetSide
+                    side
                 );
-                this.finishDrawing();
-            };
-
-            this.cardClickHandlers.set(cardId, handler);
-            cardEl.addEventListener('click', handler, true); // Use capture
-        });
+            }
+            this.finishDrawing();
+        } else {
+            // Start a new connection
+            this.startDrawingFromConnector(cardId, side);
+        }
     },
 
     /**
-     * Remove click handlers from all cards
+     * Start drawing a connection from a card (called from connect button in header)
      */
-    removeCardClickHandlers() {
-        this.cardClickHandlers.forEach((handler, cardId) => {
-            const cardEl = document.querySelector(`[data-canvas-id="${cardId}"]`);
-            if (cardEl) {
-                cardEl.removeEventListener('click', handler, true);
-            }
-        });
-        this.cardClickHandlers.clear();
+    startDrawing(cardId) {
+        this.startDrawingFromConnector(cardId, null);
     },
 
     /**
      * Start drawing from a specific connector
      */
-    startDrawingFromConnector(cardId, side, e) {
-        e.stopPropagation();
-
+    startDrawingFromConnector(cardId, side) {
         // Cancel any existing drawing operation first
         if (this.isDrawing) {
             this.cancelDrawing();
@@ -126,37 +68,50 @@ const CanvasConnections = {
         this.drawingFromCard = cardId;
         this.drawingFromSide = side;
 
+        // Highlight the source card and its active connector
         const el = document.querySelector(`[data-canvas-id="${cardId}"]`);
-        if (el) el.classList.add('connecting');
-
-        this.createTempLine();
-
-        // Update temp line to start from connector
-        const startPos = CanvasCards.getConnectorPosition(cardId, side);
-        if (startPos && this.tempLine) {
-            this.tempLine.setAttribute('x1', startPos.x);
-            this.tempLine.setAttribute('y1', startPos.y);
+        if (el) {
+            el.classList.add('connecting');
+            if (side) {
+                const connector = el.querySelector(`.connector-${side}`);
+                if (connector) connector.classList.add('active');
+            }
         }
 
-        // Add drawing mode class to canvas
+        // Add drawing mode class to canvas - this highlights all other connectors
         if (CampaignCanvas.canvas) {
             CampaignCanvas.canvas.classList.add('drawing-mode');
         }
 
-        // Add click handlers to all other cards
-        this.addCardClickHandlers();
+        // Create temp line for visual feedback
+        this.createTempLine();
 
-        // Also listen for Escape key and background clicks to cancel
+        // Update temp line to start from connector if we have a specific side
+        if (side) {
+            const startPos = CanvasCards.getConnectorPosition(cardId, side);
+            if (startPos && this.tempLine) {
+                this.tempLine.setAttribute('x1', startPos.x);
+                this.tempLine.setAttribute('y1', startPos.y);
+            }
+        }
+
+        // Listen for Escape key and background clicks to cancel
         this.escapeHandler = (e) => {
             if (e.key === 'Escape') this.cancelDrawing();
         };
         this.backgroundHandler = (e) => {
+            // Only cancel if clicking on the canvas background itself, not on cards
             if (e.target === CampaignCanvas.canvas || e.target === CampaignCanvas.viewport) {
                 this.cancelDrawing();
             }
         };
         document.addEventListener('keydown', this.escapeHandler);
-        CampaignCanvas.canvas.addEventListener('click', this.backgroundHandler);
+        // Use setTimeout to prevent immediate cancel from the click that started this
+        setTimeout(() => {
+            if (this.isDrawing && CampaignCanvas.canvas) {
+                CampaignCanvas.canvas.addEventListener('click', this.backgroundHandler);
+            }
+        }, 100);
     },
 
     /**
@@ -207,9 +162,6 @@ const CanvasConnections = {
     cancelDrawing() {
         this.isDrawing = false;
 
-        // Remove card click handlers
-        this.removeCardClickHandlers();
-
         // Remove escape and background handlers
         if (this.escapeHandler) {
             document.removeEventListener('keydown', this.escapeHandler);
@@ -225,9 +177,13 @@ const CanvasConnections = {
             CampaignCanvas.canvas.classList.remove('drawing-mode');
         }
 
-        // Remove highlight from source card
+        // Remove highlight from source card and active connector
         const el = document.querySelector(`[data-canvas-id="${this.drawingFromCard}"]`);
-        if (el) el.classList.remove('connecting');
+        if (el) {
+            el.classList.remove('connecting');
+            // Remove active class from connector
+            el.querySelectorAll('.connector.active').forEach(c => c.classList.remove('active'));
+        }
 
         this.drawingFromCard = null;
         this.drawingFromSide = null;

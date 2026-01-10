@@ -268,76 +268,136 @@
     pointer-events: none;
 }
 
+/* Connector buttons with + icon */
 .connector {
     position: absolute;
-    width: 12px;
-    height: 12px;
-    background: var(--primary-color);
-    border: 2px solid white;
+    width: 20px;
+    height: 20px;
+    background: #444;
+    border: 2px solid #666;
     border-radius: 50%;
     opacity: 0;
-    transition: opacity 0.2s, transform 0.2s;
+    transition: all 0.2s ease;
     pointer-events: auto;
-    cursor: crosshair;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    color: #aaa;
 }
 
-.canvas-card:hover .connector,
-.canvas-card.connecting .connector {
+.connector svg {
+    width: 10px;
+    height: 10px;
+}
+
+/* Show connectors on card hover */
+.canvas-card:hover .connector {
     opacity: 1;
 }
 
+/* Connector hover state */
 .connector:hover {
-    transform: scale(1.3);
+    background: var(--primary-color);
+    border-color: var(--primary-color);
+    color: white;
+    transform: scale(1.2);
 }
 
+/* Active connector (the one that started the connection) */
+.connector.active {
+    background: var(--primary-color);
+    border-color: white;
+    color: white;
+    opacity: 1;
+    animation: pulse-connector 1s infinite;
+}
+
+@keyframes pulse-connector {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(220, 53, 69, 0.7); }
+    50% { box-shadow: 0 0 0 6px rgba(220, 53, 69, 0); }
+}
+
+/* Connector positions */
 .connector-top {
-    top: -6px;
+    top: -10px;
     left: 50%;
     transform: translateX(-50%);
 }
 
 .connector-right {
-    right: -6px;
+    right: -10px;
     top: 50%;
     transform: translateY(-50%);
 }
 
 .connector-bottom {
-    bottom: -6px;
+    bottom: -10px;
     left: 50%;
     transform: translateX(-50%);
 }
 
 .connector-left {
-    left: -6px;
+    left: -10px;
     top: 50%;
     transform: translateY(-50%);
 }
 
-.connector-top:hover { transform: translateX(-50%) scale(1.3); }
-.connector-right:hover { transform: translateY(-50%) scale(1.3); }
-.connector-bottom:hover { transform: translateX(-50%) scale(1.3); }
-.connector-left:hover { transform: translateY(-50%) scale(1.3); }
+/* Hover transforms need to include the base transforms */
+.connector-top:hover { transform: translateX(-50%) scale(1.2); }
+.connector-right:hover { transform: translateY(-50%) scale(1.2); }
+.connector-bottom:hover { transform: translateX(-50%) scale(1.2); }
+.connector-left:hover { transform: translateY(-50%) scale(1.2); }
 
-/* Drawing mode - show connectors on all cards and add visual cue */
+/* ==================== DRAWING MODE ==================== */
+/* When actively connecting cards, highlight available targets */
+
 #campaign-canvas.drawing-mode {
-    cursor: crosshair;
+    cursor: default;
 }
 
-#campaign-canvas.drawing-mode .canvas-card:not(.connecting) {
-    cursor: pointer;
-}
-
-#campaign-canvas.drawing-mode .canvas-card:not(.connecting) .connector {
-    opacity: 0.5;
-}
-
-#campaign-canvas.drawing-mode .canvas-card:not(.connecting):hover {
-    box-shadow: 0 0 0 3px var(--primary-color), 0 4px 12px rgba(0, 0, 0, 0.3);
-}
-
-#campaign-canvas.drawing-mode .canvas-card:not(.connecting):hover .connector {
+/* Show all connectors on all cards during drawing mode */
+#campaign-canvas.drawing-mode .canvas-card .connector {
     opacity: 1;
+}
+
+/* Target cards (not the source) get highlighted connectors */
+#campaign-canvas.drawing-mode .canvas-card:not(.connecting) .connector {
+    background: #27ae60;
+    border-color: #27ae60;
+    color: white;
+    animation: pulse-target 1.5s infinite;
+}
+
+@keyframes pulse-target {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(39, 174, 96, 0.5); }
+    50% { box-shadow: 0 0 0 4px rgba(39, 174, 96, 0); }
+}
+
+#campaign-canvas.drawing-mode .canvas-card:not(.connecting) .connector:hover {
+    background: #2ecc71;
+    border-color: white;
+    transform: scale(1.3);
+}
+
+/* Special transforms for hover during drawing mode */
+#campaign-canvas.drawing-mode .canvas-card:not(.connecting) .connector-top:hover {
+    transform: translateX(-50%) scale(1.3);
+}
+#campaign-canvas.drawing-mode .canvas-card:not(.connecting) .connector-right:hover {
+    transform: translateY(-50%) scale(1.3);
+}
+#campaign-canvas.drawing-mode .canvas-card:not(.connecting) .connector-bottom:hover {
+    transform: translateX(-50%) scale(1.3);
+}
+#campaign-canvas.drawing-mode .canvas-card:not(.connecting) .connector-left:hover {
+    transform: translateY(-50%) scale(1.3);
+}
+
+/* Highlight target cards during drawing */
+#campaign-canvas.drawing-mode .canvas-card:not(.connecting):hover {
+    box-shadow: 0 0 0 3px #27ae60, 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
 /* ==================== CONNECTION LINES ==================== */
@@ -415,9 +475,16 @@
     color: white;
 }
 
+.conn-tool-delete {
+    background: rgba(220, 53, 69, 0.1);
+    border-color: #dc3545;
+    color: #dc3545;
+}
+
 .conn-tool-delete:hover {
     background: #dc3545;
     border-color: #dc3545;
+    color: white;
 }
 
 .conn-tool-select {
@@ -1110,5 +1177,69 @@
 
     .canvas-note {
         width: 150px;
+    }
+
+    /* Library drawer - full screen overlay on mobile */
+    .canvas-library-drawer {
+        position: fixed;
+        top: 0;
+        right: -100%;
+        width: 100%;
+        height: 100%;
+        z-index: 2000;
+    }
+
+    .canvas-library-drawer.open {
+        right: 0;
+    }
+
+    /* Make library tabs smaller on mobile */
+    .canvas-library-tab {
+        min-width: calc(50% - 4px);
+        padding: 8px 6px;
+        font-size: 0.7rem;
+    }
+
+    /* Connection toolbar - larger touch targets on mobile */
+    .connection-toolbar {
+        padding: 10px 12px;
+        gap: 8px;
+    }
+
+    .conn-tool-btn {
+        width: 40px;
+        height: 40px;
+    }
+
+    .conn-tool-select {
+        padding: 8px 10px;
+        font-size: 0.9rem;
+    }
+
+    /* Make connector buttons larger for touch */
+    .connector {
+        width: 28px;
+        height: 28px;
+    }
+
+    .connector svg {
+        width: 14px;
+        height: 14px;
+    }
+
+    .connector-top {
+        top: -14px;
+    }
+
+    .connector-right {
+        right: -14px;
+    }
+
+    .connector-bottom {
+        bottom: -14px;
+    }
+
+    .connector-left {
+        left: -14px;
     }
 }

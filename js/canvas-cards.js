@@ -137,10 +137,30 @@ const CanvasCards = {
                 <div class="canvas-card-preview">${this.getCardPreview(card)}</div>
             </div>
             <div class="canvas-card-connectors">
-                <div class="connector connector-top" data-side="top"></div>
-                <div class="connector connector-right" data-side="right"></div>
-                <div class="connector connector-bottom" data-side="bottom"></div>
-                <div class="connector connector-left" data-side="left"></div>
+                <button class="connector connector-top" data-side="top" title="Connect">
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                    </svg>
+                </button>
+                <button class="connector connector-right" data-side="right" title="Connect">
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                    </svg>
+                </button>
+                <button class="connector connector-bottom" data-side="bottom" title="Connect">
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                    </svg>
+                </button>
+                <button class="connector connector-left" data-side="left" title="Connect">
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                    </svg>
+                </button>
             </div>
         `;
 
@@ -204,11 +224,12 @@ const CanvasCards = {
             this.removeCard(card.id);
         });
 
-        // Connector click - start connection from this side
+        // Connector click - start or complete connection from this side
         el.querySelectorAll('.connector').forEach(conn => {
-            conn.addEventListener('mousedown', (e) => {
+            conn.addEventListener('click', (e) => {
                 e.stopPropagation();
-                CanvasConnections.startDrawingFromConnector(card.id, conn.dataset.side, e);
+                e.preventDefault();
+                CanvasConnections.handleConnectorClick(card.id, conn.dataset.side);
             });
         });
 
