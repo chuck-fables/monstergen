@@ -383,7 +383,7 @@ const CanvasCards = {
 
         switch (card.type) {
             case 'monster':
-                return `AC ${data.ac || '?'} | HP ${data.hp?.average || '?'}`;
+                return `AC ${data.armorClass?.value || '?'} | HP ${data.hitPoints?.average || '?'}`;
             case 'npc':
                 return data.personality ? data.personality.substring(0, 80) + '...' : '';
             case 'loot':
@@ -408,7 +408,7 @@ const CanvasCards = {
     viewFullCard(card) {
         // Create a modal to show full card
         const modal = document.createElement('div');
-        modal.className = 'canvas-card-modal';
+        modal.className = `canvas-card-modal canvas-card-modal-${card.type}`;
         modal.innerHTML = `
             <div class="canvas-card-modal-backdrop"></div>
             <div class="canvas-card-modal-content">
@@ -456,12 +456,12 @@ const CanvasCards = {
                 break;
             case 'location':
                 if (typeof LocationCardRenderer !== 'undefined') {
-                    return LocationCardRenderer.render(data);
+                    return LocationCardRenderer.renderSingle(data);
                 }
                 break;
             case 'item':
                 if (typeof ItemCardRenderer !== 'undefined') {
-                    return ItemCardRenderer.render(data);
+                    return ItemCardRenderer.renderSingle(data);
                 }
                 break;
         }

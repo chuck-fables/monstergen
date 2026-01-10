@@ -27,6 +27,9 @@ const CanvasConnections = {
         { id: 'dotted', label: 'Dotted', dashArray: '2,4' }
     ],
 
+    // Store bound handlers for cleanup
+    cardClickHandlers: new Map(),
+
     /**
      * Start drawing a connection from a card
      */
@@ -47,19 +50,65 @@ const CanvasConnections = {
         // Create temp line
         this.createTempLine();
 
-        // Use setTimeout to prevent immediate trigger from the click that started this
-        setTimeout(() => {
-            if (this.isDrawing) {
-                document.addEventListener('click', this.handleDrawingClick);
+        // Add drawing mode class to canvas
+        if (CampaignCanvas.canvas) {
+            CampaignCanvas.canvas.classList.add('drawing-mode');
+        }
+
+        // Add click handlers to all other cards
+        this.addCardClickHandlers();
+
+        // Also listen for Escape key and background clicks to cancel
+        this.escapeHandler = (e) => {
+            if (e.key === 'Escape') this.cancelDrawing();
+        };
+        this.backgroundHandler = (e) => {
+            if (e.target === CampaignCanvas.canvas || e.target === CampaignCanvas.viewport) {
+                this.cancelDrawing();
             }
-        }, 10);
+        };
+        document.addEventListener('keydown', this.escapeHandler);
+        CampaignCanvas.canvas.addEventListener('click', this.backgroundHandler);
     },
 
     /**
-     * Bound handler for drawing clicks (so we can remove it properly)
+     * Add click handlers to all cards for connection drawing
      */
-    handleDrawingClick: function(e) {
-        CanvasConnections.onDrawingClick(e);
+    addCardClickHandlers() {
+        const cards = document.querySelectorAll('.canvas-card');
+        cards.forEach(cardEl => {
+            const cardId = cardEl.dataset.canvasId;
+            if (cardId === this.drawingFromCard) return; // Skip source card
+
+            const handler = (e) => {
+                e.stopPropagation();
+                e.preventDefault();
+                const targetSide = e.target.closest('.connector')?.dataset.side || null;
+                this.createConnection(
+                    this.drawingFromCard,
+                    cardId,
+                    this.drawingFromSide,
+                    targetSide
+                );
+                this.finishDrawing();
+            };
+
+            this.cardClickHandlers.set(cardId, handler);
+            cardEl.addEventListener('click', handler, true); // Use capture
+        });
+    },
+
+    /**
+     * Remove click handlers from all cards
+     */
+    removeCardClickHandlers() {
+        this.cardClickHandlers.forEach((handler, cardId) => {
+            const cardEl = document.querySelector(`[data-canvas-id="${cardId}"]`);
+            if (cardEl) {
+                cardEl.removeEventListener('click', handler, true);
+            }
+        });
+        this.cardClickHandlers.clear();
     },
 
     /**
@@ -89,12 +138,25 @@ const CanvasConnections = {
             this.tempLine.setAttribute('y1', startPos.y);
         }
 
-        // Use setTimeout to prevent immediate trigger
-        setTimeout(() => {
-            if (this.isDrawing) {
-                document.addEventListener('click', this.handleDrawingClick);
+        // Add drawing mode class to canvas
+        if (CampaignCanvas.canvas) {
+            CampaignCanvas.canvas.classList.add('drawing-mode');
+        }
+
+        // Add click handlers to all other cards
+        this.addCardClickHandlers();
+
+        // Also listen for Escape key and background clicks to cancel
+        this.escapeHandler = (e) => {
+            if (e.key === 'Escape') this.cancelDrawing();
+        };
+        this.backgroundHandler = (e) => {
+            if (e.target === CampaignCanvas.canvas || e.target === CampaignCanvas.viewport) {
+                this.cancelDrawing();
             }
-        }, 10);
+        };
+        document.addEventListener('keydown', this.escapeHandler);
+        CampaignCanvas.canvas.addEventListener('click', this.backgroundHandler);
     },
 
     /**
@@ -133,37 +195,9 @@ const CanvasConnections = {
     },
 
     /**
-     * Handle click while drawing
-     */
-    onDrawingClick(e) {
-        // Ignore if not drawing
-        if (!this.isDrawing) return;
-
-        // Find if we clicked on a card
-        const cardEl = e.target.closest('.canvas-card');
-
-        if (cardEl && cardEl.dataset.canvasId !== this.drawingFromCard) {
-            // Connect to this card
-            const targetId = cardEl.dataset.canvasId;
-            const targetSide = e.target.closest('.connector')?.dataset.side || null;
-
-            this.createConnection(
-                this.drawingFromCard,
-                targetId,
-                this.drawingFromSide,
-                targetSide
-            );
-        }
-
-        // Always finish the drawing operation after one click (whether successful or not)
-        this.finishDrawing();
-    },
-
-    /**
      * Finish drawing operation and clean up
      */
     finishDrawing() {
-        document.removeEventListener('click', this.handleDrawingClick);
         this.cancelDrawing();
     },
 
@@ -171,12 +205,27 @@ const CanvasConnections = {
      * Cancel drawing
      */
     cancelDrawing() {
-        // Remove click listener if still attached
-        document.removeEventListener('click', this.handleDrawingClick);
-
         this.isDrawing = false;
 
-        // Remove highlight
+        // Remove card click handlers
+        this.removeCardClickHandlers();
+
+        // Remove escape and background handlers
+        if (this.escapeHandler) {
+            document.removeEventListener('keydown', this.escapeHandler);
+            this.escapeHandler = null;
+        }
+        if (this.backgroundHandler && CampaignCanvas.canvas) {
+            CampaignCanvas.canvas.removeEventListener('click', this.backgroundHandler);
+            this.backgroundHandler = null;
+        }
+
+        // Remove drawing mode class
+        if (CampaignCanvas.canvas) {
+            CampaignCanvas.canvas.classList.remove('drawing-mode');
+        }
+
+        // Remove highlight from source card
         const el = document.querySelector(`[data-canvas-id="${this.drawingFromCard}"]`);
         if (el) el.classList.remove('connecting');
 

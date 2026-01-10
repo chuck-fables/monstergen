@@ -773,6 +773,18 @@ select option {
         margin: 0;
         flex-shrink: 0;
     }
+
+    /* Monster action bar - horizontal scroll on mobile */
+    .monster-actions {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        justify-content: flex-start;
+        padding: 12px;
+    }
+
+    .monster-actions .btn-icon {
+        flex-shrink: 0;
+    }
 }
 
 /* ==================== COLLAPSIBLE CONTROLS FOR ALL GENERATORS ==================== */

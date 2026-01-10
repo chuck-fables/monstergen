@@ -210,8 +210,17 @@ const CampaignCanvas = {
         const panel = document.getElementById('panel-campaign');
         if (!panel || !panel.classList.contains('active')) return;
 
-        // Delete selected item
-        if (e.key === 'Delete' || e.key === 'Backspace') {
+        // Don't handle shortcuts when user is typing in an input or contenteditable
+        const activeEl = document.activeElement;
+        const isEditing = activeEl && (
+            activeEl.tagName === 'INPUT' ||
+            activeEl.tagName === 'TEXTAREA' ||
+            activeEl.isContentEditable ||
+            activeEl.closest('[contenteditable="true"]')
+        );
+
+        // Delete selected item (only if not editing text)
+        if ((e.key === 'Delete' || e.key === 'Backspace') && !isEditing) {
             if (this.selectedCard) {
                 CanvasCards.removeCard(this.selectedCard);
                 this.selectedCard = null;
@@ -231,7 +240,7 @@ const CampaignCanvas = {
         }
 
         // Reset view
-        if (e.key === 'Home') {
+        if (e.key === 'Home' && !isEditing) {
             this.resetView();
         }
     },
@@ -388,18 +397,30 @@ const CampaignCanvas = {
         }, 0);
     },
 
+    // Note color options
+    noteColors: [
+        { id: 'dark', label: 'Dark', bg: '#2d2d2d', text: '#e0e0e0' },
+        { id: 'yellow', label: 'Yellow', bg: '#fef3b5', text: '#5a4a00' },
+        { id: 'blue', label: 'Blue', bg: '#d4e8fc', text: '#1a4a6e' },
+        { id: 'green', label: 'Green', bg: '#d4f5d4', text: '#1a5a1a' },
+        { id: 'pink', label: 'Pink', bg: '#fce4ec', text: '#6e1a3a' },
+        { id: 'orange', label: 'Orange', bg: '#ffe0b2', text: '#6e3a00' }
+    ],
+
     /**
      * Add a sticky note
      */
-    addNote(x, y, text = '') {
+    addNote(x, y, text = '', title = '') {
         if (!this.currentBoard) this.createBoard('Default');
 
         const note = {
             id: 'note_' + Date.now(),
             x: x,
             y: y,
+            title: title || '',
             text: text || 'New note...',
-            color: 'yellow'
+            color: 'dark',
+            collapsed: false
         };
 
         if (!this.currentBoard.notes) this.currentBoard.notes = [];
@@ -417,21 +438,43 @@ const CampaignCanvas = {
      */
     renderNote(note) {
         const el = document.createElement('div');
-        el.className = `canvas-note canvas-note-${note.color}`;
+        el.className = `canvas-note canvas-note-${note.color}${note.collapsed ? ' collapsed' : ''}`;
         el.dataset.noteId = note.id;
         el.style.left = note.x + 'px';
         el.style.top = note.y + 'px';
 
         el.innerHTML = `
-            <div class="note-content" contenteditable="true">${note.text}</div>
-            <div class="note-actions">
-                <button class="note-color" title="Change color">&#9632;</button>
-                <button class="note-delete" title="Delete">&times;</button>
+            <div class="note-header">
+                <input type="text" class="note-title" placeholder="Title..." value="${this.escapeHtml(note.title || '')}" />
+                <div class="note-header-actions">
+                    <button class="note-btn note-collapse" title="Collapse/Expand">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="6 9 12 15 18 9"></polyline>
+                        </svg>
+                    </button>
+                    <button class="note-btn note-color-btn" title="Change color">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                        </svg>
+                    </button>
+                    <button class="note-btn note-delete" title="Delete">&times;</button>
+                </div>
+            </div>
+            <div class="note-body">
+                <div class="note-content" contenteditable="true">${this.escapeHtml(note.text)}</div>
             </div>
         `;
 
         // Make draggable
         this.makeNoteDraggable(el, note);
+
+        // Title editing
+        const titleInput = el.querySelector('.note-title');
+        titleInput.addEventListener('input', () => {
+            note.title = titleInput.value;
+            this.saveState();
+        });
+        titleInput.addEventListener('click', (e) => e.stopPropagation());
 
         // Content editing
         const content = el.querySelector('.note-content');
@@ -439,11 +482,20 @@ const CampaignCanvas = {
             note.text = content.textContent;
             this.saveState();
         });
+        content.addEventListener('click', (e) => e.stopPropagation());
 
-        // Color change
-        el.querySelector('.note-color').addEventListener('click', (e) => {
+        // Collapse toggle
+        el.querySelector('.note-collapse').addEventListener('click', (e) => {
             e.stopPropagation();
-            this.cycleNoteColor(note, el);
+            note.collapsed = !note.collapsed;
+            el.classList.toggle('collapsed', note.collapsed);
+            this.saveState();
+        });
+
+        // Color menu
+        el.querySelector('.note-color-btn').addEventListener('click', (e) => {
+            e.stopPropagation();
+            this.showNoteColorMenu(note, el, e);
         });
 
         // Delete
@@ -461,6 +513,72 @@ const CampaignCanvas = {
         });
 
         this.viewport.appendChild(el);
+    },
+
+    /**
+     * Show color picker menu for a note
+     */
+    showNoteColorMenu(note, noteEl, event) {
+        // Remove existing menu
+        const existing = document.querySelector('.note-color-menu');
+        if (existing) existing.remove();
+
+        const menu = document.createElement('div');
+        menu.className = 'note-color-menu';
+
+        const rect = event.target.getBoundingClientRect();
+        menu.style.left = rect.left + 'px';
+        menu.style.top = (rect.bottom + 4) + 'px';
+
+        menu.innerHTML = this.noteColors.map(c => `
+            <button class="note-color-option ${note.color === c.id ? 'active' : ''}"
+                    data-color="${c.id}"
+                    style="background: ${c.bg}; color: ${c.text};"
+                    title="${c.label}">
+                ${c.label}
+            </button>
+        `).join('');
+
+        menu.addEventListener('click', (e) => {
+            const colorId = e.target.dataset.color;
+            if (colorId) {
+                this.setNoteColor(note, noteEl, colorId);
+                menu.remove();
+            }
+        });
+
+        document.body.appendChild(menu);
+
+        // Remove on click outside
+        setTimeout(() => {
+            const handler = (e) => {
+                if (!menu.contains(e.target)) {
+                    menu.remove();
+                    document.removeEventListener('click', handler);
+                }
+            };
+            document.addEventListener('click', handler);
+        }, 0);
+    },
+
+    /**
+     * Set note color
+     */
+    setNoteColor(note, el, colorId) {
+        el.classList.remove(`canvas-note-${note.color}`);
+        note.color = colorId;
+        el.classList.add(`canvas-note-${note.color}`);
+        this.saveState();
+    },
+
+    /**
+     * Escape HTML for note content
+     */
+    escapeHtml(str) {
+        if (!str) return '';
+        const div = document.createElement('div');
+        div.textContent = str;
+        return div.innerHTML;
     },
 
     /**
@@ -494,20 +612,6 @@ const CampaignCanvas = {
                 this.saveState();
             }
         });
-    },
-
-    /**
-     * Cycle note color
-     */
-    cycleNoteColor(note, el) {
-        const colors = ['yellow', 'blue', 'green', 'pink', 'orange'];
-        const currentIndex = colors.indexOf(note.color);
-        const nextIndex = (currentIndex + 1) % colors.length;
-
-        el.classList.remove(`canvas-note-${note.color}`);
-        note.color = colors[nextIndex];
-        el.classList.add(`canvas-note-${note.color}`);
-        this.saveState();
     },
 
     /**
