@@ -1184,7 +1184,15 @@ const Generator = {
     generateInventory(monster, characterClass, cr) {
         if (typeof InventoryData === 'undefined') return [];
 
-        return InventoryData.generateInventory(characterClass, cr);
+        // Generate base inventory
+        const inventory = InventoryData.generateInventory(characterClass, cr);
+
+        // Ensure weapons used in actions are in inventory and remove non-thematic weapons
+        if (monster.actions && InventoryData.ensureActionWeaponsInInventory) {
+            InventoryData.ensureActionWeaponsInInventory(inventory, monster.actions, characterClass);
+        }
+
+        return inventory;
     },
 
     /**

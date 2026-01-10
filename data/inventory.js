@@ -4,10 +4,10 @@
  */
 
 const InventoryData = {
-    // Base equipment by class
+    // Base equipment by class (weapons match classWeaponUpgrades for consistency)
     classEquipment: {
         barbarian: {
-            weapons: ['Greataxe', 'Handaxe', 'Handaxe', 'Javelin', 'Javelin', 'Javelin', 'Javelin'],
+            weapons: ['Greataxe', 'Javelin', 'Javelin', 'Javelin', 'Javelin'],
             armor: [],
             gear: ['Explorer\'s Pack', 'Backpack', 'Bedroll', 'Mess Kit', 'Tinderbox', 'Torch', 'Torch', 'Rations', 'Waterskin', 'Rope']
         },
@@ -17,17 +17,17 @@ const InventoryData = {
             gear: ['Diplomat\'s Pack', 'Lute', 'Backpack', 'Bedroll', 'Costume', 'Candle', 'Rations', 'Waterskin', 'Disguise Kit']
         },
         cleric: {
-            weapons: ['Mace', 'Light Crossbow', 'Crossbow Bolts (20)'],
-            armor: ['Scale Mail', 'Shield'],
+            weapons: ['Mace', 'Shield', 'Light Crossbow', 'Crossbow Bolts (20)'],
+            armor: ['Scale Mail'],
             gear: ['Priest\'s Pack', 'Holy Symbol', 'Backpack', 'Blanket', 'Candle', 'Tinderbox', 'Alms Box', 'Incense', 'Censer', 'Vestments', 'Rations', 'Waterskin']
         },
         druid: {
-            weapons: ['Scimitar', 'Wooden Shield'],
+            weapons: ['Quarterstaff', 'Wooden Shield'],
             armor: ['Leather Armor'],
             gear: ['Explorer\'s Pack', 'Druidic Focus', 'Herbalism Kit', 'Backpack', 'Bedroll', 'Mess Kit', 'Tinderbox', 'Torch', 'Rations', 'Waterskin']
         },
         fighter: {
-            weapons: ['Longsword', 'Shield', 'Light Crossbow', 'Crossbow Bolts (20)'],
+            weapons: ['Longsword', 'Shield', 'Longbow', 'Arrows (20)'],
             armor: ['Chain Mail'],
             gear: ['Dungeoneer\'s Pack', 'Backpack', 'Crowbar', 'Hammer', 'Pitons', 'Torch', 'Tinderbox', 'Rations', 'Waterskin', 'Rope']
         },
@@ -42,22 +42,22 @@ const InventoryData = {
             gear: ['Priest\'s Pack', 'Holy Symbol', 'Backpack', 'Blanket', 'Candle', 'Tinderbox', 'Rations', 'Waterskin']
         },
         ranger: {
-            weapons: ['Longbow', 'Arrows (20)', 'Shortsword', 'Shortsword'],
+            weapons: ['Shortsword', 'Shortsword', 'Longbow', 'Arrows (20)'],
             armor: ['Scale Mail'],
             gear: ['Explorer\'s Pack', 'Backpack', 'Bedroll', 'Mess Kit', 'Tinderbox', 'Torch', 'Rations', 'Waterskin', 'Rope']
         },
         rogue: {
-            weapons: ['Rapier', 'Shortbow', 'Arrows (20)', 'Dagger', 'Dagger'],
+            weapons: ['Shortsword', 'Shortbow', 'Arrows (20)', 'Dagger', 'Dagger'],
             armor: ['Leather Armor'],
             gear: ['Burglar\'s Pack', 'Thieves\' Tools', 'Backpack', 'Bag of Ball Bearings', 'String', 'Bell', 'Candles', 'Crowbar', 'Hammer', 'Pitons', 'Lantern', 'Oil', 'Rations', 'Tinderbox', 'Waterskin', 'Rope']
         },
         sorcerer: {
-            weapons: ['Light Crossbow', 'Crossbow Bolts (20)', 'Dagger', 'Dagger'],
+            weapons: ['Dagger', 'Dagger', 'Light Crossbow', 'Crossbow Bolts (20)'],
             armor: [],
             gear: ['Dungeoneer\'s Pack', 'Arcane Focus', 'Component Pouch', 'Backpack', 'Crowbar', 'Hammer', 'Pitons', 'Torch', 'Tinderbox', 'Rations', 'Waterskin']
         },
         warlock: {
-            weapons: ['Light Crossbow', 'Crossbow Bolts (20)', 'Dagger', 'Dagger'],
+            weapons: ['Dagger', 'Dagger', 'Light Crossbow', 'Crossbow Bolts (20)'],
             armor: ['Leather Armor'],
             gear: ['Dungeoneer\'s Pack', 'Arcane Focus', 'Component Pouch', 'Backpack', 'Crowbar', 'Hammer', 'Pitons', 'Torch', 'Tinderbox', 'Rations', 'Waterskin']
         },
@@ -67,7 +67,7 @@ const InventoryData = {
             gear: ['Scholar\'s Pack', 'Spellbook', 'Component Pouch', 'Arcane Focus', 'Backpack', 'Book of Lore', 'Ink', 'Ink Pen', 'Parchment', 'Little Bag of Sand', 'Small Knife', 'Rations', 'Waterskin']
         },
         artificer: {
-            weapons: ['Light Crossbow', 'Crossbow Bolts (20)', 'Dagger'],
+            weapons: ['Dagger', 'Light Crossbow', 'Crossbow Bolts (20)'],
             armor: ['Scale Mail'],
             gear: ['Dungeoneer\'s Pack', 'Thieves\' Tools', 'Tinker\'s Tools', 'Backpack', 'Crowbar', 'Hammer', 'Pitons', 'Torch', 'Tinderbox', 'Rations', 'Waterskin']
         }
@@ -356,27 +356,24 @@ const InventoryData = {
     },
 
     /**
-     * Upgrade equipment based on CR
+     * Upgrade equipment based on CR using class-specific weapons
      */
     upgradeEquipment(inventory, characterClass, cr) {
-        // Determine if martial or caster
-        const casterClasses = ['wizard', 'sorcerer', 'warlock', 'bard', 'cleric', 'druid'];
-        const isCaster = casterClasses.includes(characterClass);
-
-        // Find CR tier
+        // Find CR tier for armor upgrades
         const crTiers = [0, 1, 3, 5, 8, 11, 15];
         let tier = 0;
         for (const t of crTiers) {
             if (cr >= t) tier = t;
         }
 
-        // Upgrade primary weapon
-        const weaponPool = isCaster ? this.weaponUpgrades.caster[tier] : this.weaponUpgrades.martial[tier];
-        if (weaponPool && weaponPool.length > 0) {
-            const newWeapon = weaponPool[Math.floor(Math.random() * weaponPool.length)];
-            const weaponIndex = inventory.findIndex(i => i.type === 'weapon');
-            if (weaponIndex >= 0) {
-                inventory[weaponIndex].name = newWeapon;
+        // Get class-specific weapon upgrades
+        const classWeapons = this.classWeaponUpgrades[characterClass];
+        if (classWeapons) {
+            // Upgrade melee weapon to class-appropriate weapon
+            const meleeWeaponIndex = inventory.findIndex(i => i.type === 'weapon');
+            if (meleeWeaponIndex >= 0 && classWeapons.melee && classWeapons.melee.length > 0) {
+                // Use first weapon (primary) for the class
+                inventory[meleeWeaponIndex].name = classWeapons.melee[0];
             }
         }
 
@@ -396,6 +393,58 @@ const InventoryData = {
                 inventory[armorIndex].name = newArmor;
             } else if (newArmor) {
                 inventory.push({ name: newArmor, quantity: 1, type: 'armor' });
+            }
+        }
+    },
+
+    /**
+     * Ensure weapons used in actions are in inventory
+     */
+    ensureActionWeaponsInInventory(inventory, actions, characterClass) {
+        if (!actions || !Array.isArray(actions)) return;
+
+        const classWeapons = this.classWeaponUpgrades[characterClass] || {};
+
+        for (const action of actions) {
+            if (!action.isAttack) continue;
+
+            // Extract weapon name from action (handle magic weapons like "+1 Longsword")
+            let weaponName = action.name;
+            const baseName = weaponName.replace(/^\+\d+\s+/, '');
+
+            // Check if this weapon is already in inventory
+            const hasWeapon = inventory.some(item => {
+                const itemBaseName = item.name.replace(/^\+\d+\s+/, '');
+                return itemBaseName === baseName || item.name === weaponName;
+            });
+
+            if (!hasWeapon && this.weaponStats[baseName]) {
+                // Add the weapon to inventory
+                inventory.push({ name: weaponName, quantity: 1, type: 'weapon' });
+            }
+        }
+
+        // Remove any non-class-appropriate weapons that weren't used in actions
+        const actionWeaponNames = actions
+            .filter(a => a.isAttack)
+            .map(a => a.name.replace(/^\+\d+\s+/, ''));
+
+        const allowedMelee = classWeapons.melee || [];
+        const allowedRanged = classWeapons.ranged || [];
+        const allAllowed = [...allowedMelee, ...allowedRanged];
+
+        // Filter inventory to only keep class-appropriate weapons or weapons used in actions
+        for (let i = inventory.length - 1; i >= 0; i--) {
+            const item = inventory[i];
+            if (item.type !== 'weapon') continue;
+
+            const itemBaseName = item.name.replace(/^\+\d+\s+/, '');
+            const isActionWeapon = actionWeaponNames.includes(itemBaseName);
+            const isClassWeapon = allAllowed.includes(itemBaseName);
+            const isAmmo = itemBaseName.includes('Arrows') || itemBaseName.includes('Bolts');
+
+            if (!isActionWeapon && !isClassWeapon && !isAmmo) {
+                inventory.splice(i, 1);
             }
         }
     }
