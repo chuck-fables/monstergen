@@ -335,14 +335,7 @@ const VTTManager = {
      * Zoom controls
      */
     zoom(delta, x, y) {
-        const oldScale = this.scale;
         this.scale = Math.min(3, Math.max(0.25, this.scale + delta));
-
-        // Zoom toward mouse position
-        const scaleChange = this.scale / oldScale;
-        this.offsetX = x - (x - this.offsetX) * scaleChange;
-        this.offsetY = y - (y - this.offsetY) * scaleChange;
-
         this.updateTransform();
     },
 
