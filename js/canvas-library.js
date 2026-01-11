@@ -11,7 +11,7 @@ const CanvasLibrary = {
 
     // Storage keys for each type
     storageKeys: {
-        monster: 'dmtk_monsters',
+        monster: 'monsterLibrary',  // Uses same key as MonsterStorage
         npc: 'dmtk_npcs',
         loot: 'dmtk_loot',
         hook: 'dmtk_hooks',
@@ -25,8 +25,11 @@ const CanvasLibrary = {
             color: '#8B0000',
             label: 'Monsters',
             icon: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L9 7H4l3 5-3 5h5l3 5 3-5h5l-3-5 3-5h-5L12 2z"></path></svg>',
-            getName: (item) => item.name || 'Monster',
-            getMeta: (item) => `CR ${item.cr || '?'} ${item.type || ''}`
+            getName: (item) => (item.data && item.data.name) || item.name || 'Monster',
+            getMeta: (item) => {
+                const data = item.data || item;
+                return `CR ${data.challengeRating || data.cr || item.cr || '?'} ${data.type || item.type || ''}`;
+            }
         },
         npc: {
             color: '#9E2A2B',
@@ -224,8 +227,11 @@ const CanvasLibrary = {
             return;
         }
 
+        // For monsters, unwrap the data from the wrapper
+        const dataToAdd = type === 'monster' ? (item.data || item) : item;
+
         // Add to canvas
-        CanvasCards.addCard(type, item);
+        CanvasCards.addCard(type, dataToAdd);
 
         // Show feedback
         const config = this.typeConfig[type];

@@ -518,6 +518,7 @@
     background-repeat: no-repeat;
     pointer-events: none;
     z-index: 1;
+    transform-origin: 0 0;
 }
 
 /* Grid Layer - on top of background */
@@ -534,6 +535,7 @@
     background-size: 50px 50px;
     opacity: 0.3;
     z-index: 2;
+    transform-origin: 0 0;
 }
 
 /* Token Layer */
@@ -545,6 +547,7 @@
     height: 100%;
     pointer-events: none;
     z-index: 3;
+    transform-origin: 0 0;
 }
 
 /* Fog Layer */
@@ -556,6 +559,7 @@
     height: 100%;
     pointer-events: none;
     z-index: 4;
+    transform-origin: 0 0;
 }
 
 /* Measure Layer - screen space, not transformed */
@@ -889,4 +893,235 @@
     #vtt-map-select {
         min-width: 80px;
     }
+}
+
+/* ==================== Mobile Token Touch Improvements ==================== */
+@media (max-width: 768px) {
+    /* Larger touch targets for tokens on mobile */
+    .vtt-token {
+        min-width: 44px;
+        min-height: 44px;
+    }
+
+    .vtt-token::before {
+        content: '';
+        position: absolute;
+        top: -10px;
+        left: -10px;
+        right: -10px;
+        bottom: -10px;
+        pointer-events: auto;
+    }
+}
+
+/* ==================== Mobile Map Management Bar ==================== */
+.vtt-mobile-actions {
+    display: none;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(180deg, #2a2a30 0%, #1e1e22 100%);
+    border-top: 1px solid #3a3a42;
+    padding: 8px;
+    z-index: 150;
+    gap: 8px;
+}
+
+@media (max-width: 768px) {
+    .vtt-mobile-actions {
+        display: flex;
+        justify-content: space-around;
+    }
+
+    .vtt-canvas {
+        margin-bottom: 50px;
+    }
+
+    .vtt-sidebar {
+        bottom: 50px;
+    }
+
+    .vtt-ruler-display {
+        bottom: 120px;
+    }
+}
+
+.vtt-mobile-actions .vtt-btn {
+    flex: 1;
+    max-width: 80px;
+    font-size: 0.65rem;
+    padding: 8px 4px;
+    text-align: center;
+}
+
+.vtt-mobile-actions .vtt-btn svg {
+    display: block;
+    margin: 0 auto 4px;
+}
+
+/* ==================== Dice Roller Bubble ==================== */
+.vtt-dice-roller {
+    position: fixed;
+    bottom: 80px;
+    right: 16px;
+    z-index: 300;
+}
+
+@media (max-width: 768px) {
+    .vtt-dice-roller {
+        bottom: 130px;
+    }
+}
+
+.vtt-dice-toggle {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #7b341e 0%, #5a2515 100%);
+    border: 2px solid #c9a227;
+    color: #f0e0c0;
+    font-size: 1.5rem;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.vtt-dice-toggle:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.5);
+}
+
+.vtt-dice-toggle:active {
+    transform: scale(0.95);
+}
+
+.vtt-dice-panel {
+    position: absolute;
+    bottom: 70px;
+    right: 0;
+    width: 200px;
+    background: #242428;
+    border: 1px solid #3a3a42;
+    border-radius: 8px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+    padding: 12px;
+    display: none;
+}
+
+.vtt-dice-panel.open {
+    display: block;
+}
+
+.vtt-dice-panel h4 {
+    color: #c9a227;
+    font-family: 'Libre Baskerville', serif;
+    font-size: 0.9rem;
+    margin: 0 0 12px 0;
+    text-align: center;
+}
+
+.vtt-dice-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 6px;
+    margin-bottom: 12px;
+}
+
+.vtt-dice-btn {
+    padding: 8px 4px;
+    background: #2a2a30;
+    border: 1px solid #3a3a42;
+    border-radius: 4px;
+    color: #e0e0e5;
+    font-size: 0.75rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.vtt-dice-btn:hover {
+    background: #3a3a42;
+    border-color: #c9a227;
+}
+
+.vtt-dice-btn.active {
+    background: linear-gradient(180deg, #7b341e 0%, #5a2515 100%);
+    border-color: #c9a227;
+    color: #f0e0c0;
+}
+
+.vtt-dice-count {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.vtt-dice-count button {
+    width: 28px;
+    height: 28px;
+    border-radius: 4px;
+    background: #2a2a30;
+    border: 1px solid #3a3a42;
+    color: #e0e0e5;
+    cursor: pointer;
+    font-size: 1rem;
+}
+
+.vtt-dice-count button:hover {
+    background: #3a3a42;
+}
+
+.vtt-dice-count span {
+    color: #e0e0e5;
+    font-size: 1rem;
+    min-width: 60px;
+    text-align: center;
+}
+
+.vtt-roll-btn {
+    width: 100%;
+    padding: 10px;
+    background: linear-gradient(180deg, #7b341e 0%, #5a2515 100%);
+    border: 1px solid #c9a227;
+    border-radius: 6px;
+    color: #f0e0c0;
+    font-size: 0.9rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.vtt-roll-btn:hover {
+    background: linear-gradient(180deg, #9b4422 0%, #7b341e 100%);
+}
+
+.vtt-roll-result {
+    text-align: center;
+    margin-top: 12px;
+    padding: 10px;
+    background: rgba(201, 162, 39, 0.1);
+    border: 1px solid rgba(201, 162, 39, 0.3);
+    border-radius: 6px;
+    display: none;
+}
+
+.vtt-roll-result.show {
+    display: block;
+}
+
+.vtt-roll-total {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #c9a227;
+}
+
+.vtt-roll-breakdown {
+    font-size: 0.75rem;
+    color: #a0a0a8;
+    margin-top: 4px;
 }

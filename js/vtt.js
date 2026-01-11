@@ -62,6 +62,10 @@ const VTTManager = {
     // Monster favorites
     favorites: [],
 
+    // Dice roller state
+    currentDie: 20,
+    diceCount: 1,
+
     // D&D 5e Conditions
     conditions: [
         { id: 'blinded', name: 'Blinded', icon: 'B' },
@@ -370,6 +374,7 @@ const VTTManager = {
         this.gridSize = parseInt(value);
         document.getElementById('vtt-grid-size-value').textContent = value + 'px';
         this.updateGrid();
+        this.renderTokens();  // Re-render tokens to update their sizes
         this.saveState();
     },
 
@@ -506,14 +511,20 @@ const VTTManager = {
         const maxHP = parseInt(prompt('Max HP (optional):', '')) || null;
         const ac = parseInt(prompt('AC (optional):', '')) || null;
 
+        // Calculate snap position at center of viewport
+        const centerX = (this.canvas.offsetWidth / 2 - this.offsetX) / this.scale;
+        const centerY = (this.canvas.offsetHeight / 2 - this.offsetY) / this.scale;
+        const snappedX = Math.round(centerX / this.gridSize) * this.gridSize;
+        const snappedY = Math.round(centerY / this.gridSize) * this.gridSize;
+
         const token = {
             id: 'token_' + Date.now(),
             type: 'player',
             color: color,
             name: name,
-            x: this.canvas.offsetWidth / 2 - this.offsetX / this.scale,
-            y: this.canvas.offsetHeight / 2 - this.offsetY / this.scale,
-            size: this.gridSize,
+            x: snappedX,
+            y: snappedY,
+            sizeMultiplier: 1,  // Store multiplier instead of absolute size
             maxHP: maxHP,
             currentHP: maxHP,
             ac: ac,
@@ -546,14 +557,20 @@ const VTTManager = {
         const monsterSize = (monster.size || 'medium').toLowerCase();
         const sizeMultiplier = sizeMultipliers[monsterSize] || 1;
 
+        // Calculate snap position at center of viewport
+        const centerX = (this.canvas.offsetWidth / 2 - this.offsetX) / this.scale;
+        const centerY = (this.canvas.offsetHeight / 2 - this.offsetY) / this.scale;
+        const snappedX = Math.round(centerX / this.gridSize) * this.gridSize;
+        const snappedY = Math.round(centerY / this.gridSize) * this.gridSize;
+
         const token = {
             id: 'token_' + Date.now(),
             type: 'monster',
             monsterId: monster.id,
             name: monster.name,
-            x: this.canvas.offsetWidth / 2 - this.offsetX / this.scale,
-            y: this.canvas.offsetHeight / 2 - this.offsetY / this.scale,
-            size: this.gridSize * sizeMultiplier,
+            x: snappedX,
+            y: snappedY,
+            sizeMultiplier: sizeMultiplier,  // Store multiplier instead of absolute size
             maxHP: hp,
             currentHP: hp,
             ac: ac,
@@ -574,13 +591,18 @@ const VTTManager = {
         this.tokenLayer.innerHTML = '';
 
         this.tokens.forEach(token => {
+            // Calculate actual size from multiplier (backward compat: use size if no multiplier)
+            const tokenSize = token.sizeMultiplier
+                ? this.gridSize * token.sizeMultiplier
+                : (token.size || this.gridSize);
+
             const el = document.createElement('div');
             el.className = `vtt-token ${token.type}${this.selectedToken?.id === token.id ? ' selected' : ''}`;
             el.dataset.tokenId = token.id;
             el.style.left = token.x + 'px';
             el.style.top = token.y + 'px';
-            el.style.width = token.size + 'px';
-            el.style.height = token.size + 'px';
+            el.style.width = tokenSize + 'px';
+            el.style.height = tokenSize + 'px';
 
             if (token.type === 'player') {
                 // Player token with custom image or color
@@ -591,7 +613,7 @@ const VTTManager = {
                 } else {
                     el.style.backgroundColor = this.getPlayerColor(token.color);
                 }
-                el.innerHTML = `<span style="font-size: ${token.size * 0.3}px; color: white; text-shadow: 0 1px 2px rgba(0,0,0,0.5);">${token.name.charAt(0)}</span>`;
+                el.innerHTML = `<span style="font-size: ${tokenSize * 0.3}px; color: white; text-shadow: 0 1px 2px rgba(0,0,0,0.5);">${token.name.charAt(0)}</span>`;
             }
 
             // Token content for monsters
@@ -601,7 +623,7 @@ const VTTManager = {
                     el.style.backgroundSize = 'cover';
                     el.style.backgroundPosition = 'center';
                 }
-                el.innerHTML = `<span style="font-size: ${token.size * 0.3}px; color: white; text-shadow: 0 1px 2px rgba(0,0,0,0.5);">${token.name.charAt(0)}</span>`;
+                el.innerHTML = `<span style="font-size: ${tokenSize * 0.3}px; color: white; text-shadow: 0 1px 2px rgba(0,0,0,0.5);">${token.name.charAt(0)}</span>`;
             }
 
             // HP Bar (for any token with HP)
@@ -865,7 +887,7 @@ const VTTManager = {
 
         const size = prompt('Size (Tiny, Small, Medium, Large, Huge, Gargantuan):', 'Medium');
         if (size && sizes[size]) {
-            token.size = this.gridSize * sizes[size];
+            token.sizeMultiplier = sizes[size];  // Store multiplier instead of absolute size
             this.renderTokens();
             this.saveState();
         }
@@ -1091,17 +1113,18 @@ const VTTManager = {
      */
     loadMonsterLibrary() {
         try {
-            const monsters = JSON.parse(localStorage.getItem('dmtk_monsters')) || [];
+            const monsters = JSON.parse(localStorage.getItem('monsterLibrary')) || [];
             this.renderMonsterList(monsters);
         } catch (e) {}
     },
 
     filterMonsters(query) {
         try {
-            const monsters = JSON.parse(localStorage.getItem('dmtk_monsters')) || [];
-            const filtered = monsters.filter(m =>
-                m.name.toLowerCase().includes(query.toLowerCase())
-            );
+            const monsters = JSON.parse(localStorage.getItem('monsterLibrary')) || [];
+            const filtered = monsters.filter(m => {
+                const name = m.name || (m.data && m.data.name) || '';
+                return name.toLowerCase().includes(query.toLowerCase());
+            });
             this.renderMonsterList(filtered);
         } catch (e) {}
     },
@@ -1128,10 +1151,15 @@ const VTTManager = {
     },
 
     renderMonsterItem(monster, isFav) {
-        const cr = monster.challengeRating || monster.cr || '?';
+        // Handle wrapper format {id, name, type, cr, data}
+        const monsterData = monster.data || monster;
+        const name = monsterData.name || monster.name || 'Unknown';
+        const cr = monsterData.challengeRating || monsterData.cr || monster.cr || '?';
+        // Store the unwrapped data for the token
+        const tokenData = JSON.stringify(monsterData).replace(/"/g, '&quot;');
         return `
-            <div class="vtt-monster-item" onclick="VTTManager.addMonsterToken(${JSON.stringify(monster).replace(/"/g, '&quot;')})">
-                <span class="vtt-monster-item-name">${monster.name}</span>
+            <div class="vtt-monster-item" onclick="VTTManager.addMonsterToken(${tokenData})">
+                <span class="vtt-monster-item-name">${name}</span>
                 <span class="vtt-monster-item-cr">CR ${cr}</span>
                 <button class="vtt-monster-item-fav ${isFav ? 'active' : ''}" onclick="event.stopPropagation(); VTTManager.toggleFavorite('${monster.id}')">
                     ${isFav ? '★' : '☆'}
@@ -1335,6 +1363,77 @@ const VTTManager = {
             }
         };
         reader.readAsText(file);
+    },
+
+    /**
+     * Dice Roller
+     */
+    toggleDiceRoller() {
+        const panel = document.getElementById('vtt-dice-panel');
+        if (panel) {
+            panel.classList.toggle('open');
+        }
+    },
+
+    selectDie(die) {
+        this.currentDie = die;
+        this.updateDiceDisplay();
+
+        // Update button states
+        document.querySelectorAll('.vtt-dice-btn').forEach(btn => {
+            btn.classList.toggle('active', parseInt(btn.dataset.die) === die);
+        });
+    },
+
+    changeDiceCount(delta) {
+        this.diceCount = Math.max(1, Math.min(20, this.diceCount + delta));
+        this.updateDiceDisplay();
+    },
+
+    updateDiceDisplay() {
+        const display = document.getElementById('vtt-dice-count-display');
+        if (display) {
+            display.textContent = `${this.diceCount}d${this.currentDie}`;
+        }
+    },
+
+    rollDice() {
+        const rolls = [];
+        let total = 0;
+
+        for (let i = 0; i < this.diceCount; i++) {
+            const roll = Math.floor(Math.random() * this.currentDie) + 1;
+            rolls.push(roll);
+            total += roll;
+        }
+
+        // Display result
+        const resultEl = document.getElementById('vtt-roll-result');
+        const totalEl = document.getElementById('vtt-roll-total');
+        const breakdownEl = document.getElementById('vtt-roll-breakdown');
+
+        if (resultEl && totalEl && breakdownEl) {
+            totalEl.textContent = total;
+
+            // Highlight nat 20 or nat 1 on single d20
+            if (this.currentDie === 20 && this.diceCount === 1) {
+                if (total === 20) {
+                    totalEl.style.color = '#5cb85c';
+                    breakdownEl.textContent = 'Natural 20!';
+                } else if (total === 1) {
+                    totalEl.style.color = '#d9534f';
+                    breakdownEl.textContent = 'Natural 1...';
+                } else {
+                    totalEl.style.color = '#c9a227';
+                    breakdownEl.textContent = `[${rolls.join(', ')}]`;
+                }
+            } else {
+                totalEl.style.color = '#c9a227';
+                breakdownEl.textContent = `[${rolls.join(', ')}]`;
+            }
+
+            resultEl.classList.add('show');
+        }
     }
 };
 

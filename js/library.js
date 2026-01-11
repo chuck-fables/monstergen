@@ -9,7 +9,7 @@ const LibraryPanel = {
 
     // Storage key mapping
     storageKeys: {
-        monsters: 'dmtk_monsters',
+        monsters: 'monsterLibrary',  // Uses same key as MonsterStorage
         npcs: 'dmtk_npcs',
         loot: 'dmtk_loot',
         hooks: 'dmtk_hooks',
@@ -82,14 +82,16 @@ const LibraryPanel = {
     },
 
     renderItem(item) {
-        const name = item.name || item.hoardName || 'Unnamed';
+        // Monsters use wrapper format {id, name, type, cr, data}
+        const monsterData = this.currentType === 'monsters' ? (item.data || item) : item;
+        const name = monsterData.name || item.name || item.hoardName || 'Unnamed';
         let meta = '';
 
         switch (this.currentType) {
             case 'monsters':
-                const cr = item.challengeRating || item.cr || '?';
-                const size = item.size || 'Medium';
-                const type = item.type || 'creature';
+                const cr = monsterData.challengeRating || monsterData.cr || item.cr || '?';
+                const size = monsterData.size || 'Medium';
+                const type = monsterData.type || item.type || 'creature';
                 meta = `CR ${cr} | ${size} ${type}`;
                 break;
             case 'npcs':
@@ -147,9 +149,14 @@ const LibraryPanel = {
             // Navigate to the appropriate panel and load the item
             switch (this.currentType) {
                 case 'monsters':
-                    if (typeof MonsterPanel !== 'undefined') {
+                    // Use the MonsterStorage-compatible load
+                    if (typeof Sidebar !== 'undefined') {
                         Sidebar.switchPanel('monster');
-                        MonsterPanel.loadMonster(id);
+                        // If MonsterPanel exists and has loadFromLibrary, use it
+                        // Otherwise use the library modal approach
+                        if (typeof loadMonsterFromLibrary === 'function') {
+                            loadMonsterFromLibrary(id);
+                        }
                     }
                     break;
                 case 'npcs':
@@ -205,8 +212,11 @@ const LibraryPanel = {
                 items: 'item'
             };
 
+            // For monsters, unwrap the data from the wrapper
+            const dataToSend = this.currentType === 'monsters' ? (item.data || item) : item;
+
             if (typeof CampaignCanvas !== 'undefined') {
-                CampaignCanvas.addCard(typeMap[this.currentType], item);
+                CampaignCanvas.addCard(typeMap[this.currentType], dataToSend);
                 Sidebar.switchPanel('campaign');
             }
         } catch (e) {
