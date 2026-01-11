@@ -944,17 +944,56 @@ const VTTManager = {
         input.onchange = (e) => {
             const file = e.target.files[0];
             if (file) {
-                const reader = new FileReader();
-                reader.onload = (ev) => {
-                    token.customImage = ev.target.result;
+                // Compress image before storing to save localStorage space
+                this.compressImage(file, 200, 200, 0.8, (compressedDataUrl) => {
+                    token.customImage = compressedDataUrl;
                     this.renderTokens();
                     this.saveState();
-                };
-                reader.readAsDataURL(file);
+                });
             }
         };
         input.click();
         this.closeContextMenu();
+    },
+
+    /**
+     * Compress an image file to reduce storage size
+     */
+    compressImage(file, maxWidth, maxHeight, quality, callback) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const img = new Image();
+            img.onload = () => {
+                // Calculate new dimensions maintaining aspect ratio
+                let width = img.width;
+                let height = img.height;
+
+                if (width > height) {
+                    if (width > maxWidth) {
+                        height = Math.round(height * maxWidth / width);
+                        width = maxWidth;
+                    }
+                } else {
+                    if (height > maxHeight) {
+                        width = Math.round(width * maxHeight / height);
+                        height = maxHeight;
+                    }
+                }
+
+                // Create canvas and draw resized image
+                const canvas = document.createElement('canvas');
+                canvas.width = width;
+                canvas.height = height;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, width, height);
+
+                // Convert to compressed data URL
+                const compressedDataUrl = canvas.toDataURL('image/jpeg', quality);
+                callback(compressedDataUrl);
+            };
+            img.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
     },
 
     toggleCondition(tokenId, conditionId) {
@@ -1493,7 +1532,16 @@ const VTTManager = {
     saveSavedTokens() {
         try {
             localStorage.setItem('dmtk_vtt_saved_tokens', JSON.stringify(this.savedTokens));
-        } catch (e) {}
+        } catch (e) {
+            console.error('Failed to save tokens:', e);
+            if (typeof showNotification === 'function') {
+                if (e.name === 'QuotaExceededError') {
+                    showNotification('Storage full! Try removing some saved tokens.', 'error');
+                } else {
+                    showNotification('Failed to save token templates', 'error');
+                }
+            }
+        }
     },
 
     saveTokenAsTemplate(tokenId) {
@@ -1685,9 +1733,20 @@ const VTTManager = {
 
     saveMaps() {
         try {
-            localStorage.setItem('dmtk_vtt_maps', JSON.stringify(this.maps));
+            const data = JSON.stringify(this.maps);
+            localStorage.setItem('dmtk_vtt_maps', data);
         } catch (e) {
             console.error('Failed to save maps:', e);
+            // Notify user of save failure
+            if (typeof showNotification === 'function') {
+                if (e.name === 'QuotaExceededError') {
+                    showNotification('Storage full! Try removing some token images.', 'error');
+                } else {
+                    showNotification('Failed to save map data', 'error');
+                }
+            } else {
+                alert('Failed to save: ' + (e.name === 'QuotaExceededError' ? 'Storage full!' : e.message));
+            }
         }
     },
 
