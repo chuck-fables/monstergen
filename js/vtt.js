@@ -161,32 +161,44 @@ const VTTManager = {
      */
     initDiceRollerDrag() {
         const diceRoller = document.getElementById('vtt-dice-roller');
-        if (!diceRoller) return;
+        const toggle = document.querySelector('.vtt-dice-toggle');
+        if (!diceRoller || !toggle) return;
 
-        // Mouse events
-        diceRoller.addEventListener('mousedown', (e) => this.onDiceRollerDragStart(e));
+        // Track drag state
+        this.diceRollerStartX = 0;
+        this.diceRollerStartY = 0;
+        this.diceRollerMoved = false;
+
+        // Mouse events on toggle button
+        toggle.addEventListener('mousedown', (e) => this.onDiceRollerDragStart(e));
         document.addEventListener('mousemove', (e) => this.onDiceRollerDrag(e));
         document.addEventListener('mouseup', (e) => this.onDiceRollerDragEnd(e));
 
-        // Touch events
-        diceRoller.addEventListener('touchstart', (e) => this.onDiceRollerTouchStart(e), { passive: false });
+        // Touch events on toggle button
+        toggle.addEventListener('touchstart', (e) => this.onDiceRollerTouchStart(e), { passive: false });
         document.addEventListener('touchmove', (e) => this.onDiceRollerTouchMove(e), { passive: false });
         document.addEventListener('touchend', (e) => this.onDiceRollerTouchEnd(e));
+
+        // Override the onclick to check if we dragged
+        toggle.onclick = null;
+        toggle.removeAttribute('onclick');
     },
 
     onDiceRollerDragStart(e) {
-        // Don't start drag if clicking on panel or buttons
-        if (e.target.closest('.vtt-dice-panel') || e.target.closest('.vtt-dice-toggle')) return;
-
         const diceRoller = document.getElementById('vtt-dice-roller');
         if (!diceRoller) return;
 
         this.diceRollerDragging = true;
+        this.diceRollerMoved = false;
+        this.diceRollerStartX = e.clientX;
+        this.diceRollerStartY = e.clientY;
         diceRoller.classList.add('dragging');
 
         const rect = diceRoller.getBoundingClientRect();
         this.diceRollerOffsetX = e.clientX - rect.left;
         this.diceRollerOffsetY = e.clientY - rect.top;
+
+        e.preventDefault();
     },
 
     onDiceRollerDrag(e) {
@@ -195,6 +207,15 @@ const VTTManager = {
         const diceRoller = document.getElementById('vtt-dice-roller');
         const container = this.canvas;
         if (!diceRoller || !container) return;
+
+        // Check if we've moved enough to consider it a drag
+        const dx = Math.abs(e.clientX - this.diceRollerStartX);
+        const dy = Math.abs(e.clientY - this.diceRollerStartY);
+        if (dx > 5 || dy > 5) {
+            this.diceRollerMoved = true;
+        }
+
+        if (!this.diceRollerMoved) return;
 
         const containerRect = container.getBoundingClientRect();
 
@@ -208,7 +229,7 @@ const VTTManager = {
         newX = Math.max(0, Math.min(newX, maxX));
         newY = Math.max(0, Math.min(newY, maxY));
 
-        // Apply position (use left/top instead of right)
+        // Apply position
         diceRoller.style.right = 'auto';
         diceRoller.style.left = newX + 'px';
         diceRoller.style.top = newY + 'px';
@@ -217,24 +238,34 @@ const VTTManager = {
     onDiceRollerDragEnd(e) {
         if (!this.diceRollerDragging) return;
 
+        const wasDragging = this.diceRollerMoved;
         this.diceRollerDragging = false;
+        this.diceRollerMoved = false;
+
         const diceRoller = document.getElementById('vtt-dice-roller');
         if (diceRoller) {
             diceRoller.classList.remove('dragging');
         }
+
+        // If we didn't move, toggle the panel
+        if (!wasDragging) {
+            this.toggleDiceRoller();
+        }
     },
 
     onDiceRollerTouchStart(e) {
-        if (e.target.closest('.vtt-dice-panel') || e.target.closest('.vtt-dice-toggle')) return;
         if (e.touches.length !== 1) return;
 
         const diceRoller = document.getElementById('vtt-dice-roller');
         if (!diceRoller) return;
 
+        const touch = e.touches[0];
         this.diceRollerDragging = true;
+        this.diceRollerMoved = false;
+        this.diceRollerStartX = touch.clientX;
+        this.diceRollerStartY = touch.clientY;
         diceRoller.classList.add('dragging');
 
-        const touch = e.touches[0];
         const rect = diceRoller.getBoundingClientRect();
         this.diceRollerOffsetX = touch.clientX - rect.left;
         this.diceRollerOffsetY = touch.clientY - rect.top;
@@ -250,6 +281,16 @@ const VTTManager = {
         if (!diceRoller || !container) return;
 
         const touch = e.touches[0];
+
+        // Check if we've moved enough to consider it a drag
+        const dx = Math.abs(touch.clientX - this.diceRollerStartX);
+        const dy = Math.abs(touch.clientY - this.diceRollerStartY);
+        if (dx > 5 || dy > 5) {
+            this.diceRollerMoved = true;
+        }
+
+        if (!this.diceRollerMoved) return;
+
         const containerRect = container.getBoundingClientRect();
 
         let newX = touch.clientX - containerRect.left - this.diceRollerOffsetX;
@@ -270,10 +311,18 @@ const VTTManager = {
     onDiceRollerTouchEnd(e) {
         if (!this.diceRollerDragging) return;
 
+        const wasDragging = this.diceRollerMoved;
         this.diceRollerDragging = false;
+        this.diceRollerMoved = false;
+
         const diceRoller = document.getElementById('vtt-dice-roller');
         if (diceRoller) {
             diceRoller.classList.remove('dragging');
+        }
+
+        // If we didn't move, toggle the panel
+        if (!wasDragging) {
+            this.toggleDiceRoller();
         }
     },
 
