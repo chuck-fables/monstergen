@@ -1197,10 +1197,44 @@ const VTTManager = {
             'gargantuan': 4
         };
 
-        // Parse size from monster data or use default
+        // Parse size from monster data or tokenData directly, with robust fallback
         let monsterSize = 'medium';
+        if (tokenData.sizeMultiplier) {
+            // If sizeMultiplier is already provided, use it directly
+            const sizeMultiplier = tokenData.sizeMultiplier;
+            // Skip the lookup, go straight to token creation with provided multiplier
+            const centerX = (this.canvas.offsetWidth / 2 - this.offsetX) / this.scale;
+            const centerY = (this.canvas.offsetHeight / 2 - this.offsetY) / this.scale;
+            const snapped = this.snapToGrid(centerX, centerY, sizeMultiplier);
+
+            const token = {
+                id: tokenData.id || 'token_' + Date.now(),
+                type: tokenData.type || 'monster',
+                name: tokenData.name,
+                x: snapped.x,
+                y: snapped.y,
+                sizeMultiplier: sizeMultiplier,
+                maxHP: tokenData.maxHp || tokenData.hp || 10,
+                currentHP: tokenData.hp || tokenData.maxHp || 10,
+                ac: tokenData.ac || 10,
+                color: tokenData.color || '#8b0000',
+                customImage: null,
+                conditions: [],
+                initiative: null,
+                monster: tokenData.monster
+            };
+
+            this.tokens.push(token);
+            this.renderTokens();
+            this.saveState();
+            return token;
+        }
+
+        // Get size from monster data or tokenData.size
         if (tokenData.monster?.size) {
-            monsterSize = tokenData.monster.size.toLowerCase();
+            monsterSize = String(tokenData.monster.size).toLowerCase().trim();
+        } else if (tokenData.size) {
+            monsterSize = String(tokenData.size).toLowerCase().trim();
         }
         const sizeMultiplier = sizeMultipliers[monsterSize] || 1;
 
@@ -1291,12 +1325,14 @@ const VTTManager = {
             }
 
             // Ensure sizeMultiplier has a valid value (default to 1 for medium)
-            if (!token.sizeMultiplier || token.sizeMultiplier <= 0) {
+            // Valid values: 0.5 (tiny), 1 (small/medium), 2 (large), 3 (huge), 4 (gargantuan)
+            if (typeof token.sizeMultiplier !== 'number' || token.sizeMultiplier <= 0 || isNaN(token.sizeMultiplier)) {
                 token.sizeMultiplier = 1;
             }
 
-            // Calculate actual size from multiplier
-            const tokenSize = this.gridSize * token.sizeMultiplier;
+            // Calculate actual size from multiplier - ensure gridSize is valid
+            const gridSize = this.gridSize || 50;
+            const tokenSize = Math.max(gridSize * token.sizeMultiplier, 10); // Minimum 10px
 
             const el = document.createElement('div');
             el.className = `vtt-token ${token.type}${this.selectedToken?.id === token.id ? ' selected' : ''}`;

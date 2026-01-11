@@ -1082,19 +1082,14 @@
 
 /* ==================== Mobile Token Touch Improvements ==================== */
 @media (max-width: 768px) {
-    /* Larger touch targets for tokens on mobile */
-    .vtt-token {
-        min-width: 44px;
-        min-height: 44px;
-    }
-
+    /* Expand touch target without changing visible token size */
     .vtt-token::before {
         content: '';
         position: absolute;
-        top: -10px;
-        left: -10px;
-        right: -10px;
-        bottom: -10px;
+        top: -15px;
+        left: -15px;
+        right: -15px;
+        bottom: -15px;
         pointer-events: auto;
     }
 }
