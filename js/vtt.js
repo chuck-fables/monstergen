@@ -926,17 +926,15 @@ const VTTManager = {
         const token = this.tokens.find(t => t.id === tokenId);
         if (!token) return;
 
-        const maxHP = prompt('Max HP:', token.maxHP || '');
-        if (maxHP !== null) {
-            token.maxHP = parseInt(maxHP) || null;
-            if (token.maxHP) {
-                const currentHP = prompt('Current HP:', token.currentHP || token.maxHP);
-                token.currentHP = Math.max(0, parseInt(currentHP) || token.maxHP);
-            } else {
-                token.currentHP = null;
+        const currentHP = prompt('Current HP:', token.currentHP || token.maxHP || '');
+        if (currentHP !== null) {
+            const maxHP = prompt('Max HP:', token.maxHP || currentHP || '');
+            if (maxHP !== null) {
+                token.maxHP = parseInt(maxHP) || null;
+                token.currentHP = token.maxHP ? Math.max(0, parseInt(currentHP) || token.maxHP) : null;
+                this.renderTokens();
+                this.saveState();
             }
-            this.renderTokens();
-            this.saveState();
         }
         this.closeContextMenu();
     },
