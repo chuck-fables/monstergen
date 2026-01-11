@@ -1186,15 +1186,12 @@ const VTTManager = {
         e.stopPropagation();
 
         this.draggedToken = token;
-        const tokenEl = document.querySelector(`[data-token-id="${token.id}"]`);
-        if (!tokenEl) return;
-
-        const tokenRect = tokenEl.getBoundingClientRect();
         const rect = this.tokenLayer.getBoundingClientRect();
 
-        // Calculate offset from token center
-        this.dragOffsetX = (tokenRect.left + tokenRect.width / 2) - rect.left - token.x * this.scale - (this.gridSize * (token.sizeMultiplier || 1) * this.scale / 2);
-        this.dragOffsetY = (tokenRect.top + tokenRect.height / 2) - rect.top - token.y * this.scale - (this.gridSize * (token.sizeMultiplier || 1) * this.scale / 2);
+        // Calculate offset from click position to token position
+        // This makes the token move relative to where you clicked on the bubble
+        this.dragOffsetX = e.clientX - rect.left - token.x * this.scale;
+        this.dragOffsetY = e.clientY - rect.top - token.y * this.scale;
 
         // Add global mouse listeners
         document.addEventListener('mousemove', this.boundBubbleDrag = (e) => this.onBubbleDrag(e, token));
