@@ -1159,6 +1159,245 @@
     margin-top: 4px;
 }
 
+/* ==================== Stat Editor Popup ==================== */
+.vtt-stat-editor {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.vtt-stat-editor-content {
+    background: #1e1e22;
+    border: 1px solid #3a3a42;
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+    width: 320px;
+    max-width: 90vw;
+    overflow: hidden;
+}
+
+.vtt-stat-editor-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    background: linear-gradient(180deg, #2a2a30 0%, #242428 100%);
+    border-bottom: 1px solid #3a3a42;
+}
+
+.vtt-stat-editor-title {
+    font-family: 'Libre Baskerville', serif;
+    font-size: 1rem;
+    color: #c9a227;
+    font-weight: 600;
+}
+
+.vtt-stat-editor-close {
+    background: none;
+    border: none;
+    color: #a0a0a8;
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 0;
+    line-height: 1;
+}
+
+.vtt-stat-editor-close:hover {
+    color: #e0e0e5;
+}
+
+.vtt-stat-editor-tabs {
+    display: flex;
+    border-bottom: 1px solid #3a3a42;
+}
+
+.vtt-stat-tab {
+    flex: 1;
+    padding: 10px;
+    background: #242428;
+    border: none;
+    color: #a0a0a8;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.vtt-stat-tab:hover {
+    background: #2a2a30;
+    color: #e0e0e5;
+}
+
+.vtt-stat-tab.active {
+    background: #2a2a30;
+    color: #c9a227;
+    border-bottom: 2px solid #c9a227;
+}
+
+.vtt-stat-panel {
+    padding: 16px;
+}
+
+.vtt-stat-current {
+    text-align: center;
+    margin-bottom: 16px;
+}
+
+.vtt-stat-label {
+    display: block;
+    font-size: 0.75rem;
+    color: #a0a0a8;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 4px;
+}
+
+.vtt-stat-value {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #e0e0e5;
+    font-family: 'Libre Baskerville', serif;
+}
+
+.vtt-stat-quick-btns {
+    display: flex;
+    gap: 6px;
+    justify-content: center;
+    margin-bottom: 16px;
+}
+
+.vtt-stat-btn {
+    padding: 8px 12px;
+    border: 1px solid #3a3a42;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.vtt-stat-btn.damage {
+    background: linear-gradient(180deg, #6b2020 0%, #4a1515 100%);
+    color: #ff9999;
+    border-color: #8b3030;
+}
+
+.vtt-stat-btn.damage:hover {
+    background: linear-gradient(180deg, #7b2525 0%, #5a1a1a 100%);
+    border-color: #a03535;
+}
+
+.vtt-stat-btn.heal {
+    background: linear-gradient(180deg, #206b20 0%, #154a15 100%);
+    color: #99ff99;
+    border-color: #308b30;
+}
+
+.vtt-stat-btn.heal:hover {
+    background: linear-gradient(180deg, #257b25 0%, #1a5a1a 100%);
+    border-color: #35a035;
+}
+
+.vtt-stat-input-row {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+}
+
+.vtt-stat-input {
+    flex: 1;
+    padding: 10px 12px;
+    background: #242428;
+    border: 1px solid #3a3a42;
+    border-radius: 6px;
+    color: #e0e0e5;
+    font-size: 0.95rem;
+    text-align: center;
+}
+
+.vtt-stat-input:focus {
+    outline: none;
+    border-color: #c9a227;
+}
+
+.vtt-stat-input::placeholder {
+    color: #606068;
+}
+
+.vtt-stat-apply {
+    padding: 10px 16px;
+    background: linear-gradient(180deg, #7b341e 0%, #5a2515 100%);
+    border: 1px solid #c9a227;
+    border-radius: 6px;
+    color: #f0e0c0;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.vtt-stat-apply:hover {
+    background: linear-gradient(180deg, #8b3e23 0%, #6a2a18 100%);
+}
+
+.vtt-stat-set-row {
+    display: flex;
+    gap: 8px;
+    align-items: flex-end;
+    padding-top: 12px;
+    border-top: 1px solid #3a3a42;
+}
+
+.vtt-stat-set-field {
+    flex: 1;
+}
+
+.vtt-stat-set-field label {
+    display: block;
+    font-size: 0.7rem;
+    color: #a0a0a8;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+}
+
+.vtt-stat-small-input {
+    width: 100%;
+    padding: 8px;
+    background: #242428;
+    border: 1px solid #3a3a42;
+    border-radius: 4px;
+    color: #e0e0e5;
+    font-size: 0.9rem;
+    text-align: center;
+}
+
+.vtt-stat-small-input:focus {
+    outline: none;
+    border-color: #c9a227;
+}
+
+.vtt-stat-set-btn {
+    padding: 8px 12px;
+    background: #2a2a30;
+    border: 1px solid #3a3a42;
+    border-radius: 4px;
+    color: #a0a0a8;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.vtt-stat-set-btn:hover {
+    background: #3a3a42;
+    color: #e0e0e5;
+}
+
 /* ==================== Player Token Dropdown ==================== */
 .vtt-add-player-row {
     display: flex;

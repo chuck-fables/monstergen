@@ -1050,33 +1050,229 @@ const VTTManager = {
     },
 
     editTokenHP(tokenId) {
-        const token = this.tokens.find(t => t.id === tokenId);
-        if (!token) return;
-
-        const currentHP = prompt('Current HP:', token.currentHP || token.maxHP || '');
-        if (currentHP !== null) {
-            const maxHP = prompt('Max HP:', token.maxHP || currentHP || '');
-            if (maxHP !== null) {
-                token.maxHP = parseInt(maxHP) || null;
-                token.currentHP = token.maxHP ? Math.max(0, parseInt(currentHP) || token.maxHP) : null;
-                this.renderTokens();
-                this.saveState();
-            }
-        }
-        this.closeContextMenu();
+        this.showStatEditor(tokenId, 'hp');
     },
 
     editTokenAC(tokenId) {
+        this.showStatEditor(tokenId, 'ac');
+    },
+
+    showStatEditor(tokenId, initialTab = 'hp') {
         const token = this.tokens.find(t => t.id === tokenId);
         if (!token) return;
 
-        const ac = prompt('AC:', token.ac || '');
-        if (ac !== null) {
-            token.ac = parseInt(ac) || null;
-            this.renderTokens();
-            this.saveState();
-        }
         this.closeContextMenu();
+        this.closeStatEditor();
+
+        const currentHP = token.currentHP ?? '';
+        const maxHP = token.maxHP ?? '';
+        const ac = token.ac ?? '';
+
+        const editor = document.createElement('div');
+        editor.className = 'vtt-stat-editor';
+        editor.id = 'vtt-stat-editor';
+        editor.innerHTML = `
+            <div class="vtt-stat-editor-content">
+                <div class="vtt-stat-editor-header">
+                    <span class="vtt-stat-editor-title">${token.name || 'Token'}</span>
+                    <button class="vtt-stat-editor-close" onclick="VTTManager.closeStatEditor()">&times;</button>
+                </div>
+                <div class="vtt-stat-editor-tabs">
+                    <button class="vtt-stat-tab ${initialTab === 'hp' ? 'active' : ''}" data-tab="hp" onclick="VTTManager.switchStatTab('hp')">HP</button>
+                    <button class="vtt-stat-tab ${initialTab === 'ac' ? 'active' : ''}" data-tab="ac" onclick="VTTManager.switchStatTab('ac')">AC</button>
+                </div>
+
+                <div class="vtt-stat-panel" id="vtt-stat-panel-hp" style="display: ${initialTab === 'hp' ? 'block' : 'none'}">
+                    <div class="vtt-stat-current">
+                        <span class="vtt-stat-label">Current HP</span>
+                        <span class="vtt-stat-value" id="vtt-hp-display">${currentHP || '—'}${maxHP ? ' / ' + maxHP : ''}</span>
+                    </div>
+                    <div class="vtt-stat-quick-btns">
+                        <button class="vtt-stat-btn damage" onclick="VTTManager.adjustHP('${tokenId}', -10)">-10</button>
+                        <button class="vtt-stat-btn damage" onclick="VTTManager.adjustHP('${tokenId}', -5)">-5</button>
+                        <button class="vtt-stat-btn damage" onclick="VTTManager.adjustHP('${tokenId}', -1)">-1</button>
+                        <button class="vtt-stat-btn heal" onclick="VTTManager.adjustHP('${tokenId}', 1)">+1</button>
+                        <button class="vtt-stat-btn heal" onclick="VTTManager.adjustHP('${tokenId}', 5)">+5</button>
+                        <button class="vtt-stat-btn heal" onclick="VTTManager.adjustHP('${tokenId}', 10)">+10</button>
+                    </div>
+                    <div class="vtt-stat-input-row">
+                        <input type="text" id="vtt-hp-input" class="vtt-stat-input" placeholder="+10, -5, or set value"
+                            onkeydown="if(event.key==='Enter') VTTManager.applyHPChange('${tokenId}')">
+                        <button class="vtt-stat-apply" onclick="VTTManager.applyHPChange('${tokenId}')">Apply</button>
+                    </div>
+                    <div class="vtt-stat-set-row">
+                        <div class="vtt-stat-set-field">
+                            <label>Current</label>
+                            <input type="number" id="vtt-hp-current" class="vtt-stat-small-input" value="${currentHP}" placeholder="HP">
+                        </div>
+                        <div class="vtt-stat-set-field">
+                            <label>Max</label>
+                            <input type="number" id="vtt-hp-max" class="vtt-stat-small-input" value="${maxHP}" placeholder="Max">
+                        </div>
+                        <button class="vtt-stat-set-btn" onclick="VTTManager.setHP('${tokenId}')">Set</button>
+                    </div>
+                </div>
+
+                <div class="vtt-stat-panel" id="vtt-stat-panel-ac" style="display: ${initialTab === 'ac' ? 'block' : 'none'}">
+                    <div class="vtt-stat-current">
+                        <span class="vtt-stat-label">Armor Class</span>
+                        <span class="vtt-stat-value" id="vtt-ac-display">${ac || '—'}</span>
+                    </div>
+                    <div class="vtt-stat-quick-btns">
+                        <button class="vtt-stat-btn damage" onclick="VTTManager.adjustAC('${tokenId}', -2)">-2</button>
+                        <button class="vtt-stat-btn damage" onclick="VTTManager.adjustAC('${tokenId}', -1)">-1</button>
+                        <button class="vtt-stat-btn heal" onclick="VTTManager.adjustAC('${tokenId}', 1)">+1</button>
+                        <button class="vtt-stat-btn heal" onclick="VTTManager.adjustAC('${tokenId}', 2)">+2</button>
+                    </div>
+                    <div class="vtt-stat-input-row">
+                        <input type="text" id="vtt-ac-input" class="vtt-stat-input" placeholder="+2, -1, or set value"
+                            onkeydown="if(event.key==='Enter') VTTManager.applyACChange('${tokenId}')">
+                        <button class="vtt-stat-apply" onclick="VTTManager.applyACChange('${tokenId}')">Apply</button>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        document.body.appendChild(editor);
+
+        // Focus the appropriate input
+        setTimeout(() => {
+            const input = initialTab === 'hp' ? document.getElementById('vtt-hp-input') : document.getElementById('vtt-ac-input');
+            if (input) input.focus();
+        }, 50);
+    },
+
+    closeStatEditor() {
+        const editor = document.getElementById('vtt-stat-editor');
+        if (editor) editor.remove();
+    },
+
+    switchStatTab(tab) {
+        document.querySelectorAll('.vtt-stat-tab').forEach(t => t.classList.toggle('active', t.dataset.tab === tab));
+        document.getElementById('vtt-stat-panel-hp').style.display = tab === 'hp' ? 'block' : 'none';
+        document.getElementById('vtt-stat-panel-ac').style.display = tab === 'ac' ? 'block' : 'none';
+
+        const input = tab === 'hp' ? document.getElementById('vtt-hp-input') : document.getElementById('vtt-ac-input');
+        if (input) input.focus();
+    },
+
+    adjustHP(tokenId, amount) {
+        const token = this.tokens.find(t => t.id === tokenId);
+        if (!token) return;
+
+        if (token.maxHP && token.currentHP !== null) {
+            token.currentHP = Math.max(0, Math.min(token.maxHP, token.currentHP + amount));
+        } else if (token.maxHP) {
+            token.currentHP = Math.max(0, Math.min(token.maxHP, token.maxHP + amount));
+        }
+
+        this.updateStatEditorDisplay(token);
+        this.renderTokens();
+        this.saveState();
+    },
+
+    applyHPChange(tokenId) {
+        const token = this.tokens.find(t => t.id === tokenId);
+        if (!token) return;
+
+        const input = document.getElementById('vtt-hp-input');
+        if (!input) return;
+
+        const value = input.value.trim();
+        if (!value) return;
+
+        if (value.startsWith('+') || value.startsWith('-')) {
+            // Relative change
+            const amount = parseInt(value);
+            if (!isNaN(amount) && token.currentHP !== null) {
+                token.currentHP = Math.max(0, token.maxHP ? Math.min(token.maxHP, token.currentHP + amount) : token.currentHP + amount);
+            }
+        } else {
+            // Absolute value
+            const newHP = parseInt(value);
+            if (!isNaN(newHP)) {
+                token.currentHP = Math.max(0, token.maxHP ? Math.min(token.maxHP, newHP) : newHP);
+            }
+        }
+
+        input.value = '';
+        this.updateStatEditorDisplay(token);
+        this.renderTokens();
+        this.saveState();
+    },
+
+    setHP(tokenId) {
+        const token = this.tokens.find(t => t.id === tokenId);
+        if (!token) return;
+
+        const currentInput = document.getElementById('vtt-hp-current');
+        const maxInput = document.getElementById('vtt-hp-max');
+
+        const maxHP = parseInt(maxInput?.value) || null;
+        const currentHP = parseInt(currentInput?.value) || maxHP;
+
+        token.maxHP = maxHP;
+        token.currentHP = maxHP ? Math.max(0, Math.min(maxHP, currentHP)) : currentHP;
+
+        this.updateStatEditorDisplay(token);
+        this.renderTokens();
+        this.saveState();
+    },
+
+    adjustAC(tokenId, amount) {
+        const token = this.tokens.find(t => t.id === tokenId);
+        if (!token) return;
+
+        token.ac = Math.max(0, (token.ac || 10) + amount);
+
+        this.updateStatEditorDisplay(token);
+        this.renderTokens();
+        this.saveState();
+    },
+
+    applyACChange(tokenId) {
+        const token = this.tokens.find(t => t.id === tokenId);
+        if (!token) return;
+
+        const input = document.getElementById('vtt-ac-input');
+        if (!input) return;
+
+        const value = input.value.trim();
+        if (!value) return;
+
+        if (value.startsWith('+') || value.startsWith('-')) {
+            const amount = parseInt(value);
+            if (!isNaN(amount)) {
+                token.ac = Math.max(0, (token.ac || 10) + amount);
+            }
+        } else {
+            const newAC = parseInt(value);
+            if (!isNaN(newAC)) {
+                token.ac = Math.max(0, newAC);
+            }
+        }
+
+        input.value = '';
+        this.updateStatEditorDisplay(token);
+        this.renderTokens();
+        this.saveState();
+    },
+
+    updateStatEditorDisplay(token) {
+        const hpDisplay = document.getElementById('vtt-hp-display');
+        const acDisplay = document.getElementById('vtt-ac-display');
+        const hpCurrentInput = document.getElementById('vtt-hp-current');
+        const hpMaxInput = document.getElementById('vtt-hp-max');
+
+        if (hpDisplay) {
+            const hpText = token.currentHP !== null ? token.currentHP : '—';
+            hpDisplay.textContent = token.maxHP ? `${hpText} / ${token.maxHP}` : hpText;
+        }
+        if (acDisplay) {
+            acDisplay.textContent = token.ac ?? '—';
+        }
+        if (hpCurrentInput) hpCurrentInput.value = token.currentHP ?? '';
+        if (hpMaxInput) hpMaxInput.value = token.maxHP ?? '';
     },
 
     setTokenImage(tokenId) {
