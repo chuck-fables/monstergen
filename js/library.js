@@ -81,58 +81,99 @@ const LibraryPanel = {
         }
     },
 
+    // Type icons for library cards
+    typeIcons: {
+        monsters: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L9 7H4l3 5-3 5h5l3 5 3-5h5l-3-5 3-5h-5L12 2z"></path></svg>',
+        npcs: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>',
+        loot: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M12 6v6l4 2"></path></svg>',
+        hooks: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>',
+        locations: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>',
+        items: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>'
+    },
+
+    // Type colors for library cards
+    typeColors: {
+        monsters: '#8B0000',
+        npcs: '#9E2A2B',
+        loot: '#DAA520',
+        hooks: '#D35400',
+        locations: '#27AE60',
+        items: '#8E44AD'
+    },
+
     renderItem(item) {
         // Monsters use wrapper format {id, name, type, cr, data}
         const monsterData = this.currentType === 'monsters' ? (item.data || item) : item;
         const name = monsterData.name || item.name || item.hoardName || 'Unnamed';
         let meta = '';
+        let subtitle = '';
 
         switch (this.currentType) {
             case 'monsters':
                 const cr = monsterData.challengeRating || monsterData.cr || item.cr || '?';
                 const size = monsterData.size || 'Medium';
                 const type = monsterData.type || item.type || 'creature';
-                meta = `CR ${cr} | ${size} ${type}`;
+                subtitle = `${size} ${type}`;
+                meta = `CR ${cr}`;
                 break;
             case 'npcs':
-                const race = item.race?.displayName || item.race || 'Unknown';
-                const profession = item.profession || '';
-                meta = `${race}${profession ? ' - ' + profession : ''}`;
+                const race = item.raceName || item.race?.displayName || item.race || 'Unknown';
+                const vocation = item.vocation?.name || item.profession || '';
+                subtitle = race;
+                meta = vocation;
                 break;
             case 'loot':
                 const level = item.partyLevel || '?';
                 const value = item.totalValue ? Math.round(item.totalValue) + ' gp' : '';
-                meta = `Level ${level}${value ? ' | ' + value : ''}`;
+                subtitle = `Party Level ${level}`;
+                meta = value;
                 break;
             case 'hooks':
-                const hookType = item.type || '';
-                const setting = item.environment || '';
-                meta = `${hookType}${setting ? ' - ' + setting : ''}`;
+                const biome = item.biome?.name || item.environment || '';
+                const theme = item.theme?.name || item.type || '';
+                subtitle = biome;
+                meta = theme;
                 break;
             case 'locations':
                 const locType = item.locationType || item.type || '';
-                const biome = item.biome || item.environment || '';
-                meta = `${locType}${biome ? ' - ' + biome : ''}`;
+                const locBiome = item.biome || item.environment || '';
+                subtitle = locType;
+                meta = locBiome;
                 break;
             case 'items':
                 const rarity = item.rarityData?.name || item.rarity || '';
                 const itemType = item.subtype?.name || item.type || '';
-                meta = `${rarity}${itemType ? ' ' + itemType : ''}`;
+                subtitle = itemType;
+                meta = rarity;
                 break;
         }
 
+        const icon = this.typeIcons[this.currentType] || '';
+        const color = this.typeColors[this.currentType] || '#666';
+
         return `
-            <div class="library-item" onclick="LibraryPanel.viewItem('${item.id}')">
-                <div class="library-item-header">
-                    <span class="library-item-name">${this.escapeHtml(name)}</span>
+            <div class="library-card" onclick="LibraryPanel.viewItem('${item.id}')">
+                <div class="library-card-icon" style="background: ${color}">
+                    ${icon}
                 </div>
-                <div class="library-item-meta">${meta}</div>
-                <div class="library-item-actions">
-                    <button class="library-item-btn" onclick="event.stopPropagation(); LibraryPanel.sendToCanvas('${item.id}')">
-                        Send to Canvas
+                <div class="library-card-content">
+                    <div class="library-card-name">${this.escapeHtml(name)}</div>
+                    <div class="library-card-subtitle">${this.escapeHtml(subtitle)}</div>
+                    <div class="library-card-meta">${this.escapeHtml(meta)}</div>
+                </div>
+                <div class="library-card-actions">
+                    <button class="library-card-btn" onclick="event.stopPropagation(); LibraryPanel.sendToCanvas('${item.id}')" title="Send to Canvas">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                            <line x1="12" y1="8" x2="12" y2="16"></line>
+                            <line x1="8" y1="12" x2="16" y2="12"></line>
+                        </svg>
                     </button>
-                    <button class="library-item-btn danger" onclick="event.stopPropagation(); LibraryPanel.deleteItem('${item.id}')">
-                        Delete
+                    <button class="library-card-btn danger" onclick="event.stopPropagation(); LibraryPanel.deleteItem('${item.id}')" title="Delete">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="3 6 5 6 21 6"></polyline>
+                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                        </svg>
                     </button>
                 </div>
             </div>

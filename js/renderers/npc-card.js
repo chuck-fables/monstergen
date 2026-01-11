@@ -199,23 +199,31 @@ const NPCCardRenderer = {
 
         return `
             <div class="npc-card-compact" data-npc-id="${npc.id}" data-wealth="${npc.wealth || 'commoner'}">
-                <div class="npc-compact-header">
+                <div class="npc-compact-icon">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                </div>
+                <div class="npc-compact-content">
                     <div class="npc-compact-name">${npc.name}</div>
                     <div class="npc-compact-info">
                         <span class="npc-compact-race">${npc.raceName}</span>
                         <span class="npc-compact-vocation">${npc.vocation?.name || npc.profession || 'Unknown'}</span>
                     </div>
-                    <div class="npc-compact-meta">
-                        <span class="npc-compact-gender">${npc.genderDisplay || ''}</span>
-                        <span class="npc-compact-wealth wealth-${npc.wealth || 'commoner'}">${npc.wealthDisplay || ''}</span>
-                    </div>
                 </div>
                 <div class="npc-compact-actions">
-                    <button type="button" class="btn-compact" onclick="NPCPanel.loadNPC('${npc.id}')" title="Load">
-                        View
+                    <button type="button" class="btn-compact-icon" onclick="NPCPanel.loadNPC('${npc.id}')" title="View">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                            <circle cx="12" cy="12" r="3"></circle>
+                        </svg>
                     </button>
-                    <button type="button" class="btn-compact btn-compact-danger" onclick="NPCPanel.deleteNPC('${npc.id}')" title="Delete">
-                        Delete
+                    <button type="button" class="btn-compact-icon btn-compact-danger" onclick="NPCPanel.deleteNPC('${npc.id}')" title="Delete">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="3 6 5 6 21 6"></polyline>
+                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                        </svg>
                     </button>
                 </div>
             </div>

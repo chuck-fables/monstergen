@@ -235,17 +235,31 @@ const ItemCardRenderer = {
 
         return `
             <div class="item-card-compact" data-item-id="${item.id}" data-rarity="${item.rarity}">
-                <div class="item-compact-header" style="border-left-color: ${rarityColor}">
-                    <span class="item-compact-name">${item.name}</span>
-                    <span class="item-compact-type">${item.subtype?.name || 'Item'}</span>
+                <div class="item-compact-icon" style="background: ${rarityColor}">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                    </svg>
                 </div>
-                <div class="item-compact-meta">
-                    <span class="item-compact-rarity" style="color: ${rarityColor}">${item.rarityData?.name || item.rarity}</span>
-                    <span class="item-compact-biome">${item.biomeData?.name || item.biome}</span>
+                <div class="item-compact-content">
+                    <div class="item-compact-name">${item.name}</div>
+                    <div class="item-compact-info">
+                        <span class="item-compact-type">${item.subtype?.name || 'Item'}</span>
+                        <span class="item-compact-rarity" style="color: ${rarityColor}">${item.rarityData?.name || item.rarity}</span>
+                    </div>
                 </div>
                 <div class="item-compact-actions">
-                    <button class="item-compact-btn" onclick="ItemPanel.loadItem('${item.id}')" title="View">View</button>
-                    <button class="item-compact-btn item-compact-btn-danger" onclick="ItemPanel.deleteItem('${item.id}')" title="Delete">Delete</button>
+                    <button class="btn-compact-icon" onclick="ItemPanel.loadItem('${item.id}')" title="View">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                            <circle cx="12" cy="12" r="3"></circle>
+                        </svg>
+                    </button>
+                    <button class="btn-compact-icon btn-compact-danger" onclick="ItemPanel.deleteItem('${item.id}')" title="Delete">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="3 6 5 6 21 6"></polyline>
+                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                        </svg>
+                    </button>
                 </div>
             </div>
         `;

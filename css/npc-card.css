@@ -421,8 +421,8 @@
 /* Compact Card for Library */
 .npc-card-compact {
     display: flex;
-    justify-content: space-between;
     align-items: center;
+    gap: 12px;
     padding: 10px 14px;
     background: var(--npc-parchment);
     border: 1px solid var(--npc-border);
@@ -455,6 +455,23 @@
 .npc-card-compact:hover {
     background: #F5E6C8;
     border-color: var(--npc-accent);
+}
+
+.npc-compact-icon {
+    width: 40px;
+    height: 40px;
+    background: var(--npc-accent);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    flex-shrink: 0;
+}
+
+.npc-compact-content {
+    flex: 1;
+    min-width: 0;
 }
 
 .npc-compact-header {
@@ -534,6 +551,33 @@
 .btn-compact-danger:hover {
     background: #dc3545;
     border-color: #dc3545;
+}
+
+/* Icon button styles for compact cards */
+.btn-compact-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    border: 1px solid var(--npc-border);
+    background: transparent;
+    color: var(--npc-accent);
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-compact-icon:hover {
+    background: var(--npc-accent);
+    border-color: var(--npc-accent);
+    color: white;
+}
+
+.btn-compact-icon.btn-compact-danger:hover {
+    background: #dc3545;
+    border-color: #dc3545;
+    color: white;
 }
 
 /* NPC Panel Layout */

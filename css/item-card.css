@@ -390,12 +390,12 @@
 /* Compact Card for Library - Parchment Style */
 .item-card-compact {
     display: flex;
-    justify-content: space-between;
     align-items: center;
+    gap: 12px;
     padding: 10px 14px;
     background: var(--item-parchment);
     border: 1px solid var(--item-border);
-    border-left: 4px solid var(--item-border);
+    border-radius: 4px;
     margin-bottom: 8px;
     transition: all 0.2s;
     font-family: 'Libre Baskerville', Georgia, serif;
@@ -406,28 +406,20 @@
     border-color: var(--item-accent);
 }
 
-.item-card-compact[data-rarity="common"] {
-    border-left-color: var(--rarity-common);
+.item-compact-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    flex-shrink: 0;
 }
 
-.item-card-compact[data-rarity="uncommon"] {
-    border-left-color: var(--rarity-uncommon);
-}
-
-.item-card-compact[data-rarity="rare"] {
-    border-left-color: var(--rarity-rare);
-}
-
-.item-card-compact[data-rarity="veryRare"] {
-    border-left-color: var(--rarity-veryRare);
-}
-
-.item-card-compact[data-rarity="legendary"] {
-    border-left-color: var(--rarity-legendary);
-}
-
-.item-card-compact[data-rarity="artifact"] {
-    border-left-color: var(--rarity-artifact);
+.item-compact-content {
+    flex: 1;
+    min-width: 0;
 }
 
 .item-compact-header {
@@ -442,6 +434,12 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+}
+
+.item-compact-info {
+    display: flex;
+    gap: 8px;
+    font-size: 11px;
 }
 
 .item-compact-type {
@@ -459,7 +457,7 @@
 .item-compact-rarity {
     font-weight: 700;
     text-transform: uppercase;
-    font-size: 0.7rem;
+    font-size: 0.65rem;
     letter-spacing: 0.5px;
 }
 
@@ -470,7 +468,8 @@
 
 .item-compact-actions {
     display: flex;
-    gap: 0.5rem;
+    gap: 6px;
+    flex-shrink: 0;
 }
 
 .item-compact-btn {
