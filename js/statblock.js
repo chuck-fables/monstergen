@@ -348,7 +348,7 @@ const StatblockRenderer = {
         const spellLists = [];
 
         if (sc.spells.cantrips && sc.spells.cantrips.length > 0) {
-            spellLists.push(`<p class="spell-level"><span class="spell-level-name">Cantrips (at will):</span> <em>${sc.spells.cantrips.join(', ')}</em></p>`);
+            spellLists.push(`<p class="spell-level"><span class="spell-level-name">Cantrips (at will):</span> ${this.linkifySpellList(sc.spells.cantrips)}</p>`);
         }
 
         // Warlock Pact Magic uses different slot display
@@ -363,7 +363,7 @@ const StatblockRenderer = {
             }
             if (pactSpells.length > 0) {
                 const slotText = sc.pactSlots === 1 ? '1 slot' : `${sc.pactSlots} slots`;
-                spellLists.push(`<p class="spell-level"><span class="spell-level-name">1st-${Utils.ordinal(sc.pactSlotLevel)} level (${slotText}, ${Utils.ordinal(sc.pactSlotLevel)}-level):</span> <em>${pactSpells.join(', ')}</em></p>`);
+                spellLists.push(`<p class="spell-level"><span class="spell-level-name">1st-${Utils.ordinal(sc.pactSlotLevel)} level (${slotText}, ${Utils.ordinal(sc.pactSlotLevel)}-level):</span> ${this.linkifySpellList(pactSpells)}</p>`);
             }
 
             // Mystic Arcanum (1/day each)
@@ -371,7 +371,7 @@ const StatblockRenderer = {
                 if (sc.mysticArcanum && sc.mysticArcanum[level]) {
                     const levelSpells = sc.spells[`level${level}`];
                     if (levelSpells && levelSpells.length > 0) {
-                        spellLists.push(`<p class="spell-level"><span class="spell-level-name">${Utils.ordinal(level)} level (1/day):</span> <em>${levelSpells.join(', ')}</em></p>`);
+                        spellLists.push(`<p class="spell-level"><span class="spell-level-name">${Utils.ordinal(level)} level (1/day):</span> ${this.linkifySpellList(levelSpells)}</p>`);
                     }
                 }
             }
@@ -385,21 +385,21 @@ const StatblockRenderer = {
 
                 if (levelSpells && levelSpells.length > 0 && slots > 0) {
                     const slotText = slots === 1 ? '1 slot' : `${slots} slots`;
-                    spellLists.push(`<p class="spell-level"><span class="spell-level-name">${Utils.ordinal(level)} level (${slotText}):</span> <em>${levelSpells.join(', ')}</em></p>`);
+                    spellLists.push(`<p class="spell-level"><span class="spell-level-name">${Utils.ordinal(level)} level (${slotText}):</span> ${this.linkifySpellList(levelSpells)}</p>`);
                 }
             }
         }
 
         // At-will for innate
         if (sc.innate && sc.spells.atWill && sc.spells.atWill.length > 0) {
-            spellLists.push(`<p class="spell-level"><span class="spell-level-name">At will:</span> <em>${sc.spells.atWill.join(', ')}</em></p>`);
+            spellLists.push(`<p class="spell-level"><span class="spell-level-name">At will:</span> ${this.linkifySpellList(sc.spells.atWill)}</p>`);
         }
 
         // Daily uses for innate
         for (const uses of [3, 2, 1]) {
             const dailySpells = sc.spells[`${uses}day`];
             if (dailySpells && dailySpells.length > 0) {
-                spellLists.push(`<p class="spell-level"><span class="spell-level-name">${uses}/day each:</span> <em>${dailySpells.join(', ')}</em></p>`);
+                spellLists.push(`<p class="spell-level"><span class="spell-level-name">${uses}/day each:</span> ${this.linkifySpellList(dailySpells)}</p>`);
             }
         }
 
@@ -624,6 +624,42 @@ const StatblockRenderer = {
             .replace(/{Name}/g, monster.name);
 
         return formatted;
+    },
+
+    /**
+     * Linkify a list of spell names to open spell modals
+     */
+    linkifySpellList(spells) {
+        if (!spells || spells.length === 0) return '';
+
+        // Get all available spells from SRD
+        const allSpells = typeof SRDPanel !== 'undefined' && SRDPanel.getAllSpells
+            ? SRDPanel.getAllSpells()
+            : [];
+
+        if (allSpells.length === 0) {
+            // If no SRD spells available, just return italicized names
+            return `<em>${spells.join(', ')}</em>`;
+        }
+
+        // Create a map of spell names (lowercase) to actual spell data
+        const spellMap = new Map();
+        allSpells.forEach(spell => {
+            spellMap.set(spell.name.toLowerCase(), spell);
+        });
+
+        // Create links for each spell
+        const linkedSpells = spells.map(spellName => {
+            const spellKey = spellName.toLowerCase();
+            if (spellMap.has(spellKey)) {
+                const escapedName = spellName.replace(/'/g, "\\'");
+                return `<a href="#" class="spell-link" data-spell="${spellName}" onclick="SRDPanel.showSpellModal('${escapedName}'); return false;"><em>${spellName}</em></a>`;
+            }
+            // Spell not found in SRD, just return italicized
+            return `<em>${spellName}</em>`;
+        });
+
+        return linkedSpells.join(', ');
     }
 };
 

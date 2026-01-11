@@ -394,6 +394,24 @@
     color: #666;
 }
 
+/* ==================== SPELL LINKS ==================== */
+.spell-link {
+    color: #9E2A2B;
+    text-decoration: underline;
+    text-decoration-style: dotted;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.spell-link:hover {
+    color: #5a1008;
+    text-decoration-style: solid;
+}
+
+.spell-link em {
+    font-style: italic;
+}
+
 /* ==================== MOBILE RESPONSIVE ==================== */
 @media (max-width: 900px) {
     /* Force single column on mobile */
