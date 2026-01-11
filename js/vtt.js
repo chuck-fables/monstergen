@@ -1283,10 +1283,20 @@ const VTTManager = {
         this.tokenLayer.innerHTML = '';
 
         this.tokens.forEach(token => {
-            // Calculate actual size from multiplier (backward compat: use size if no multiplier)
-            const tokenSize = token.sizeMultiplier
-                ? this.gridSize * token.sizeMultiplier
-                : (token.size || this.gridSize);
+            // Migrate old tokens with pixel size to sizeMultiplier
+            if (!token.sizeMultiplier && token.size) {
+                // Convert old pixel size to multiplier (assuming 50px grid)
+                token.sizeMultiplier = token.size / 50;
+                delete token.size;
+            }
+
+            // Ensure sizeMultiplier has a valid value (default to 1 for medium)
+            if (!token.sizeMultiplier || token.sizeMultiplier <= 0) {
+                token.sizeMultiplier = 1;
+            }
+
+            // Calculate actual size from multiplier
+            const tokenSize = this.gridSize * token.sizeMultiplier;
 
             const el = document.createElement('div');
             el.className = `vtt-token ${token.type}${this.selectedToken?.id === token.id ? ' selected' : ''}`;
