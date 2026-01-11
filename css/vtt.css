@@ -550,6 +550,23 @@
     transform-origin: 0 0;
 }
 
+/* Tool Overlay - blocks token interaction when tools are active */
+.vtt-tool-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 3;
+    pointer-events: none;
+    transform-origin: 0 0;
+}
+
+.vtt-tool-overlay.active {
+    pointer-events: auto;
+    cursor: crosshair;
+}
+
 /* Fog Layer */
 .vtt-fog-layer {
     position: absolute;

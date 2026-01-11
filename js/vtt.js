@@ -585,6 +585,8 @@ const VTTManager = {
         this.backgroundLayer.style.transform = transform;
         this.tokenLayer.style.transform = transform;
         this.fogLayer.style.transform = transform;
+        const toolOverlay = document.getElementById('vtt-tool-overlay');
+        if (toolOverlay) toolOverlay.style.transform = transform;
         // Note: measureLayer is NOT transformed - it uses screen coordinates
 
         document.getElementById('vtt-zoom-level').textContent = Math.round(this.scale * 100) + '%';
@@ -655,6 +657,16 @@ const VTTManager = {
         // Deselect token when switching away from select tool
         if (tool !== 'select' && this.selectedToken) {
             this.deselectToken();
+        }
+
+        // Show/hide tool overlay to block token interaction
+        const toolOverlay = document.getElementById('vtt-tool-overlay');
+        if (toolOverlay) {
+            if (tool === 'fog' || tool === 'eraser' || tool === 'ruler') {
+                toolOverlay.classList.add('active');
+            } else {
+                toolOverlay.classList.remove('active');
+            }
         }
 
         // Update cursor
