@@ -62,6 +62,9 @@ const VTTManager = {
     // Monster favorites
     favorites: [],
 
+    // Saved token templates (player characters with custom art)
+    savedTokens: [],
+
     // Dice roller state
     currentDie: 20,
     diceCount: 1,
@@ -105,6 +108,7 @@ const VTTManager = {
         this.loadSettings();
         this.loadMaps();
         this.loadFavorites();
+        this.loadSavedTokens();
         this.bindEvents();
         this.updateGrid();
         this.loadMonsterLibrary();
@@ -610,10 +614,12 @@ const VTTManager = {
                     el.style.backgroundImage = `url(${token.customImage})`;
                     el.style.backgroundSize = 'cover';
                     el.style.backgroundPosition = 'center';
+                    el.style.backgroundColor = 'transparent';
+                    // No letter overlay when custom art is set
                 } else {
                     el.style.backgroundColor = this.getPlayerColor(token.color);
+                    el.innerHTML = `<span style="font-size: ${tokenSize * 0.3}px; color: white; text-shadow: 0 1px 2px rgba(0,0,0,0.5);">${token.name.charAt(0)}</span>`;
                 }
-                el.innerHTML = `<span style="font-size: ${tokenSize * 0.3}px; color: white; text-shadow: 0 1px 2px rgba(0,0,0,0.5);">${token.name.charAt(0)}</span>`;
             }
 
             // Token content for monsters
@@ -622,8 +628,11 @@ const VTTManager = {
                     el.style.backgroundImage = `url(${token.customImage})`;
                     el.style.backgroundSize = 'cover';
                     el.style.backgroundPosition = 'center';
+                    el.style.background = `url(${token.customImage}) center/cover`;  // Override gradient
+                    // No letter overlay when custom art is set
+                } else {
+                    el.innerHTML = `<span style="font-size: ${tokenSize * 0.3}px; color: white; text-shadow: 0 1px 2px rgba(0,0,0,0.5);">${token.name.charAt(0)}</span>`;
                 }
-                el.innerHTML = `<span style="font-size: ${tokenSize * 0.3}px; color: white; text-shadow: 0 1px 2px rgba(0,0,0,0.5);">${token.name.charAt(0)}</span>`;
             }
 
             // HP Bar (for any token with HP)
@@ -754,6 +763,7 @@ const VTTManager = {
             <div class="vtt-context-menu-item" onclick="VTTManager.editTokenHP('${token.id}')">Edit HP ${token.maxHP ? `(${token.currentHP}/${token.maxHP})` : '(not set)'}</div>
             <div class="vtt-context-menu-item" onclick="VTTManager.editTokenAC('${token.id}')">Edit AC ${token.ac ? `(${token.ac})` : '(not set)'}</div>
             <div class="vtt-context-menu-item" onclick="VTTManager.setTokenImage('${token.id}')">Set Custom Art</div>
+            <div class="vtt-context-menu-item" onclick="VTTManager.saveTokenAsTemplate('${token.id}')">Save as Template</div>
         `;
 
         menuHtml += `
@@ -1191,6 +1201,116 @@ const VTTManager = {
         try {
             localStorage.setItem('dmtk_vtt_favorites', JSON.stringify(this.favorites));
         } catch (e) {}
+    },
+
+    /**
+     * Saved Token Templates
+     */
+    loadSavedTokens() {
+        try {
+            this.savedTokens = JSON.parse(localStorage.getItem('dmtk_vtt_saved_tokens')) || [];
+        } catch (e) {
+            this.savedTokens = [];
+        }
+        this.renderSavedTokens();
+    },
+
+    saveSavedTokens() {
+        try {
+            localStorage.setItem('dmtk_vtt_saved_tokens', JSON.stringify(this.savedTokens));
+        } catch (e) {}
+    },
+
+    saveTokenAsTemplate(tokenId) {
+        const token = this.tokens.find(t => t.id === tokenId);
+        if (!token) return;
+
+        const template = {
+            id: 'template_' + Date.now(),
+            name: token.name,
+            type: token.type,
+            color: token.color || 'blue',
+            customImage: token.customImage,
+            maxHP: token.maxHP,
+            ac: token.ac,
+            sizeMultiplier: token.sizeMultiplier || 1,
+            savedAt: new Date().toISOString()
+        };
+
+        this.savedTokens.push(template);
+        this.saveSavedTokens();
+        this.renderSavedTokens();
+        this.closeContextMenu();
+
+        if (typeof showNotification === 'function') {
+            showNotification(`Saved "${token.name}" as template`, 'success');
+        }
+    },
+
+    deleteSavedToken(templateId) {
+        if (!confirm('Delete this saved token?')) return;
+
+        this.savedTokens = this.savedTokens.filter(t => t.id !== templateId);
+        this.saveSavedTokens();
+        this.renderSavedTokens();
+    },
+
+    addSavedToken(templateId) {
+        const template = this.savedTokens.find(t => t.id === templateId);
+        if (!template) return;
+
+        // Calculate snap position at center of viewport
+        const centerX = (this.canvas.offsetWidth / 2 - this.offsetX) / this.scale;
+        const centerY = (this.canvas.offsetHeight / 2 - this.offsetY) / this.scale;
+        const snappedX = Math.round(centerX / this.gridSize) * this.gridSize;
+        const snappedY = Math.round(centerY / this.gridSize) * this.gridSize;
+
+        const token = {
+            id: 'token_' + Date.now(),
+            type: template.type || 'player',
+            color: template.color || 'blue',
+            name: template.name,
+            x: snappedX,
+            y: snappedY,
+            sizeMultiplier: template.sizeMultiplier || 1,
+            maxHP: template.maxHP,
+            currentHP: template.maxHP,
+            ac: template.ac,
+            customImage: template.customImage,
+            conditions: [],
+            initiative: null
+        };
+
+        this.tokens.push(token);
+        this.renderTokens();
+        this.saveState();
+    },
+
+    renderSavedTokens() {
+        const container = document.getElementById('vtt-saved-tokens-list');
+        if (!container) return;
+
+        if (this.savedTokens.length === 0) {
+            container.innerHTML = '<div class="vtt-empty-state">No saved tokens yet.<br>Right-click a token to save it.</div>';
+            return;
+        }
+
+        container.innerHTML = this.savedTokens.map(template => {
+            const preview = template.customImage
+                ? `<div class="vtt-saved-token-preview" style="background-image: url(${template.customImage}); background-size: cover;"></div>`
+                : `<div class="vtt-saved-token-preview ${template.color || 'blue'}">${template.name.charAt(0)}</div>`;
+
+            return `
+                <div class="vtt-saved-token-item" onclick="VTTManager.addSavedToken('${template.id}')">
+                    ${preview}
+                    <div class="vtt-saved-token-info">
+                        <div class="vtt-saved-token-name">${template.name}</div>
+                        <div class="vtt-saved-token-meta">${template.maxHP ? 'HP: ' + template.maxHP : ''} ${template.ac ? 'AC: ' + template.ac : ''}</div>
+                    </div>
+                    <button class="vtt-saved-token-delete" onclick="event.stopPropagation(); VTTManager.deleteSavedToken('${template.id}')" title="Delete">×</button>
+                </div>
+            `;
+        }).join('');
     },
 
     /**

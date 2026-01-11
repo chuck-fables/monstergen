@@ -1105,26 +1105,26 @@
                             </div>
 
                             <div class="vtt-token-section">
-                                <h4>Player Tokens</h4>
-                                <div class="vtt-player-tokens">
-                                    <button class="vtt-token-add" data-color="blue" onclick="VTTManager.addPlayerToken('blue')">
-                                        <span class="vtt-token-preview blue"></span> Blue
+                                <h4>Add Player Token</h4>
+                                <div class="vtt-add-player-row">
+                                    <select id="vtt-player-color" class="vtt-player-color-select">
+                                        <option value="blue">Blue</option>
+                                        <option value="green">Green</option>
+                                        <option value="red">Red</option>
+                                        <option value="yellow">Yellow</option>
+                                        <option value="purple">Purple</option>
+                                        <option value="orange">Orange</option>
+                                    </select>
+                                    <button class="vtt-btn vtt-btn-primary" onclick="VTTManager.addPlayerToken(document.getElementById('vtt-player-color').value)">
+                                        Add Token
                                     </button>
-                                    <button class="vtt-token-add" data-color="green" onclick="VTTManager.addPlayerToken('green')">
-                                        <span class="vtt-token-preview green"></span> Green
-                                    </button>
-                                    <button class="vtt-token-add" data-color="red" onclick="VTTManager.addPlayerToken('red')">
-                                        <span class="vtt-token-preview red"></span> Red
-                                    </button>
-                                    <button class="vtt-token-add" data-color="yellow" onclick="VTTManager.addPlayerToken('yellow')">
-                                        <span class="vtt-token-preview yellow"></span> Yellow
-                                    </button>
-                                    <button class="vtt-token-add" data-color="purple" onclick="VTTManager.addPlayerToken('purple')">
-                                        <span class="vtt-token-preview purple"></span> Purple
-                                    </button>
-                                    <button class="vtt-token-add" data-color="orange" onclick="VTTManager.addPlayerToken('orange')">
-                                        <span class="vtt-token-preview orange"></span> Orange
-                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="vtt-token-section">
+                                <h4>Saved Tokens</h4>
+                                <div id="vtt-saved-tokens-list" class="vtt-saved-tokens-list">
+                                    <div class="vtt-empty-state">No saved tokens yet.<br>Right-click a token to save it.</div>
                                 </div>
                             </div>
 
