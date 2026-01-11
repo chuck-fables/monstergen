@@ -2011,9 +2011,20 @@ const VTTManager = {
         if (!token) return;
 
         token.sizeMultiplier = multiplier;
+
+        // Re-snap position based on new size (centers small tokens, corners for large)
+        const snapped = this.snapToGrid(token.x, token.y, multiplier);
+        token.x = snapped.x;
+        token.y = snapped.y;
+
         this.renderTokens();
         this.saveState();
         this.closeContextMenu();
+
+        // Update action bubbles if this is the selected token
+        if (this.selectedToken?.id === tokenId) {
+            setTimeout(() => this.showTokenActionBubbles(token), 0);
+        }
     },
 
     setTokenBorderColor(tokenId, color) {
