@@ -828,3 +828,86 @@
 .srd-subclasses h4 {
     color: var(--srd-accent) !important;
 }
+
+/* ================================
+   Spell Links in Statblocks
+   ================================ */
+.spell-link {
+    color: var(--srd-accent);
+    text-decoration: underline;
+    text-decoration-style: dotted;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.spell-link:hover {
+    color: #5a1008;
+    text-decoration-style: solid;
+}
+
+/* ================================
+   Spell Modal (popup from statblock)
+   ================================ */
+.srd-spell-modal {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10001;
+    background: rgba(0, 0, 0, 0.7);
+}
+
+.srd-spell-modal-content {
+    background: var(--srd-parchment);
+    border-radius: 0;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+    max-width: 500px;
+    max-height: 80vh;
+    overflow-y: auto;
+    margin: 1rem;
+}
+
+.srd-spell-modal-content .modal-header {
+    background: var(--srd-accent);
+    color: var(--srd-parchment);
+    padding: 1rem 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.srd-spell-modal-content .modal-header h2 {
+    margin: 0;
+    font-family: 'Libre Baskerville', serif;
+    font-size: 1.25rem;
+}
+
+.srd-spell-modal-content .modal-close {
+    background: none;
+    border: none;
+    color: var(--srd-parchment);
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 0;
+    line-height: 1;
+}
+
+.srd-spell-modal-content .modal-close:hover {
+    opacity: 0.8;
+}
+
+.srd-spell-modal-content .modal-body {
+    padding: 1rem 1.5rem;
+    color: #000;
+    font-family: 'Libre Baskerville', serif;
+}
+
+.srd-spell-modal-content .modal-body p {
+    margin: 0.4rem 0;
+    font-size: 0.9rem;
+}
+
+.srd-spell-modal-content .modal-body strong {
+    color: var(--srd-accent);
+}

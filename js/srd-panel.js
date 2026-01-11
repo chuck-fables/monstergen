@@ -33,6 +33,76 @@ const SRDPanel = {
         localStorage.setItem('dmtk_srd_custom', JSON.stringify(this.customEntries));
     },
 
+    // Linkify spell names in text - makes them clickable
+    linkifySpells(text) {
+        const allSpells = this.getAllSpells();
+        if (!allSpells || allSpells.length === 0) return text;
+
+        // Create a map of lowercase spell names to actual spell objects
+        const spellMap = new Map();
+        allSpells.forEach(spell => {
+            spellMap.set(spell.name.toLowerCase(), spell);
+        });
+
+        // Sort spell names by length (longest first) to avoid partial matches
+        const spellNames = Array.from(spellMap.keys()).sort((a, b) => b.length - a.length);
+
+        // Create regex pattern for all spell names (case insensitive)
+        // Only match whole words
+        let result = text;
+        spellNames.forEach(spellName => {
+            const regex = new RegExp(`\\b(${spellName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})\\b`, 'gi');
+            result = result.replace(regex, '<a href="#" class="spell-link" data-spell="$1" onclick="SRDPanel.showSpellModal(\'$1\'); return false;">$1</a>');
+        });
+
+        return result;
+    },
+
+    // Show a spell in a modal
+    showSpellModal(spellName) {
+        const allSpells = this.getAllSpells();
+        const spell = allSpells.find(s => s.name.toLowerCase() === spellName.toLowerCase());
+
+        if (!spell) {
+            console.warn('Spell not found:', spellName);
+            return;
+        }
+
+        // Create modal HTML
+        const modalHtml = `
+            <div id="srd-spell-modal" class="srd-spell-modal" onclick="if(event.target === this) SRDPanel.closeSpellModal()">
+                <div class="srd-spell-modal-content">
+                    <div class="modal-header">
+                        <h2>${spell.name}</h2>
+                        <button class="modal-close" onclick="SRDPanel.closeSpellModal()">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <p><em>${spell.level === 0 ? 'Cantrip' : `Level ${spell.level}`} ${spell.school}</em></p>
+                        <p><strong>Casting Time:</strong> ${spell.castingTime}</p>
+                        <p><strong>Range:</strong> ${spell.range}</p>
+                        <p><strong>Components:</strong> ${spell.components}</p>
+                        <p><strong>Duration:</strong> ${spell.duration}</p>
+                        <p><strong>Classes:</strong> ${spell.classes ? spell.classes.join(', ') : 'N/A'}</p>
+                        <hr style="border-color: var(--srd-border-light); margin: 0.75rem 0;">
+                        <p>${spell.description}</p>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        // Remove existing spell modal if any
+        const existingModal = document.getElementById('srd-spell-modal');
+        if (existingModal) existingModal.remove();
+
+        // Add modal to body
+        document.body.insertAdjacentHTML('beforeend', modalHtml);
+    },
+
+    closeSpellModal() {
+        const modal = document.getElementById('srd-spell-modal');
+        if (modal) modal.remove();
+    },
+
     switchTab(tab) {
         this.currentTab = tab;
         this.currentSearch = '';
@@ -398,7 +468,11 @@ const SRDPanel = {
         if (monster.traits && monster.traits.length) {
             html += `<div class="statblock-section statblock-traits">`;
             monster.traits.forEach(trait => {
-                html += `<p><strong><em>${trait.name}.</em></strong> ${trait.description}</p>`;
+                // Linkify spells in Spellcasting traits
+                const description = trait.name.toLowerCase().includes('spellcasting')
+                    ? this.linkifySpells(trait.description)
+                    : trait.description;
+                html += `<p><strong><em>${trait.name}.</em></strong> ${description}</p>`;
             });
             html += `</div>`;
         }
