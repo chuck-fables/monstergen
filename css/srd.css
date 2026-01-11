@@ -197,6 +197,9 @@
 .srd-list {
     display: grid;
     gap: 1rem;
+    justify-content: center;
+    max-width: 1400px;
+    margin: 0 auto;
 }
 
 .srd-empty {
@@ -658,6 +661,9 @@
 /* Grid layout for monster cards */
 #srd-monsters-content .srd-list {
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    justify-content: center;
+    max-width: 1400px;
+    margin: 0 auto;
 }
 
 /* ================================
