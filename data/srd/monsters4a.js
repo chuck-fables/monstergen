@@ -383,6 +383,150 @@ const SRDMonsters4a = [
         source: "SRD"
     },
     {
+        name: "Ape",
+        size: "medium",
+        type: "beast",
+        alignment: "unaligned",
+        ac: 12,
+        hp: 19,
+        hpDice: "3d8+6",
+        speed: "30 ft., climb 30 ft.",
+        str: 16, dex: 14, con: 14, int: 6, wis: 12, cha: 7,
+        skills: ["Athletics +5", "Perception +3"],
+        senses: "passive Perception 13",
+        languages: "-",
+        cr: "0.5",
+        actions: [
+            { name: "Multiattack", description: "The ape makes two fist attacks." },
+            { name: "Fist", description: "Melee Weapon Attack: +5 to hit, reach 5 ft., one target. Hit: 6 (1d6 + 3) bludgeoning damage." },
+            { name: "Rock", description: "Ranged Weapon Attack: +5 to hit, range 25/50 ft., one target. Hit: 6 (1d6 + 3) bludgeoning damage." }
+        ],
+        source: "SRD"
+    },
+    {
+        name: "Assassin",
+        size: "medium",
+        type: "humanoid",
+        subtype: "any race",
+        alignment: "any non-good alignment",
+        ac: 15,
+        acType: "studded leather",
+        hp: 78,
+        hpDice: "12d8+24",
+        speed: "30 ft.",
+        str: 11, dex: 16, con: 14, int: 13, wis: 11, cha: 10,
+        saves: ["Dex +6", "Int +4"],
+        skills: ["Acrobatics +6", "Deception +3", "Perception +3", "Stealth +9"],
+        resistances: ["poison"],
+        senses: "passive Perception 13",
+        languages: "Thieves' cant plus any two languages",
+        cr: "8",
+        traits: [
+            { name: "Assassinate", description: "During its first turn, the assassin has advantage on attack rolls against any creature that hasn't taken a turn. Any hit the assassin scores against a surprised creature is a critical hit." },
+            { name: "Evasion", description: "If the assassin is subjected to an effect that allows it to make a Dexterity saving throw to take only half damage, the assassin instead takes no damage if it succeeds on the saving throw, and only half damage if it fails." },
+            { name: "Sneak Attack (1/Turn)", description: "The assassin deals an extra 14 (4d6) damage when it hits a target with a weapon attack and has advantage on the attack roll, or when the target is within 5 feet of an ally of the assassin that isn't incapacitated and the assassin doesn't have disadvantage on the attack roll." }
+        ],
+        actions: [
+            { name: "Multiattack", description: "The assassin makes two shortsword attacks." },
+            { name: "Shortsword", description: "Melee Weapon Attack: +6 to hit, reach 5 ft., one target. Hit: 6 (1d6 + 3) piercing damage, and the target must make a DC 15 Constitution saving throw, taking 24 (7d6) poison damage on a failed save, or half as much damage on a successful one." },
+            { name: "Light Crossbow", description: "Ranged Weapon Attack: +6 to hit, range 80/320 ft., one target. Hit: 7 (1d8 + 3) piercing damage, and the target must make a DC 15 Constitution saving throw, taking 24 (7d6) poison damage on a failed save, or half as much damage on a successful one." }
+        ],
+        source: "SRD"
+    },
+    {
+        name: "Bandit",
+        size: "medium",
+        type: "humanoid",
+        subtype: "any race",
+        alignment: "any non-lawful alignment",
+        ac: 12,
+        acType: "leather armor",
+        hp: 11,
+        hpDice: "2d8+2",
+        speed: "30 ft.",
+        str: 11, dex: 12, con: 12, int: 10, wis: 10, cha: 10,
+        senses: "passive Perception 10",
+        languages: "any one language (usually Common)",
+        cr: "0.125",
+        actions: [
+            { name: "Scimitar", description: "Melee Weapon Attack: +3 to hit, reach 5 ft., one target. Hit: 4 (1d6 + 1) slashing damage." },
+            { name: "Light Crossbow", description: "Ranged Weapon Attack: +3 to hit, range 80/320 ft., one target. Hit: 5 (1d8 + 1) piercing damage." }
+        ],
+        source: "SRD"
+    },
+    {
+        name: "Bandit Captain",
+        size: "medium",
+        type: "humanoid",
+        subtype: "any race",
+        alignment: "any non-lawful alignment",
+        ac: 15,
+        acType: "studded leather",
+        hp: 65,
+        hpDice: "10d8+20",
+        speed: "30 ft.",
+        str: 15, dex: 16, con: 14, int: 14, wis: 11, cha: 14,
+        saves: ["Str +4", "Dex +5", "Wis +2"],
+        skills: ["Athletics +4", "Deception +4"],
+        senses: "passive Perception 10",
+        languages: "any two languages",
+        cr: "2",
+        actions: [
+            { name: "Multiattack", description: "The captain makes three melee attacks: two with its scimitar and one with its dagger. Or the captain makes two ranged attacks with its daggers." },
+            { name: "Scimitar", description: "Melee Weapon Attack: +5 to hit, reach 5 ft., one target. Hit: 6 (1d6 + 3) slashing damage." },
+            { name: "Dagger", description: "Melee or Ranged Weapon Attack: +5 to hit, reach 5 ft. or range 20/60 ft., one target. Hit: 5 (1d4 + 3) piercing damage." }
+        ],
+        reactions: [
+            { name: "Parry", description: "The captain adds 2 to its AC against one melee attack that would hit it. To do so, the captain must see the attacker and be wielding a melee weapon." }
+        ],
+        source: "SRD"
+    },
+    {
+        name: "Bat",
+        size: "tiny",
+        type: "beast",
+        alignment: "unaligned",
+        ac: 12,
+        hp: 1,
+        hpDice: "1d4-1",
+        speed: "5 ft., fly 30 ft.",
+        str: 2, dex: 15, con: 8, int: 2, wis: 12, cha: 4,
+        senses: "blindsight 60 ft., passive Perception 11",
+        languages: "-",
+        cr: "0",
+        traits: [
+            { name: "Echolocation", description: "The bat can't use its blindsight while deafened." },
+            { name: "Keen Hearing", description: "The bat has advantage on Wisdom (Perception) checks that rely on hearing." }
+        ],
+        actions: [
+            { name: "Bite", description: "Melee Weapon Attack: +0 to hit, reach 5 ft., one creature. Hit: 1 piercing damage." }
+        ],
+        source: "SRD"
+    },
+    {
+        name: "Berserker",
+        size: "medium",
+        type: "humanoid",
+        subtype: "any race",
+        alignment: "any chaotic alignment",
+        ac: 13,
+        acType: "hide armor",
+        hp: 67,
+        hpDice: "9d8+27",
+        speed: "30 ft.",
+        str: 16, dex: 12, con: 17, int: 9, wis: 11, cha: 9,
+        senses: "passive Perception 10",
+        languages: "any one language (usually Common)",
+        cr: "2",
+        traits: [
+            { name: "Reckless", description: "At the start of its turn, the berserker can gain advantage on all melee weapon attack rolls during that turn, but attack rolls against it have advantage until the start of its next turn." }
+        ],
+        actions: [
+            { name: "Greataxe", description: "Melee Weapon Attack: +5 to hit, reach 5 ft., one target. Hit: 9 (1d12 + 3) slashing damage." }
+        ],
+        source: "SRD"
+    },
+    {
         name: "Black Bear",
         size: "medium",
         type: "beast",
@@ -459,6 +603,29 @@ const SRDMonsters4a = [
         source: "SRD"
     },
     {
+        name: "Boar",
+        size: "medium",
+        type: "beast",
+        alignment: "unaligned",
+        ac: 11,
+        acType: "natural armor",
+        hp: 11,
+        hpDice: "2d8+2",
+        speed: "40 ft.",
+        str: 13, dex: 11, con: 12, int: 2, wis: 9, cha: 5,
+        senses: "passive Perception 9",
+        languages: "-",
+        cr: "0.25",
+        traits: [
+            { name: "Charge", description: "If the boar moves at least 20 feet straight toward a target and then hits it with a tusk attack on the same turn, the target takes an extra 3 (1d6) slashing damage. If the target is a creature, it must succeed on a DC 11 Strength saving throw or be knocked prone." },
+            { name: "Relentless (Recharges after a Short or Long Rest)", description: "If the boar takes 7 damage or less that would reduce it to 0 hit points, it is reduced to 1 hit point instead." }
+        ],
+        actions: [
+            { name: "Tusk", description: "Melee Weapon Attack: +3 to hit, reach 5 ft., one target. Hit: 4 (1d6 + 1) slashing damage." }
+        ],
+        source: "SRD"
+    },
+    {
         name: "Brown Bear",
         size: "large",
         type: "beast",
@@ -505,6 +672,28 @@ const SRDMonsters4a = [
             { name: "Pike", description: "Melee Weapon Attack: +6 to hit, reach 10 ft., one target. Hit: 9 (1d10 + 4) piercing damage." },
             { name: "Hooves", description: "Melee Weapon Attack: +6 to hit, reach 5 ft., one target. Hit: 11 (2d6 + 4) bludgeoning damage." },
             { name: "Longbow", description: "Ranged Weapon Attack: +4 to hit, range 150/600 ft., one target. Hit: 6 (1d8 + 2) piercing damage." }
+        ],
+        source: "SRD"
+    },
+    {
+        name: "Cat",
+        size: "tiny",
+        type: "beast",
+        alignment: "unaligned",
+        ac: 12,
+        hp: 2,
+        hpDice: "1d4",
+        speed: "40 ft., climb 30 ft.",
+        str: 3, dex: 15, con: 10, int: 3, wis: 12, cha: 7,
+        skills: ["Perception +3", "Stealth +4"],
+        senses: "passive Perception 13",
+        languages: "-",
+        cr: "0",
+        traits: [
+            { name: "Keen Smell", description: "The cat has advantage on Wisdom (Perception) checks that rely on smell." }
+        ],
+        actions: [
+            { name: "Claws", description: "Melee Weapon Attack: +0 to hit, reach 5 ft., one target. Hit: 1 slashing damage." }
         ],
         source: "SRD"
     },
@@ -591,6 +780,48 @@ const SRDMonsters4a = [
         source: "SRD"
     },
     {
+        name: "Commoner",
+        size: "medium",
+        type: "humanoid",
+        subtype: "any race",
+        alignment: "any alignment",
+        ac: 10,
+        hp: 4,
+        hpDice: "1d8",
+        speed: "30 ft.",
+        str: 10, dex: 10, con: 10, int: 10, wis: 10, cha: 10,
+        senses: "passive Perception 10",
+        languages: "any one language (usually Common)",
+        cr: "0",
+        actions: [
+            { name: "Club", description: "Melee Weapon Attack: +2 to hit, reach 5 ft., one target. Hit: 2 (1d4) bludgeoning damage." }
+        ],
+        source: "SRD"
+    },
+    {
+        name: "Crab",
+        size: "tiny",
+        type: "beast",
+        alignment: "unaligned",
+        ac: 11,
+        acType: "natural armor",
+        hp: 2,
+        hpDice: "1d4",
+        speed: "20 ft., swim 20 ft.",
+        str: 2, dex: 11, con: 10, int: 1, wis: 8, cha: 2,
+        skills: ["Stealth +2"],
+        senses: "blindsight 30 ft., passive Perception 9",
+        languages: "-",
+        cr: "0",
+        traits: [
+            { name: "Amphibious", description: "The crab can breathe air and water." }
+        ],
+        actions: [
+            { name: "Claw", description: "Melee Weapon Attack: +0 to hit, reach 5 ft., one target. Hit: 1 bludgeoning damage." }
+        ],
+        source: "SRD"
+    },
+    {
         name: "Crocodile",
         size: "large",
         type: "beast",
@@ -610,6 +841,56 @@ const SRDMonsters4a = [
         ],
         actions: [
             { name: "Bite", description: "Melee Weapon Attack: +4 to hit, reach 5 ft., one creature. Hit: 7 (1d10 + 2) piercing damage, and the target is grappled (escape DC 12). Until this grapple ends, the target is restrained, and the crocodile can't bite another target." }
+        ],
+        source: "SRD"
+    },
+    {
+        name: "Cult Fanatic",
+        size: "medium",
+        type: "humanoid",
+        subtype: "any race",
+        alignment: "any non-good alignment",
+        ac: 13,
+        acType: "leather armor",
+        hp: 33,
+        hpDice: "6d8+6",
+        speed: "30 ft.",
+        str: 11, dex: 14, con: 12, int: 10, wis: 13, cha: 14,
+        skills: ["Deception +4", "Persuasion +4", "Religion +2"],
+        senses: "passive Perception 11",
+        languages: "any one language (usually Common)",
+        cr: "2",
+        traits: [
+            { name: "Dark Devotion", description: "The fanatic has advantage on saving throws against being charmed or frightened." },
+            { name: "Spellcasting", description: "The fanatic is a 4th-level spellcaster. Its spellcasting ability is Wisdom (spell save DC 11, +3 to hit with spell attacks). The fanatic has the following cleric spells prepared: Cantrips (at will): light, sacred flame, thaumaturgy. 1st level (4 slots): command, inflict wounds, shield of faith. 2nd level (3 slots): hold person, spiritual weapon." }
+        ],
+        actions: [
+            { name: "Multiattack", description: "The fanatic makes two melee attacks." },
+            { name: "Dagger", description: "Melee or Ranged Weapon Attack: +4 to hit, reach 5 ft. or range 20/60 ft., one creature. Hit: 4 (1d4 + 2) piercing damage." }
+        ],
+        source: "SRD"
+    },
+    {
+        name: "Cultist",
+        size: "medium",
+        type: "humanoid",
+        subtype: "any race",
+        alignment: "any non-good alignment",
+        ac: 12,
+        acType: "leather armor",
+        hp: 9,
+        hpDice: "2d8",
+        speed: "30 ft.",
+        str: 11, dex: 12, con: 10, int: 10, wis: 11, cha: 10,
+        skills: ["Deception +2", "Religion +2"],
+        senses: "passive Perception 10",
+        languages: "any one language (usually Common)",
+        cr: "0.125",
+        traits: [
+            { name: "Dark Devotion", description: "The cultist has advantage on saving throws against being charmed or frightened." }
+        ],
+        actions: [
+            { name: "Scimitar", description: "Melee Weapon Attack: +3 to hit, reach 5 ft., one creature. Hit: 4 (1d6 + 1) slashing damage." }
         ],
         source: "SRD"
     },

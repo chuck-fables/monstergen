@@ -56,6 +56,24 @@ const SRDMonsters4b = [
         source: "SRD"
     },
     {
+        name: "Deer",
+        size: "medium",
+        type: "beast",
+        alignment: "unaligned",
+        ac: 13,
+        hp: 4,
+        hpDice: "1d8",
+        speed: "50 ft.",
+        str: 11, dex: 16, con: 11, int: 2, wis: 14, cha: 5,
+        senses: "passive Perception 12",
+        languages: "-",
+        cr: "0",
+        actions: [
+            { name: "Bite", description: "Melee Weapon Attack: +2 to hit, reach 5 ft., one target. Hit: 2 (1d4) piercing damage." }
+        ],
+        source: "SRD"
+    },
+    {
         name: "Demilich",
         size: "tiny",
         type: "undead",
@@ -447,6 +465,28 @@ const SRDMonsters4b = [
         actions: [
             { name: "Gore", description: "Melee Weapon Attack: +8 to hit, reach 5 ft., one target. Hit: 19 (3d8 + 6) piercing damage." },
             { name: "Stomp", description: "Melee Weapon Attack: +8 to hit, reach 5 ft., one prone creature. Hit: 22 (3d10 + 6) bludgeoning damage." }
+        ],
+        source: "SRD"
+    },
+    {
+        name: "Elk",
+        size: "large",
+        type: "beast",
+        alignment: "unaligned",
+        ac: 10,
+        hp: 13,
+        hpDice: "2d10+2",
+        speed: "50 ft.",
+        str: 16, dex: 10, con: 12, int: 2, wis: 10, cha: 6,
+        senses: "passive Perception 10",
+        languages: "-",
+        cr: "0.25",
+        traits: [
+            { name: "Charge", description: "If the elk moves at least 20 feet straight toward a target and then hits it with a ram attack on the same turn, the target takes an extra 7 (2d6) damage. If the target is a creature, it must succeed on a DC 13 Strength saving throw or be knocked prone." }
+        ],
+        actions: [
+            { name: "Ram", description: "Melee Weapon Attack: +5 to hit, reach 5 ft., one target. Hit: 6 (1d6 + 3) bludgeoning damage." },
+            { name: "Hooves", description: "Melee Weapon Attack: +5 to hit, reach 5 ft., one prone creature. Hit: 8 (2d4 + 3) bludgeoning damage." }
         ],
         source: "SRD"
     },

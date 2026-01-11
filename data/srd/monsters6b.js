@@ -1104,6 +1104,151 @@ const SRDMonsters6b = [
         source: "SRD"
     },
     {
+        name: "Werebear",
+        size: "medium",
+        type: "humanoid",
+        subtype: "human, shapechanger",
+        alignment: "neutral good",
+        ac: 10,
+        acType: "11 in bear or hybrid form, natural armor",
+        hp: 135,
+        hpDice: "18d8+54",
+        speed: "30 ft. (40 ft., climb 30 ft. in bear or hybrid form)",
+        str: 19, dex: 10, con: 17, int: 11, wis: 12, cha: 12,
+        skills: ["Perception +7"],
+        immunities: ["bludgeoning, piercing, and slashing from nonmagical attacks not made with silvered weapons"],
+        senses: "passive Perception 17",
+        languages: "Common (can't speak in bear form)",
+        cr: "5",
+        traits: [
+            { name: "Shapechanger", description: "The werebear can use its action to polymorph into a Large bear-humanoid hybrid or into a Large bear, or back into its true form, which is humanoid. Its statistics, other than its size and AC, are the same in each form. Any equipment it is wearing or carrying isn't transformed. It reverts to its true form if it dies." },
+            { name: "Keen Smell", description: "The werebear has advantage on Wisdom (Perception) checks that rely on smell." }
+        ],
+        actions: [
+            { name: "Multiattack", description: "In bear form, the werebear makes two claw attacks. In humanoid form, it makes two greataxe attacks. In hybrid form, it can attack like a bear or a humanoid." },
+            { name: "Bite (Bear or Hybrid Form Only)", description: "Melee Weapon Attack: +7 to hit, reach 5 ft., one target. Hit: 15 (2d10 + 4) piercing damage. If the target is a humanoid, it must succeed on a DC 14 Constitution saving throw or be cursed with werebear lycanthropy." },
+            { name: "Claw (Bear or Hybrid Form Only)", description: "Melee Weapon Attack: +7 to hit, reach 5 ft., one target. Hit: 13 (2d8 + 4) slashing damage." },
+            { name: "Greataxe (Humanoid or Hybrid Form Only)", description: "Melee Weapon Attack: +7 to hit, reach 5 ft., one target. Hit: 10 (1d12 + 4) slashing damage." }
+        ],
+        source: "SRD"
+    },
+    {
+        name: "Wereboar",
+        size: "medium",
+        type: "humanoid",
+        subtype: "human, shapechanger",
+        alignment: "neutral evil",
+        ac: 10,
+        acType: "11 in boar or hybrid form, natural armor",
+        hp: 78,
+        hpDice: "12d8+24",
+        speed: "30 ft. (40 ft. in boar form)",
+        str: 17, dex: 10, con: 15, int: 10, wis: 11, cha: 8,
+        skills: ["Perception +2"],
+        immunities: ["bludgeoning, piercing, and slashing from nonmagical attacks not made with silvered weapons"],
+        senses: "passive Perception 12",
+        languages: "Common (can't speak in boar form)",
+        cr: "4",
+        traits: [
+            { name: "Shapechanger", description: "The wereboar can use its action to polymorph into a boar-humanoid hybrid or into a boar, or back into its true form, which is humanoid. Its statistics, other than its AC, are the same in each form. Any equipment it is wearing or carrying isn't transformed. It reverts to its true form if it dies." },
+            { name: "Charge (Boar or Hybrid Form Only)", description: "If the wereboar moves at least 15 feet straight toward a target and then hits it with its tusks on the same turn, the target takes an extra 7 (2d6) slashing damage. If the target is a creature, it must succeed on a DC 13 Strength saving throw or be knocked prone." },
+            { name: "Relentless (Recharges after a Short or Long Rest)", description: "If the wereboar takes 14 damage or less that would reduce it to 0 hit points, it is reduced to 1 hit point instead." }
+        ],
+        actions: [
+            { name: "Multiattack (Humanoid or Hybrid Form Only)", description: "The wereboar makes two attacks, only one of which can be with its tusks." },
+            { name: "Maul (Humanoid or Hybrid Form Only)", description: "Melee Weapon Attack: +5 to hit, reach 5 ft., one target. Hit: 10 (2d6 + 3) bludgeoning damage." },
+            { name: "Tusks (Boar or Hybrid Form Only)", description: "Melee Weapon Attack: +5 to hit, reach 5 ft., one target. Hit: 10 (2d6 + 3) slashing damage. If the target is a humanoid, it must succeed on a DC 12 Constitution saving throw or be cursed with wereboar lycanthropy." }
+        ],
+        source: "SRD"
+    },
+    {
+        name: "Wererat",
+        size: "medium",
+        type: "humanoid",
+        subtype: "human, shapechanger",
+        alignment: "lawful evil",
+        ac: 12,
+        hp: 33,
+        hpDice: "6d8+6",
+        speed: "30 ft.",
+        str: 10, dex: 15, con: 12, int: 11, wis: 10, cha: 8,
+        skills: ["Perception +2", "Stealth +4"],
+        immunities: ["bludgeoning, piercing, and slashing from nonmagical attacks not made with silvered weapons"],
+        senses: "darkvision 60 ft. (rat form only), passive Perception 12",
+        languages: "Common (can't speak in rat form)",
+        cr: "2",
+        traits: [
+            { name: "Shapechanger", description: "The wererat can use its action to polymorph into a rat-humanoid hybrid or into a giant rat, or back into its true form, which is humanoid. Its statistics, other than its size, are the same in each form. Any equipment it is wearing or carrying isn't transformed. It reverts to its true form if it dies." },
+            { name: "Keen Smell", description: "The wererat has advantage on Wisdom (Perception) checks that rely on smell." }
+        ],
+        actions: [
+            { name: "Multiattack (Humanoid or Hybrid Form Only)", description: "The wererat makes two attacks, only one of which can be a bite." },
+            { name: "Bite (Rat or Hybrid Form Only)", description: "Melee Weapon Attack: +4 to hit, reach 5 ft., one target. Hit: 4 (1d4 + 2) piercing damage. If the target is a humanoid, it must succeed on a DC 11 Constitution saving throw or be cursed with wererat lycanthropy." },
+            { name: "Shortsword (Humanoid or Hybrid Form Only)", description: "Melee Weapon Attack: +4 to hit, reach 5 ft., one target. Hit: 5 (1d6 + 2) piercing damage." },
+            { name: "Hand Crossbow (Humanoid or Hybrid Form Only)", description: "Ranged Weapon Attack: +4 to hit, range 30/120 ft., one target. Hit: 5 (1d6 + 2) piercing damage." }
+        ],
+        source: "SRD"
+    },
+    {
+        name: "Weretiger",
+        size: "medium",
+        type: "humanoid",
+        subtype: "human, shapechanger",
+        alignment: "neutral",
+        ac: 12,
+        hp: 120,
+        hpDice: "16d8+48",
+        speed: "30 ft. (40 ft. in tiger form)",
+        str: 17, dex: 15, con: 16, int: 10, wis: 13, cha: 11,
+        skills: ["Perception +5", "Stealth +4"],
+        immunities: ["bludgeoning, piercing, and slashing from nonmagical attacks not made with silvered weapons"],
+        senses: "darkvision 60 ft., passive Perception 15",
+        languages: "Common (can't speak in tiger form)",
+        cr: "4",
+        traits: [
+            { name: "Shapechanger", description: "The weretiger can use its action to polymorph into a tiger-humanoid hybrid or into a tiger, or back into its true form, which is humanoid. Its statistics, other than its size, are the same in each form. Any equipment it is wearing or carrying isn't transformed. It reverts to its true form if it dies." },
+            { name: "Keen Hearing and Smell", description: "The weretiger has advantage on Wisdom (Perception) checks that rely on hearing or smell." },
+            { name: "Pounce (Tiger or Hybrid Form Only)", description: "If the weretiger moves at least 15 feet straight toward a creature and then hits it with a claw attack on the same turn, that target must succeed on a DC 14 Strength saving throw or be knocked prone. If the target is prone, the weretiger can make one bite attack against it as a bonus action." }
+        ],
+        actions: [
+            { name: "Multiattack (Humanoid or Hybrid Form Only)", description: "In humanoid form, the weretiger makes two scimitar attacks or two longbow attacks. In hybrid form, it can attack like a humanoid or make two claw attacks." },
+            { name: "Bite (Tiger or Hybrid Form Only)", description: "Melee Weapon Attack: +5 to hit, reach 5 ft., one target. Hit: 8 (1d10 + 3) piercing damage. If the target is a humanoid, it must succeed on a DC 13 Constitution saving throw or be cursed with weretiger lycanthropy." },
+            { name: "Claw (Tiger or Hybrid Form Only)", description: "Melee Weapon Attack: +5 to hit, reach 5 ft., one target. Hit: 7 (1d8 + 3) slashing damage." },
+            { name: "Scimitar (Humanoid or Hybrid Form Only)", description: "Melee Weapon Attack: +5 to hit, reach 5 ft., one target. Hit: 6 (1d6 + 3) slashing damage." },
+            { name: "Longbow (Humanoid or Hybrid Form Only)", description: "Ranged Weapon Attack: +4 to hit, range 150/600 ft., one target. Hit: 6 (1d8 + 2) piercing damage." }
+        ],
+        source: "SRD"
+    },
+    {
+        name: "Werewolf",
+        size: "medium",
+        type: "humanoid",
+        subtype: "human, shapechanger",
+        alignment: "chaotic evil",
+        ac: 11,
+        acType: "12 in wolf or hybrid form, natural armor",
+        hp: 58,
+        hpDice: "9d8+18",
+        speed: "30 ft. (40 ft. in wolf form)",
+        str: 15, dex: 13, con: 14, int: 10, wis: 11, cha: 10,
+        skills: ["Perception +4", "Stealth +3"],
+        immunities: ["bludgeoning, piercing, and slashing from nonmagical attacks not made with silvered weapons"],
+        senses: "passive Perception 14",
+        languages: "Common (can't speak in wolf form)",
+        cr: "3",
+        traits: [
+            { name: "Shapechanger", description: "The werewolf can use its action to polymorph into a wolf-humanoid hybrid or into a wolf, or back into its true form, which is humanoid. Its statistics, other than its AC, are the same in each form. Any equipment it is wearing or carrying isn't transformed. It reverts to its true form if it dies." },
+            { name: "Keen Hearing and Smell", description: "The werewolf has advantage on Wisdom (Perception) checks that rely on hearing or smell." }
+        ],
+        actions: [
+            { name: "Multiattack (Humanoid or Hybrid Form Only)", description: "The werewolf makes two attacks: one with its bite and one with its claws or spear." },
+            { name: "Bite (Wolf or Hybrid Form Only)", description: "Melee Weapon Attack: +4 to hit, reach 5 ft., one target. Hit: 6 (1d8 + 2) piercing damage. If the target is a humanoid, it must succeed on a DC 12 Constitution saving throw or be cursed with werewolf lycanthropy." },
+            { name: "Claws (Hybrid Form Only)", description: "Melee Weapon Attack: +4 to hit, reach 5 ft., one creature. Hit: 7 (2d4 + 2) slashing damage." },
+            { name: "Spear (Humanoid Form Only)", description: "Melee or Ranged Weapon Attack: +4 to hit, reach 5 ft. or range 20/60 ft., one creature. Hit: 5 (1d6 + 2) piercing damage, or 6 (1d8 + 2) piercing damage if used with two hands to make a melee attack." }
+        ],
+        source: "SRD"
+    },
+    {
         name: "Wight",
         size: "medium",
         type: "undead",
