@@ -773,24 +773,24 @@
     height: 100%;
 }
 
-/* AC Bubble - smaller and less intrusive */
+/* AC Bubble - compact, positioned on token corner */
 .vtt-token-ac {
     position: absolute;
-    top: -4px;
-    right: -4px;
-    min-width: 16px;
-    height: 16px;
-    padding: 0 3px;
-    background: rgba(74, 144, 217, 0.85);
-    border: 1px solid rgba(255, 255, 255, 0.4);
+    top: 2px;
+    right: 2px;
+    min-width: 14px;
+    height: 14px;
+    padding: 0 2px;
+    background: rgba(40, 40, 40, 0.85);
+    border: 1px solid rgba(255, 255, 255, 0.3);
     border-radius: 3px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 0.55rem;
+    font-size: 0.5rem;
     font-weight: 600;
     color: white;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
 }
 
 /* Condition Icons */
