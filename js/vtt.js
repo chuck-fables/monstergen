@@ -2572,7 +2572,8 @@ const VTTManager = {
             ...(window.SRDMonsters4a || []),
             ...(window.SRDMonsters4b || []),
             ...(window.SRDMonsters5 || []),
-            ...(window.SRDMonsters6a || [])
+            ...(window.SRDMonsters6a || []),
+            ...(window.SRDMonsters6b || [])
         ];
         return allMonsters;
     },

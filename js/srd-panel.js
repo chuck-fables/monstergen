@@ -205,7 +205,8 @@ const SRDPanel = {
             ...(window.SRDMonsters4a || []),
             ...(window.SRDMonsters4b || []),
             ...(window.SRDMonsters5 || []),
-            ...(window.SRDMonsters6a || [])
+            ...(window.SRDMonsters6a || []),
+            ...(window.SRDMonsters6b || [])
         ];
         const custom = this.customEntries.monsters.map(m => ({ ...m, isCustom: true }));
         return [...srd, ...custom];
