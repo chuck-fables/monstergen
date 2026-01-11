@@ -868,9 +868,9 @@ select option {
 
     .controls-content {
         padding: 16px 20px;
-        overflow: hidden;
+        overflow-y: auto;
         transition: max-height 0.4s ease, opacity 0.3s ease, padding 0.3s ease;
-        max-height: 1000px; /* Large enough to fit content */
+        max-height: 60vh; /* Limit height to allow scrolling */
     }
 
     .controls-content.collapsed {
@@ -887,7 +887,6 @@ select option {
     .location-controls,
     .item-controls {
         padding: 0;
-        overflow: hidden;
     }
 }
 
