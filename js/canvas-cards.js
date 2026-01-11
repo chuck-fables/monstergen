@@ -666,6 +666,14 @@ const CanvasCards = {
         // Use existing renderers with hideActions option to hide buttons in canvas modal
         switch (card.type) {
             case 'monster':
+                // Check if this is an SRD monster (has 'ac' directly instead of 'armorClass.value')
+                if (data.source === 'SRD' || (data.ac !== undefined && data.armorClass === undefined)) {
+                    // Use SRDPanel's renderStatblock for SRD monsters
+                    if (typeof SRDPanel !== 'undefined' && SRDPanel.renderStatblock) {
+                        return SRDPanel.renderStatblock(data);
+                    }
+                }
+                // Generated monsters use StatblockRenderer
                 if (typeof StatblockRenderer !== 'undefined') {
                     return StatblockRenderer.render(data, { hideActions: true });
                 }
