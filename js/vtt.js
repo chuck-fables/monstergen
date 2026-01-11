@@ -648,6 +648,11 @@ const VTTManager = {
             btn.classList.toggle('active', btn.dataset.tool === tool);
         });
 
+        // Deselect token when switching away from select tool
+        if (tool !== 'select' && this.selectedToken) {
+            this.deselectToken();
+        }
+
         // Update cursor
         if (tool === 'fog' || tool === 'eraser') {
             this.canvas.style.cursor = 'crosshair';
@@ -883,13 +888,29 @@ const VTTManager = {
                 el.innerHTML += `<div class="vtt-token-conditions">${conditionsHtml}</div>`;
             }
 
-            // Events
-            el.addEventListener('mousedown', (e) => this.onTokenMouseDown(e, token));
-            el.addEventListener('touchstart', (e) => this.onTokenTouchStart(e, token), { passive: false });
-            el.addEventListener('touchmove', (e) => this.onTokenTouchMove(e, token), { passive: false });
-            el.addEventListener('touchend', (e) => this.onTokenTouchEnd(e, token));
-            el.addEventListener('contextmenu', (e) => this.showTokenContextMenu(e, token));
+            // Events - only allow token interaction in select mode
+            el.addEventListener('mousedown', (e) => {
+                if (this.currentTool !== 'select') return;
+                this.onTokenMouseDown(e, token);
+            });
+            el.addEventListener('touchstart', (e) => {
+                if (this.currentTool !== 'select') return;
+                this.onTokenTouchStart(e, token);
+            }, { passive: false });
+            el.addEventListener('touchmove', (e) => {
+                if (this.currentTool !== 'select') return;
+                this.onTokenTouchMove(e, token);
+            }, { passive: false });
+            el.addEventListener('touchend', (e) => {
+                if (this.currentTool !== 'select') return;
+                this.onTokenTouchEnd(e, token);
+            });
+            el.addEventListener('contextmenu', (e) => {
+                if (this.currentTool !== 'select') return;
+                this.showTokenContextMenu(e, token);
+            });
             el.addEventListener('click', (e) => {
+                if (this.currentTool !== 'select') return;
                 e.stopPropagation();
                 this.selectToken(token);
             });
