@@ -49,9 +49,9 @@ const Sidebar = {
         // Keyboard navigation
         document.addEventListener('keydown', (e) => {
             // Alt + number to switch panels
-            if (e.altKey && e.key >= '1' && e.key <= '8') {
+            if (e.altKey && e.key >= '1' && e.key <= '9') {
                 const index = parseInt(e.key) - 1;
-                const panelKeys = ['monster', 'npc', 'loot', 'hooks', 'location', 'item', 'campaign', 'vtt'];
+                const panelKeys = ['monster', 'npc', 'loot', 'hooks', 'location', 'item', 'library', 'campaign', 'vtt'];
                 if (panelKeys[index]) {
                     this.switchPanel(panelKeys[index]);
                     e.preventDefault();

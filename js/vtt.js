@@ -358,7 +358,7 @@ const VTTManager = {
         this.backgroundLayer.style.transform = transform;
         this.tokenLayer.style.transform = transform;
         this.fogLayer.style.transform = transform;
-        this.measureLayer.style.transform = transform;
+        // Note: measureLayer is NOT transformed - it uses screen coordinates
 
         document.getElementById('vtt-zoom-level').textContent = Math.round(this.scale * 100) + '%';
     },
@@ -954,30 +954,31 @@ const VTTManager = {
      */
     startMeasure(x, y) {
         this.isDrawing = true;
-        this.drawStartX = (x - this.offsetX) / this.scale;
-        this.drawStartY = (y - this.offsetY) / this.scale;
+        // Store screen coordinates directly
+        this.drawStartX = x;
+        this.drawStartY = y;
 
         document.getElementById('vtt-ruler-display').classList.remove('hidden');
     },
 
     updateMeasure(x, y) {
-        const endX = (x - this.offsetX) / this.scale;
-        const endY = (y - this.offsetY) / this.scale;
+        const endX = x;
+        const endY = y;
 
-        // Calculate distance
-        const dx = endX - this.drawStartX;
-        const dy = endY - this.drawStartY;
-        const pixelDist = Math.sqrt(dx * dx + dy * dy);
+        // Calculate distance in world space for accurate measurement
+        const worldDx = (endX - this.drawStartX) / this.scale;
+        const worldDy = (endY - this.drawStartY) / this.scale;
+        const pixelDist = Math.sqrt(worldDx * worldDx + worldDy * worldDy);
         const squares = pixelDist / this.gridSize;
         const feet = Math.round(squares * 5);
 
         document.getElementById('vtt-ruler-distance').textContent = feet + ' ft';
 
-        // Draw line
+        // Draw line in screen coordinates
         this.measureLayer.innerHTML = `
             <line class="vtt-ruler-line" x1="${this.drawStartX}" y1="${this.drawStartY}" x2="${endX}" y2="${endY}"/>
-            <circle class="vtt-ruler-endpoint" cx="${this.drawStartX}" cy="${this.drawStartY}" r="5"/>
-            <circle class="vtt-ruler-endpoint" cx="${endX}" cy="${endY}" r="5"/>
+            <circle class="vtt-ruler-endpoint" cx="${this.drawStartX}" cy="${this.drawStartY}" r="6"/>
+            <circle class="vtt-ruler-endpoint" cx="${endX}" cy="${endY}" r="6"/>
         `;
     },
 

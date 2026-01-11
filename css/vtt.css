@@ -558,7 +558,7 @@
     z-index: 4;
 }
 
-/* Measure Layer */
+/* Measure Layer - screen space, not transformed */
 .vtt-measure-layer {
     position: absolute;
     top: 0;
@@ -566,7 +566,8 @@
     width: 100%;
     height: 100%;
     pointer-events: none;
-    z-index: 5;
+    z-index: 200;
+    overflow: visible;
 }
 
 /* ==================== Tokens ==================== */

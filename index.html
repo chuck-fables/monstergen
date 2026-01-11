@@ -51,6 +51,10 @@
                     <span class="nav-label">Item</span>
                 </li>
                 <li class="nav-divider"></li>
+                <li class="nav-item" data-panel="library">
+                    <span class="nav-icon">&#128218;</span>
+                    <span class="nav-label">Library</span>
+                </li>
                 <li class="nav-item" data-panel="campaign">
                     <span class="nav-icon">&#128203;</span>
                     <span class="nav-label">Campaign</span>
@@ -850,6 +854,35 @@
                 </div>
             </div>
 
+            <!-- ==================== LIBRARY PANEL ==================== -->
+            <div id="panel-library" class="generator-panel">
+                <div class="library-container">
+                    <div class="library-header">
+                        <h2>Saved Content Library</h2>
+                        <p>All your saved monsters, NPCs, loot, and more in one place</p>
+                    </div>
+
+                    <div class="library-tabs">
+                        <button class="library-tab active" data-type="monsters" onclick="LibraryPanel.switchTab('monsters')">Monsters</button>
+                        <button class="library-tab" data-type="npcs" onclick="LibraryPanel.switchTab('npcs')">NPCs</button>
+                        <button class="library-tab" data-type="loot" onclick="LibraryPanel.switchTab('loot')">Loot</button>
+                        <button class="library-tab" data-type="hooks" onclick="LibraryPanel.switchTab('hooks')">Hooks</button>
+                        <button class="library-tab" data-type="locations" onclick="LibraryPanel.switchTab('locations')">Locations</button>
+                        <button class="library-tab" data-type="items" onclick="LibraryPanel.switchTab('items')">Items</button>
+                    </div>
+
+                    <div class="library-search">
+                        <input type="text" id="library-search" placeholder="Search saved content..." oninput="LibraryPanel.search(this.value)">
+                    </div>
+
+                    <div class="library-content" id="library-content">
+                        <div class="library-empty">
+                            <p>Select a category to view saved content</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <!-- ==================== CAMPAIGN CANVAS PANEL ==================== -->
             <div id="panel-campaign" class="generator-panel">
                 <div class="canvas-container">
@@ -1482,6 +1515,9 @@
     <script src="js/generators/item.js"></script>
     <script src="js/renderers/item-card.js"></script>
     <script src="js/item-panel.js"></script>
+
+    <!-- Library Panel -->
+    <script src="js/library.js"></script>
 
     <!-- Campaign Canvas -->
     <script src="js/canvas.js"></script>
