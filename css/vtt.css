@@ -1706,3 +1706,66 @@
         height: 24px;
     }
 }
+
+/* ========================================
+   VTT Statblock Modal
+   ======================================== */
+
+.vtt-statblock-modal {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10000;
+}
+
+.vtt-statblock-modal-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.7);
+    z-index: -1;
+}
+
+.vtt-statblock-modal-content {
+    position: relative;
+    max-width: 600px;
+    max-height: 85vh;
+    overflow-y: auto;
+    background: #fdf1dc;
+    border-radius: 8px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+    margin: 1rem;
+}
+
+.vtt-statblock-modal-close {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 32px;
+    height: 32px;
+    border: none;
+    background: rgba(0, 0, 0, 0.5);
+    color: white;
+    border-radius: 50%;
+    font-size: 1.2rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+    transition: background 0.2s;
+}
+
+.vtt-statblock-modal-close:hover {
+    background: rgba(0, 0, 0, 0.7);
+}
+
+.vtt-statblock-modal-body {
+    padding: 1rem;
+}
+
+.vtt-statblock-modal-body .statblock {
+    margin: 0;
+    box-shadow: none;
+}

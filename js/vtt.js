@@ -1472,6 +1472,7 @@ const VTTManager = {
             <div class="vtt-context-menu-item" onclick="VTTManager.editTokenAC('${token.id}')">Edit AC ${token.ac ? `(${token.ac})` : '(not set)'}</div>
             <div class="vtt-context-menu-item" onclick="VTTManager.setTokenImage('${token.id}')">Set Custom Art</div>
             <div class="vtt-context-menu-item" onclick="VTTManager.saveTokenAsTemplate('${token.id}')">Save as Template</div>
+            ${token.monster ? `<div class="vtt-context-menu-item" onclick="VTTManager.viewTokenStatblock('${token.id}')">View Statblock</div>` : ''}
         `;
 
         // Get current size name for highlighting
@@ -1530,6 +1531,49 @@ const VTTManager = {
             this.saveState();
         }
         this.closeContextMenu();
+    },
+
+    viewTokenStatblock(tokenId) {
+        const token = this.tokens.find(t => t.id === tokenId);
+        if (!token || !token.monster) return;
+
+        this.closeContextMenu();
+
+        const monster = token.monster;
+
+        // Create modal
+        const modal = document.createElement('div');
+        modal.className = 'vtt-statblock-modal';
+        modal.innerHTML = `
+            <div class="vtt-statblock-modal-backdrop"></div>
+            <div class="vtt-statblock-modal-content">
+                <button class="vtt-statblock-modal-close">&times;</button>
+                <div class="vtt-statblock-modal-body">
+                    ${this.renderStatblockHTML(monster)}
+                </div>
+            </div>
+        `;
+
+        modal.querySelector('.vtt-statblock-modal-backdrop').addEventListener('click', () => modal.remove());
+        modal.querySelector('.vtt-statblock-modal-close').addEventListener('click', () => modal.remove());
+
+        document.body.appendChild(modal);
+    },
+
+    renderStatblockHTML(monster) {
+        // Check if this is an SRD monster (has 'ac' directly instead of 'armorClass.value')
+        if (monster.source === 'SRD' || (monster.ac !== undefined && monster.armorClass === undefined)) {
+            // Use SRDPanel's renderStatblock for SRD monsters
+            if (typeof SRDPanel !== 'undefined' && SRDPanel.renderStatblock) {
+                return SRDPanel.renderStatblock(monster);
+            }
+        }
+        // Generated monsters use StatblockRenderer
+        if (typeof StatblockRenderer !== 'undefined') {
+            return StatblockRenderer.render(monster, { hideActions: true });
+        }
+        // Fallback
+        return `<pre>${JSON.stringify(monster, null, 2)}</pre>`;
     },
 
     editTokenHP(tokenId) {
