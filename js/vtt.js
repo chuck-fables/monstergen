@@ -273,6 +273,19 @@ const VTTManager = {
             e.preventDefault();
             this.moveToken(touch.clientX, touch.clientY);
             this.updateBubblePositions(this.draggedToken);
+        } else if (this.touchedToken) {
+            // Handle case where touch moved off token element before draggedToken was set
+            const dx = touch.clientX - this.touchStartX;
+            const dy = touch.clientY - this.touchStartY;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+            if (distance > 10) {
+                e.preventDefault();
+                this.touchMoved = true;
+                clearTimeout(this.longPressTimer);
+                this.draggedToken = this.touchedToken;
+                this.moveToken(touch.clientX, touch.clientY);
+                this.updateBubblePositions(this.touchedToken);
+            }
         } else if (this.isPanning) {
             e.preventDefault();
             this.offsetX = touch.clientX - this.panStartX;
@@ -374,6 +387,11 @@ const VTTManager = {
         // Note: measureLayer is NOT transformed - it uses screen coordinates
 
         document.getElementById('vtt-zoom-level').textContent = Math.round(this.scale * 100) + '%';
+
+        // Update bubble positions if a token is selected
+        if (this.selectedToken) {
+            this.updateBubblePositions(this.selectedToken);
+        }
     },
 
     /**
