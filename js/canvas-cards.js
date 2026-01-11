@@ -446,36 +446,36 @@ const CanvasCards = {
         const data = card.data;
         if (!data) return '<p>No data available</p>';
 
-        // Use existing renderers if available
+        // Use existing renderers with hideActions option to hide buttons in canvas modal
         switch (card.type) {
             case 'monster':
                 if (typeof StatblockRenderer !== 'undefined') {
-                    return StatblockRenderer.render(data);
+                    return StatblockRenderer.render(data, { hideActions: true });
                 }
                 break;
             case 'npc':
                 if (typeof NPCCardRenderer !== 'undefined') {
-                    return NPCCardRenderer.render(data, { expanded: true });
+                    return NPCCardRenderer.render(data, { expanded: true, hideActions: true });
                 }
                 break;
             case 'loot':
                 if (typeof LootCardRenderer !== 'undefined') {
-                    return LootCardRenderer.render(data, { showTags: true, showValues: true });
+                    return LootCardRenderer.render(data, { showTags: true, showValues: true, hideActions: true });
                 }
                 break;
             case 'hook':
                 if (typeof HookCardRenderer !== 'undefined') {
-                    return HookCardRenderer.renderSingle(data, { showEnvironment: true, showLoot: true, showMoral: true });
+                    return HookCardRenderer.renderSingle(data, { showEnvironment: true, showLoot: true, showMoral: true, hideActions: true });
                 }
                 break;
             case 'location':
                 if (typeof LocationCardRenderer !== 'undefined') {
-                    return LocationCardRenderer.renderSingle(data);
+                    return LocationCardRenderer.renderSingle(data, { hideActions: true });
                 }
                 break;
             case 'item':
                 if (typeof ItemCardRenderer !== 'undefined') {
-                    return ItemCardRenderer.renderSingle(data);
+                    return ItemCardRenderer.renderSingle(data, { hideActions: true });
                 }
                 break;
         }

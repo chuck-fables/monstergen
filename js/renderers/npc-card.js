@@ -148,6 +148,7 @@ const NPCCardRenderer = {
 
                 <div class="npc-tapered-rule reverse"></div>
 
+                ${options.hideActions ? '' : `
                 <div class="npc-card-footer">
                     ${editable ? `
                     <button type="button" class="btn-small btn-npc-primary" onclick="NPCPanel.saveEdits()">
@@ -183,6 +184,7 @@ const NPCCardRenderer = {
                     </button>
                     `}
                 </div>
+                `}
             </div>
         `;
     },

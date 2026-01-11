@@ -50,6 +50,7 @@ const LootCardRenderer = {
                         <span class="total-label">Estimated Total Value:</span>
                         <span class="total-value">${this.formatGold(loot.totalValue)}</span>
                     </div>
+                    ${options.hideActions ? '' : `
                     <div class="loot-actions">
                         ${editable ? `
                             <button type="button" class="btn-loot btn-loot-text btn-loot-primary" onclick="LootPanel.saveEdits()">
@@ -85,6 +86,7 @@ const LootCardRenderer = {
                             </button>
                         `}
                     </div>
+                    `}
                 </div>
             </div>
         `;

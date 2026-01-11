@@ -39,6 +39,7 @@ const ItemCardRenderer = {
                             ? `<input type="text" class="item-name-edit" data-field="name" value="${this.escapeHtml(item.name)}" />`
                             : `<h3 class="item-name">${item.name}</h3>`
                         }
+                        ${options.hideActions ? '' : `
                         <div class="item-actions">
                             ${editable ? '' : `
                             <button class="item-action-btn" onclick="ItemPanel.toggleEdit('${item.id}')" title="Edit item">
@@ -67,6 +68,7 @@ const ItemCardRenderer = {
                             </button>
                             `}
                         </div>
+                        `}
                     </div>
                     <div class="item-subtitle">
                         <span class="item-type">${item.subtype.name}</span>
@@ -85,7 +87,7 @@ const ItemCardRenderer = {
                     ${this.renderFlavorText(item, editable)}
                 </div>
 
-                ${editable ? `
+                ${editable && !options.hideActions ? `
                 <div class="item-card-footer item-edit-footer">
                     <button type="button" class="btn btn-primary btn-small" onclick="ItemPanel.saveEdits('${item.id}')">
                         Save Changes

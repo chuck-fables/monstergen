@@ -453,7 +453,10 @@ const VTTManager = {
         tokensPanel.classList.toggle('active', panel === 'tokens');
         initiativePanel.classList.toggle('active', panel === 'initiative');
 
-        // Update initiative list if showing
+        // Refresh content when showing
+        if (panel === 'tokens') {
+            this.loadMonsterLibrary();
+        }
         if (panel === 'initiative') {
             this.renderInitiativeList();
         }
@@ -498,14 +501,23 @@ const VTTManager = {
      * Player Tokens
      */
     addPlayerToken(color) {
+        // Prompt for name and optional stats
+        const name = prompt('Player name:', color.charAt(0).toUpperCase() + color.slice(1)) || color;
+        const maxHP = parseInt(prompt('Max HP (optional):', '')) || null;
+        const ac = parseInt(prompt('AC (optional):', '')) || null;
+
         const token = {
             id: 'token_' + Date.now(),
             type: 'player',
             color: color,
-            name: color.charAt(0).toUpperCase() + color.slice(1),
+            name: name,
             x: this.canvas.offsetWidth / 2 - this.offsetX / this.scale,
             y: this.canvas.offsetHeight / 2 - this.offsetY / this.scale,
             size: this.gridSize,
+            maxHP: maxHP,
+            currentHP: maxHP,
+            ac: ac,
+            customImage: null,
             conditions: [],
             initiative: null
         };
@@ -522,6 +534,18 @@ const VTTManager = {
         const hp = monster.hitPoints?.average || monster.hp?.average || 10;
         const ac = monster.armorClass?.value || monster.ac?.value || 10;
 
+        // Get size multiplier based on monster size
+        const sizeMultipliers = {
+            'tiny': 0.5,
+            'small': 1,
+            'medium': 1,
+            'large': 2,
+            'huge': 3,
+            'gargantuan': 4
+        };
+        const monsterSize = (monster.size || 'medium').toLowerCase();
+        const sizeMultiplier = sizeMultipliers[monsterSize] || 1;
+
         const token = {
             id: 'token_' + Date.now(),
             type: 'monster',
@@ -529,10 +553,11 @@ const VTTManager = {
             name: monster.name,
             x: this.canvas.offsetWidth / 2 - this.offsetX / this.scale,
             y: this.canvas.offsetHeight / 2 - this.offsetY / this.scale,
-            size: this.gridSize,
+            size: this.gridSize * sizeMultiplier,
             maxHP: hp,
             currentHP: hp,
             ac: ac,
+            customImage: null,
             conditions: [],
             initiative: null
         };
@@ -558,16 +583,29 @@ const VTTManager = {
             el.style.height = token.size + 'px';
 
             if (token.type === 'player') {
-                el.style.backgroundColor = this.getPlayerColor(token.color);
-            }
-
-            // Token content
-            if (token.type === 'monster') {
+                // Player token with custom image or color
+                if (token.customImage) {
+                    el.style.backgroundImage = `url(${token.customImage})`;
+                    el.style.backgroundSize = 'cover';
+                    el.style.backgroundPosition = 'center';
+                } else {
+                    el.style.backgroundColor = this.getPlayerColor(token.color);
+                }
                 el.innerHTML = `<span style="font-size: ${token.size * 0.3}px; color: white; text-shadow: 0 1px 2px rgba(0,0,0,0.5);">${token.name.charAt(0)}</span>`;
             }
 
-            // HP Bar (monsters only)
-            if (token.type === 'monster' && this.settings.showHP) {
+            // Token content for monsters
+            if (token.type === 'monster') {
+                if (token.customImage) {
+                    el.style.backgroundImage = `url(${token.customImage})`;
+                    el.style.backgroundSize = 'cover';
+                    el.style.backgroundPosition = 'center';
+                }
+                el.innerHTML = `<span style="font-size: ${token.size * 0.3}px; color: white; text-shadow: 0 1px 2px rgba(0,0,0,0.5);">${token.name.charAt(0)}</span>`;
+            }
+
+            // HP Bar (for any token with HP)
+            if (token.maxHP && token.currentHP !== null && this.settings.showHP) {
                 const hpPercent = (token.currentHP / token.maxHP) * 100;
                 let hpClass = '';
                 if (hpPercent <= 25) hpClass = 'critical';
@@ -580,8 +618,8 @@ const VTTManager = {
                 `;
             }
 
-            // AC Bubble (monsters only)
-            if (token.type === 'monster' && this.settings.showAC) {
+            // AC Bubble (for any token with AC)
+            if (token.ac && this.settings.showAC) {
                 el.innerHTML += `<div class="vtt-token-ac">${token.ac}</div>`;
             }
 
@@ -691,14 +729,10 @@ const VTTManager = {
 
         let menuHtml = `
             <div class="vtt-context-menu-item" onclick="VTTManager.renameToken('${token.id}')">Rename</div>
+            <div class="vtt-context-menu-item" onclick="VTTManager.editTokenHP('${token.id}')">Edit HP ${token.maxHP ? `(${token.currentHP}/${token.maxHP})` : '(not set)'}</div>
+            <div class="vtt-context-menu-item" onclick="VTTManager.editTokenAC('${token.id}')">Edit AC ${token.ac ? `(${token.ac})` : '(not set)'}</div>
+            <div class="vtt-context-menu-item" onclick="VTTManager.setTokenImage('${token.id}')">Set Custom Art</div>
         `;
-
-        if (token.type === 'monster') {
-            menuHtml += `
-                <div class="vtt-context-menu-item" onclick="VTTManager.editTokenHP('${token.id}')">Edit HP (${token.currentHP}/${token.maxHP})</div>
-                <div class="vtt-context-menu-item" onclick="VTTManager.editTokenAC('${token.id}')">Edit AC (${token.ac})</div>
-            `;
-        }
 
         menuHtml += `
             <div class="vtt-context-submenu">
@@ -749,9 +783,15 @@ const VTTManager = {
         const token = this.tokens.find(t => t.id === tokenId);
         if (!token) return;
 
-        const hp = prompt('Current HP:', token.currentHP);
-        if (hp !== null) {
-            token.currentHP = Math.max(0, parseInt(hp) || 0);
+        const maxHP = prompt('Max HP:', token.maxHP || '');
+        if (maxHP !== null) {
+            token.maxHP = parseInt(maxHP) || null;
+            if (token.maxHP) {
+                const currentHP = prompt('Current HP:', token.currentHP || token.maxHP);
+                token.currentHP = Math.max(0, parseInt(currentHP) || token.maxHP);
+            } else {
+                token.currentHP = null;
+            }
             this.renderTokens();
             this.saveState();
         }
@@ -762,12 +802,36 @@ const VTTManager = {
         const token = this.tokens.find(t => t.id === tokenId);
         if (!token) return;
 
-        const ac = prompt('AC:', token.ac);
+        const ac = prompt('AC:', token.ac || '');
         if (ac !== null) {
-            token.ac = parseInt(ac) || 10;
+            token.ac = parseInt(ac) || null;
             this.renderTokens();
             this.saveState();
         }
+        this.closeContextMenu();
+    },
+
+    setTokenImage(tokenId) {
+        const token = this.tokens.find(t => t.id === tokenId);
+        if (!token) return;
+
+        // Create file input
+        const input = document.createElement('input');
+        input.type = 'file';
+        input.accept = 'image/*';
+        input.onchange = (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (ev) => {
+                    token.customImage = ev.target.result;
+                    this.renderTokens();
+                    this.saveState();
+                };
+                reader.readAsDataURL(file);
+            }
+        };
+        input.click();
         this.closeContextMenu();
     },
 
