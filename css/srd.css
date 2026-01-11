@@ -578,6 +578,8 @@
     background: var(--srd-parchment);
     padding: 1rem 1.5rem;
     color: #000;
+    max-width: 400px;
+    margin: 0 auto;
 }
 
 #srd-statblock .statblock-header h1 {
