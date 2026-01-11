@@ -120,7 +120,7 @@ const VTTManager = {
         beast: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 4c-1 0-2 1-3 2-1-1-3-1-4 0s-1 3 0 4c-2 1-3 3-2 5 0 2 2 3 4 3h10c2 0 4-1 4-3 1-2 0-4-2-5 1-1 1-3 0-4s-3-1-4 0c-1-1-2-2-3-2z"/><circle cx="9" cy="11" r="1.5" fill="white"/><circle cx="15" cy="11" r="1.5" fill="white"/><ellipse cx="12" cy="14" rx="2" ry="1.5"/></svg>',
         celestial: '<svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="4"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4M5.6 5.6l2.8 2.8M15.6 15.6l2.8 2.8M5.6 18.4l2.8-2.8M15.6 8.4l2.8-2.8" stroke="currentColor" stroke-width="2" fill="none"/></svg>',
         construct: '<svg viewBox="0 0 24 24" fill="currentColor"><rect x="7" y="4" width="10" height="8" rx="1"/><rect x="9" y="14" width="6" height="6" rx="1"/><circle cx="10" cy="8" r="1.5" fill="white"/><circle cx="14" cy="8" r="1.5" fill="white"/><rect x="6" y="14" width="3" height="4" rx="0.5"/><rect x="15" y="14" width="3" height="4" rx="0.5"/></svg>',
-        dragon: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3c-2 0-4 2-5 4-2 0-4 1-4 3 0 1 1 2 2 2-1 1-1 3 0 4 1 2 3 2 5 2h0c2 0 4 0 5-2 1-1 1-3 0-4 1 0 2-1 2-2 0-2-2-3-4-3-1-2-3-4-5-4z"/><path d="M6 6c-1-2-1-4 1-5M18 6c1-2 1-4-1-5" stroke="currentColor" stroke-width="1.5" fill="none"/><circle cx="9" cy="10" r="1.5" fill="white"/><circle cx="15" cy="10" r="1.5" fill="white"/><path d="M10 14h4" stroke="white" stroke-width="1"/></svg>',
+        dragon: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M4 12c0-3 2-6 5-7l1 3c-2 1-3 2-3 4s2 4 5 4c2 0 4-1 5-3l3 1c0 4-4 7-8 7-5 0-8-4-8-9z"/><path d="M9 5L7 2M12 4l1-3M15 5l2-3" stroke="currentColor" stroke-width="1.5" fill="none"/><path d="M17 11c2 0 4-1 5-2l1 2c-1 2-3 3-5 3" fill="currentColor"/><circle cx="8" cy="11" r="1.5" fill="white"/><circle cx="8" cy="11" r="0.5"/></svg>',
         elemental: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3c-1 2-4 4-4 7 0 3 2 5 4 5s4-2 4-5c0-3-3-5-4-7z"/><path d="M12 8c-.5 1-2 2-2 3.5 0 1.5 1 2.5 2 2.5s2-1 2-2.5c0-1.5-1.5-2.5-2-3.5z" fill="white"/><path d="M8 17c-2 1-4 2-4 4h16c0-2-2-3-4-4" fill="currentColor"/></svg>',
         fey: '<svg viewBox="0 0 24 24" fill="currentColor"><ellipse cx="12" cy="13" rx="4" ry="5"/><path d="M8 8c-3-2-6-1-7 1 2 1 4 2 5 4M16 8c3-2 6-1 7 1-2 1-4 2-5 4" fill="currentColor"/><circle cx="10" cy="12" r="1" fill="white"/><circle cx="14" cy="12" r="1" fill="white"/><path d="M12 6v-3M10 4l2-2 2 2" stroke="currentColor" stroke-width="1" fill="none"/></svg>',
         fiend: '<svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="13" r="6"/><path d="M6 8c-1-3 0-5 2-6l1 4M18 8c1-3 0-5-2-6l-1 4"/><circle cx="9" cy="12" r="1.5" fill="white"/><circle cx="15" cy="12" r="1.5" fill="white"/><path d="M9 16c1.5 1 4.5 1 6 0" stroke="white" stroke-width="1" fill="none"/></svg>',
@@ -140,7 +140,7 @@ const VTTManager = {
         if (!monster) return null;
 
         // Get monster type, handling both SRD and generated formats
-        let type = monster.type || '';
+        let type = monster.type || monster.creatureType || '';
 
         // Handle "swarm of X" types
         if (type.toLowerCase().includes('swarm')) {
@@ -153,8 +153,9 @@ const VTTManager = {
         const iconSvg = this.monsterTypeIcons[type];
         if (!iconSvg) return null;
 
-        const iconSize = size * 0.5;
-        return `<div style="width: ${iconSize}px; height: ${iconSize}px; color: white; filter: drop-shadow(0 1px 2px rgba(0,0,0,0.5));">${iconSvg}</div>`;
+        // Icon size with minimum to stay visible on small tokens
+        const iconSize = Math.max(size * 0.55, 24);
+        return `<div class="vtt-token-icon" style="width: ${iconSize}px; height: ${iconSize}px;">${iconSvg}</div>`;
     },
 
     /**
@@ -1223,7 +1224,8 @@ const VTTManager = {
             ac: ac,
             customImage: null,
             conditions: [],
-            initiative: null
+            initiative: null,
+            monster: monster  // Store full monster data for type-based icons
         };
 
         this.tokens.push(token);
@@ -1298,8 +1300,8 @@ const VTTManager = {
                 `;
             }
 
-            // AC Bubble (for any token with AC)
-            if (token.ac && this.settings.showAC) {
+            // AC Bubble (for any token with AC) - only show when token is selected
+            if (token.ac && this.settings.showAC && this.selectedToken?.id === token.id) {
                 el.innerHTML += `<div class="vtt-token-ac">${token.ac}</div>`;
             }
 
