@@ -613,6 +613,9 @@ const VTTManager = {
         const vttPanel = document.getElementById('panel-vtt');
         if (!vttPanel?.classList.contains('active')) return;
 
+        // Don't handle if typing in an input field
+        if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+
         if (e.key === 'Delete' && this.selectedToken) {
             this.removeToken(this.selectedToken.id);
         }
@@ -624,6 +627,45 @@ const VTTManager = {
         if (e.key === '2') this.setTool('fog');
         if (e.key === '3') this.setTool('eraser');
         if (e.key === '4') this.setTool('ruler');
+
+        // Arrow keys to move selected token
+        if (this.selectedToken && ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
+            e.preventDefault();
+            this.moveTokenByKey(e.key, e.shiftKey);
+        }
+    },
+
+    moveTokenByKey(key, fine = false) {
+        if (!this.selectedToken) return;
+
+        // Move by grid size, or 1/4 grid if shift is held for fine movement
+        const moveAmount = fine ? this.gridSize / 4 : this.gridSize;
+
+        this.saveUndoState(`Move ${this.selectedToken.name}`);
+
+        switch (key) {
+            case 'ArrowUp':
+                this.selectedToken.y -= moveAmount;
+                break;
+            case 'ArrowDown':
+                this.selectedToken.y += moveAmount;
+                break;
+            case 'ArrowLeft':
+                this.selectedToken.x -= moveAmount;
+                break;
+            case 'ArrowRight':
+                this.selectedToken.x += moveAmount;
+                break;
+        }
+
+        // Snap to grid if not fine movement
+        if (!fine) {
+            this.selectedToken.x = Math.round(this.selectedToken.x / this.gridSize) * this.gridSize;
+            this.selectedToken.y = Math.round(this.selectedToken.y / this.gridSize) * this.gridSize;
+        }
+
+        this.renderTokens();
+        this.saveState();
     },
 
     /**
