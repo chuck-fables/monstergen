@@ -831,6 +831,9 @@ select option {
     display: flex;
     flex-direction: column;
     gap: 16px;
+    padding: 24px;
+    overflow-y: auto;
+    flex: 1;
 }
 
 /* Mobile: Enable collapsible controls */

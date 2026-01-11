@@ -190,14 +190,13 @@ const LibraryPanel = {
             // Navigate to the appropriate panel and load the item
             switch (this.currentType) {
                 case 'monsters':
-                    // Use the MonsterStorage-compatible load
+                    // Use the App's loadFromLibrary method
                     if (typeof Sidebar !== 'undefined') {
                         Sidebar.switchPanel('monster');
-                        // If MonsterPanel exists and has loadFromLibrary, use it
-                        // Otherwise use the library modal approach
-                        if (typeof loadMonsterFromLibrary === 'function') {
-                            loadMonsterFromLibrary(id);
-                        }
+                    }
+                    // Load the monster using App's method
+                    if (typeof App !== 'undefined' && App.loadFromLibrary) {
+                        App.loadFromLibrary(id);
                     }
                     break;
                 case 'npcs':
