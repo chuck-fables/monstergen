@@ -535,7 +535,7 @@
     background-size: 50px 50px;
     opacity: 0.3;
     z-index: 2;
-    transform-origin: 0 0;
+    transform-origin: 2000px 2000px;  /* Align with canvas origin (0,0) */
 }
 
 /* Token Layer */
