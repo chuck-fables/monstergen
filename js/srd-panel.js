@@ -214,6 +214,7 @@ const SRDPanel = {
     getAllSpells() {
         const srd = [
             ...(window.SRDSpells || []),
+            ...(window.SRDSpells2 || []),
             ...(window.SRDSpells2a || []),
             ...(window.SRDSpells3a || []),
             ...(window.SRDSpells3b || [])
