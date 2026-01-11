@@ -680,6 +680,7 @@ const CampaignCanvas = {
                 const board = this.boards.find(b => b.id === lastBoardId);
                 if (board) {
                     this.loadBoard(board.id);
+                    this.updateBoardsList();
                     return;
                 }
             }
