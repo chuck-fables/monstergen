@@ -1,0 +1,788 @@
+/* SRD Panel Styles - Dark Theme with Parchment Cards */
+/* Matching the Location/Hooks tab styling */
+
+/* CSS Variables for SRD - matches location-card.css */
+:root {
+    --srd-accent: #7A200D;
+    --srd-border: #9E2A2B;
+    --srd-border-light: #E6D5B8;
+    --srd-parchment: #FDF1DC;
+    --srd-gold: #D4A76A;
+    --srd-text-dark: #58180D;
+}
+
+/* Main Container - Dark Background */
+.srd-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    background: var(--panel-bg, #1a1a1e);
+    overflow: hidden;
+}
+
+/* Header - Dark themed */
+.srd-header {
+    padding: 1.5rem 2rem 1rem;
+    border-bottom: 1px solid var(--border-color, #333);
+    background: var(--panel-bg, #1a1a1e);
+}
+
+.srd-header h2 {
+    margin: 0;
+    font-family: 'Libre Baskerville', serif;
+    font-size: 1.75rem;
+    color: var(--srd-border);
+}
+
+.srd-header p {
+    margin: 0.25rem 0 0;
+    color: var(--text-muted, #888);
+    font-size: 0.9rem;
+}
+
+/* Tabs - Dark themed with active indicator */
+.srd-tabs {
+    display: flex;
+    gap: 0;
+    padding: 0 1.5rem;
+    background: var(--panel-bg, #1a1a1e);
+    border-bottom: 1px solid var(--border-color, #333);
+}
+
+.srd-tab {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    background: transparent;
+    font-family: 'Libre Baskerville', serif;
+    font-size: 0.95rem;
+    color: var(--srd-border);
+    cursor: pointer;
+    position: relative;
+    transition: all 0.2s ease;
+}
+
+.srd-tab:hover {
+    color: var(--srd-parchment);
+    background: rgba(158, 42, 43, 0.2);
+}
+
+.srd-tab.active {
+    color: var(--srd-parchment);
+    background: rgba(158, 42, 43, 0.3);
+    border-bottom: 2px solid var(--srd-border);
+    margin-bottom: -1px;
+}
+
+/* Toolbar - Dark themed */
+.srd-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 1.5rem;
+    background: var(--panel-bg, #1a1a1e);
+    border-bottom: 1px solid var(--border-color, #333);
+    flex-wrap: wrap;
+}
+
+.srd-search-wrapper {
+    flex: 1;
+    min-width: 200px;
+}
+
+/* Search input - DARK background with visible text */
+.srd-search {
+    width: 100%;
+    padding: 0.6rem 1rem;
+    border: 1px solid var(--border-color, #444);
+    border-radius: 4px;
+    font-size: 0.9rem;
+    background: var(--input-bg, #2a2a2e);
+    color: var(--text-color, #e0e0e0);
+}
+
+.srd-search::placeholder {
+    color: var(--text-muted, #888);
+}
+
+.srd-search:focus {
+    outline: none;
+    border-color: var(--srd-border);
+    box-shadow: 0 0 0 2px rgba(158, 42, 43, 0.3);
+}
+
+/* Filters - Dark themed dropdowns */
+.srd-filters {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.srd-filters select {
+    padding: 0.6rem 0.75rem;
+    border: 1px solid var(--border-color, #444);
+    border-radius: 4px;
+    font-size: 0.85rem;
+    background: var(--input-bg, #2a2a2e);
+    color: var(--text-color, #e0e0e0);
+    cursor: pointer;
+}
+
+.srd-filters select:focus {
+    outline: none;
+    border-color: var(--srd-border);
+}
+
+.srd-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.srd-btn {
+    padding: 0.5rem 1rem;
+    border: 1px solid var(--srd-border);
+    border-radius: 4px;
+    background: transparent;
+    color: var(--srd-border);
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.srd-btn:hover {
+    background: var(--srd-border);
+    color: var(--srd-parchment);
+}
+
+.srd-btn-icon {
+    padding: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Content Area - Dark background */
+.srd-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 1.5rem;
+    background: var(--panel-bg, #1a1a1e);
+}
+
+.srd-tab-content {
+    display: none;
+}
+
+.srd-tab-content.active {
+    display: block;
+}
+
+.srd-list {
+    display: grid;
+    gap: 1rem;
+}
+
+.srd-empty {
+    text-align: center;
+    padding: 3rem;
+    color: var(--text-muted, #888);
+    font-style: italic;
+}
+
+/* ================================
+   Monster Cards - Parchment Style
+   ================================ */
+.srd-monster-card {
+    font-family: 'Libre Baskerville', 'Georgia', serif;
+    background: var(--srd-parchment);
+    background-image: linear-gradient(to bottom,
+        rgba(0, 0, 0, 0.03) 0%,
+        transparent 50%,
+        rgba(0, 0, 0, 0.03) 100%);
+    border: 2px solid var(--srd-border);
+    border-radius: 0;
+    padding: 1rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.srd-monster-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+.srd-card-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.srd-card-header h3 {
+    margin: 0;
+    font-family: 'Libre Baskerville', serif;
+    font-size: 1.1rem;
+    color: var(--srd-accent);
+    font-weight: 700;
+}
+
+.srd-card-meta {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.85rem;
+    color: var(--srd-text-dark);
+    margin-bottom: 0.5rem;
+}
+
+.srd-meta-cr {
+    font-weight: bold;
+    color: var(--srd-accent);
+}
+
+.srd-card-stats {
+    display: flex;
+    gap: 1rem;
+    font-size: 0.85rem;
+    color: #000;
+}
+
+/* Badges */
+.srd-badge {
+    display: inline-block;
+    padding: 0.15rem 0.5rem;
+    border-radius: 2px;
+    font-size: 0.7rem;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.srd-badge-custom {
+    background: var(--srd-accent);
+    color: var(--srd-parchment);
+}
+
+/* ================================
+   Spell/Item/Class Entries - Parchment Style
+   ================================ */
+.srd-entry {
+    font-family: 'Libre Baskerville', 'Georgia', serif;
+    background: var(--srd-parchment);
+    background-image: linear-gradient(to bottom,
+        rgba(0, 0, 0, 0.03) 0%,
+        transparent 50%,
+        rgba(0, 0, 0, 0.03) 100%);
+    border: 1px solid var(--srd-border);
+    border-radius: 0;
+    overflow: hidden;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+.srd-entry:hover {
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+.srd-entry-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    border-bottom: 1px solid transparent;
+}
+
+.srd-entry.expanded .srd-entry-header {
+    border-bottom: 1px solid var(--srd-border-light);
+}
+
+.srd-entry-title {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.srd-entry-title h3 {
+    margin: 0;
+    font-family: 'Libre Baskerville', serif;
+    font-size: 1rem;
+    color: var(--srd-accent);
+    font-weight: 700;
+    /* NO background highlight */
+    background: none !important;
+}
+
+.srd-entry-meta {
+    display: flex;
+    gap: 0.75rem;
+    font-size: 0.8rem;
+    color: var(--srd-text-dark);
+}
+
+/* Level badge - clean styling */
+.srd-meta-level {
+    background: var(--srd-accent);
+    color: var(--srd-parchment);
+    padding: 0.15rem 0.5rem;
+    border-radius: 2px;
+    font-weight: bold;
+    font-size: 0.75rem;
+}
+
+.srd-meta-school {
+    font-style: italic;
+    color: var(--srd-text-dark);
+}
+
+.srd-meta-die {
+    font-weight: bold;
+    color: var(--srd-text-dark);
+}
+
+/* Rarity colors */
+.srd-rarity-common { color: #333; }
+.srd-rarity-uncommon { color: #1a8a1a; font-weight: bold; }
+.srd-rarity-rare { color: #0066cc; font-weight: bold; }
+.srd-rarity-very-rare { color: #9933cc; font-weight: bold; }
+.srd-rarity-legendary { color: #cc6600; font-weight: bold; }
+
+/* Entry Details (expandable) - NO highlight backgrounds */
+.srd-entry-details {
+    display: none;
+    padding: 0.75rem 1rem;
+    background: rgba(255, 255, 255, 0.3);
+    font-size: 0.9rem;
+    line-height: 1.6;
+    color: #000;
+}
+
+.srd-entry.expanded .srd-entry-details {
+    display: block;
+}
+
+.srd-entry-details p {
+    margin: 0.25rem 0;
+    /* CRITICAL: Remove any background highlights */
+    background: none !important;
+    color: #000 !important;
+}
+
+.srd-entry-details strong {
+    color: var(--srd-accent);
+    background: none !important;
+}
+
+.srd-spell-description {
+    margin-top: 0.75rem !important;
+    padding-top: 0.5rem;
+    border-top: 1px dashed var(--srd-border-light);
+}
+
+/* ================================
+   Class Features - Clean styling
+   ================================ */
+.srd-class-features {
+    margin-top: 1rem;
+    padding-top: 0.75rem;
+    border-top: 1px dashed var(--srd-border-light);
+}
+
+.srd-class-features h4 {
+    margin: 0 0 0.5rem;
+    font-size: 0.95rem;
+    color: var(--srd-accent);
+    background: none !important;
+}
+
+.srd-feature {
+    margin-bottom: 0.75rem;
+    padding: 0.5rem;
+    background: rgba(0, 0, 0, 0.03);
+    border-left: 3px solid var(--srd-gold);
+}
+
+.srd-feature strong {
+    color: var(--srd-accent);
+    background: none !important;
+    display: block;
+    margin-bottom: 0.25rem;
+}
+
+.srd-feature p {
+    margin: 0;
+    font-size: 0.85rem;
+    color: #000 !important;
+    background: none !important;
+    line-height: 1.5;
+}
+
+.srd-more {
+    font-style: italic;
+    color: var(--srd-text-dark);
+}
+
+/* Subclasses */
+.srd-subclasses {
+    margin-top: 1rem;
+    padding-top: 0.75rem;
+    border-top: 1px dashed var(--srd-border-light);
+}
+
+.srd-subclasses h4 {
+    margin: 0 0 0.5rem;
+    font-size: 0.95rem;
+    color: var(--srd-accent);
+    background: none !important;
+}
+
+.srd-subclass {
+    margin-bottom: 0.75rem;
+    padding: 0.5rem;
+    background: rgba(0, 0, 0, 0.03);
+    border-left: 3px solid var(--srd-gold);
+}
+
+.srd-subclass h5 {
+    margin: 0;
+    font-size: 0.9rem;
+    color: var(--srd-accent);
+    background: none !important;
+}
+
+.srd-subclass p {
+    margin: 0.25rem 0 0;
+    font-size: 0.85rem;
+    color: #000 !important;
+    background: none !important;
+}
+
+/* ================================
+   Monster Modal - Centered
+   ================================ */
+#srd-monster-modal .modal-content {
+    max-width: 600px;
+    max-height: 85vh;
+    overflow-y: auto;
+    /* CENTER the modal */
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    margin: 0;
+}
+
+#srd-monster-modal .modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+    z-index: 999;
+}
+
+.srd-monster-modal-content {
+    position: relative;
+    z-index: 1000;
+    background: var(--srd-parchment);
+    border-radius: 0;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+}
+
+.srd-monster-modal-content .modal-header {
+    background: var(--srd-accent);
+    color: var(--srd-parchment);
+    padding: 1rem 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.srd-monster-modal-content .modal-header h2 {
+    margin: 0;
+    font-family: 'Libre Baskerville', serif;
+    font-size: 1.25rem;
+}
+
+.srd-monster-modal-content .modal-close {
+    background: none;
+    border: none;
+    color: var(--srd-parchment);
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 0;
+    line-height: 1;
+}
+
+.srd-monster-modal-content .modal-close:hover {
+    opacity: 0.8;
+}
+
+.srd-monster-modal-content .modal-body {
+    padding: 0;
+    background: var(--srd-parchment);
+}
+
+.srd-monster-modal-content .modal-footer {
+    display: flex;
+    gap: 0.5rem;
+    padding: 1rem 1.5rem;
+    background: rgba(0, 0, 0, 0.05);
+    border-top: 1px solid var(--srd-border-light);
+    flex-wrap: wrap;
+}
+
+/* Statblock within modal */
+#srd-statblock {
+    background: var(--srd-parchment);
+    padding: 1rem 1.5rem;
+    color: #000;
+}
+
+#srd-statblock .statblock-header h1 {
+    font-family: 'Libre Baskerville', serif;
+    font-size: 1.5rem;
+    color: var(--srd-accent);
+    margin: 0;
+}
+
+#srd-statblock .statblock-subheading {
+    font-style: italic;
+    color: var(--srd-text-dark);
+    margin: 0.25rem 0 0;
+}
+
+#srd-statblock .statblock-section {
+    margin: 0.75rem 0;
+    padding: 0.5rem 0;
+    border-top: 2px solid var(--srd-accent);
+    border-bottom: 2px solid var(--srd-accent);
+}
+
+#srd-statblock .statblock-section:first-of-type {
+    margin-top: 0.5rem;
+}
+
+#srd-statblock .statblock-section p {
+    margin: 0.25rem 0;
+    font-size: 0.9rem;
+    color: #000;
+    background: none !important;
+}
+
+#srd-statblock .statblock-section strong {
+    color: var(--srd-accent);
+}
+
+#srd-statblock .statblock-abilities {
+    display: flex;
+    justify-content: space-between;
+    text-align: center;
+    padding: 0.5rem 0;
+    border-top: 2px solid var(--srd-accent);
+    border-bottom: 2px solid var(--srd-accent);
+    margin: 0.5rem 0;
+}
+
+#srd-statblock .ability {
+    flex: 1;
+}
+
+#srd-statblock .ability-name {
+    display: block;
+    font-weight: bold;
+    color: var(--srd-accent);
+    font-size: 0.85rem;
+}
+
+#srd-statblock .ability-score {
+    display: block;
+    font-size: 0.9rem;
+    color: #000;
+}
+
+#srd-statblock .statblock-traits p {
+    margin: 0.5rem 0;
+}
+
+#srd-statblock .statblock-section h2 {
+    font-family: 'Libre Baskerville', serif;
+    font-size: 1.1rem;
+    color: var(--srd-accent);
+    margin: 0 0 0.5rem;
+    border-bottom: 1px solid var(--srd-accent);
+    padding-bottom: 0.25rem;
+}
+
+/* Grid layout for monster cards */
+#srd-monsters-content .srd-list {
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+}
+
+/* ================================
+   Custom Modal Styling
+   ================================ */
+#srd-custom-modal .modal-content {
+    max-width: 500px;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: var(--panel-bg, #1a1a1e);
+    border-radius: 8px;
+}
+
+#srd-custom-modal .modal-header {
+    background: var(--srd-accent);
+    color: var(--srd-parchment);
+    padding: 1rem 1.5rem;
+    border-radius: 8px 8px 0 0;
+}
+
+#srd-custom-modal .modal-body {
+    padding: 1.5rem;
+}
+
+#srd-custom-modal .edit-section {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+#srd-custom-modal .edit-row {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+#srd-custom-modal .edit-row label {
+    color: var(--text-color, #e0e0e0);
+    font-size: 0.85rem;
+}
+
+#srd-custom-modal .edit-row input,
+#srd-custom-modal .edit-row select,
+#srd-custom-modal .edit-row textarea {
+    padding: 0.5rem;
+    border: 1px solid var(--border-color, #444);
+    border-radius: 4px;
+    background: var(--input-bg, #2a2a2e);
+    color: var(--text-color, #e0e0e0);
+    font-size: 0.9rem;
+}
+
+#srd-custom-modal .edit-row-group {
+    display: flex;
+    gap: 1rem;
+}
+
+#srd-custom-modal .edit-row-group .edit-row {
+    flex: 1;
+}
+
+#srd-custom-modal .edit-abilities {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 0.5rem;
+}
+
+#srd-custom-modal .edit-ability {
+    text-align: center;
+}
+
+#srd-custom-modal .edit-ability label {
+    display: block;
+    font-size: 0.75rem;
+    margin-bottom: 0.25rem;
+    color: var(--text-muted, #888);
+}
+
+#srd-custom-modal .edit-ability input {
+    width: 100%;
+    text-align: center;
+}
+
+/* ================================
+   Responsive
+   ================================ */
+@media (max-width: 768px) {
+    .srd-header {
+        padding: 1rem;
+    }
+
+    .srd-tabs {
+        padding: 0 1rem;
+        overflow-x: auto;
+    }
+
+    .srd-tab {
+        padding: 0.5rem 1rem;
+        white-space: nowrap;
+    }
+
+    .srd-toolbar {
+        padding: 0.75rem 1rem;
+    }
+
+    .srd-search-wrapper {
+        width: 100%;
+        order: -1;
+    }
+
+    .srd-filters {
+        width: 100%;
+    }
+
+    .srd-filters select {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .srd-content {
+        padding: 0.75rem 1rem;
+    }
+
+    #srd-monsters-content .srd-list {
+        grid-template-columns: 1fr;
+    }
+
+    #srd-monster-modal .modal-content,
+    #srd-custom-modal .modal-content {
+        max-width: 95vw;
+        max-height: 90vh;
+    }
+
+    #srd-custom-modal .edit-abilities {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+/* ================================
+   Force Text Visibility - Override any browser styles
+   ================================ */
+.srd-entry-details *,
+.srd-class-features *,
+.srd-subclasses *,
+.srd-feature *,
+.srd-subclass *,
+#srd-statblock * {
+    background-color: transparent !important;
+    -webkit-text-fill-color: inherit !important;
+}
+
+/* Ensure text is always readable */
+.srd-entry-details p,
+.srd-entry-details span,
+.srd-feature p,
+.srd-subclass p {
+    color: #000 !important;
+}
+
+.srd-entry-details strong,
+.srd-feature strong,
+.srd-subclass h5,
+.srd-class-features h4,
+.srd-subclasses h4 {
+    color: var(--srd-accent) !important;
+}

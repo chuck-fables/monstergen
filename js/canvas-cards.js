@@ -4,6 +4,20 @@
  */
 
 const CanvasCards = {
+    // Drag state
+    isDragging: false,
+    dragCard: null,
+    dragElement: null,
+    dragOffsetX: 0,
+    dragOffsetY: 0,
+
+    // Touch state for mobile
+    touchStartTime: 0,
+    touchStartX: 0,
+    touchStartY: 0,
+    touchMoved: false,
+    selectedCardForBubble: null,
+
     // SVG icons for card types
     icons: {
         monster: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L9 7H4l3 5-3 5h5l3 5 3-5h5l-3-5 3-5h-5L12 2z"></path></svg>',
@@ -214,6 +228,7 @@ const CanvasCards = {
         // Delete button
         el.querySelector('.delete-btn').addEventListener('click', (e) => {
             e.stopPropagation();
+            CampaignCanvas.saveUndoState('Delete card');
             this.removeCard(card.id);
         });
 
@@ -226,11 +241,210 @@ const CanvasCards = {
             });
         });
 
-        // Touch support
+        // Touch support - tap to select and show bubble, drag from bubble to move
         header.addEventListener('touchstart', (e) => {
             if (e.target.classList.contains('canvas-card-btn')) return;
-            this.startDragTouch(e, el, card);
+            this.onCardTouchStart(e, el, card);
         }, { passive: false });
+
+        header.addEventListener('touchmove', (e) => {
+            this.onCardTouchMove(e);
+        }, { passive: false });
+
+        header.addEventListener('touchend', (e) => {
+            if (e.target.classList.contains('canvas-card-btn')) return;
+            this.onCardTouchEnd(e, el, card);
+        });
+    },
+
+    /**
+     * Handle card touch start - detect tap vs drag
+     */
+    onCardTouchStart(e, el, card) {
+        const touch = e.touches[0];
+        this.touchStartTime = Date.now();
+        this.touchStartX = touch.clientX;
+        this.touchStartY = touch.clientY;
+        this.touchMoved = false;
+    },
+
+    onCardTouchMove(e) {
+        if (e.touches.length !== 1) return;
+        const touch = e.touches[0];
+        const dx = Math.abs(touch.clientX - this.touchStartX);
+        const dy = Math.abs(touch.clientY - this.touchStartY);
+        if (dx > 10 || dy > 10) {
+            this.touchMoved = true;
+        }
+    },
+
+    onCardTouchEnd(e, el, card) {
+        const touchDuration = Date.now() - this.touchStartTime;
+
+        // If it was a quick tap without much movement, select and show bubble
+        if (!this.touchMoved && touchDuration < 300) {
+            e.preventDefault();
+            CampaignCanvas.deselectAll();
+            CampaignCanvas.selectedCard = card.id;
+            el.classList.add('selected');
+            this.showCardActionBubble(card, el);
+        }
+    },
+
+    /**
+     * Show mobile action bubble for a card
+     */
+    showCardActionBubble(card, el) {
+        this.hideCardActionBubble();
+
+        const rect = el.getBoundingClientRect();
+        this.selectedCardForBubble = card;
+
+        // Create bubble container
+        const bubble = document.createElement('div');
+        bubble.className = 'canvas-card-action-bubble';
+        bubble.id = 'canvas-card-bubble';
+        bubble.innerHTML = `
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="5 9 2 12 5 15"></polyline>
+                <polyline points="9 5 12 2 15 5"></polyline>
+                <polyline points="15 19 12 22 9 19"></polyline>
+                <polyline points="19 9 22 12 19 15"></polyline>
+                <line x1="2" y1="12" x2="22" y2="12"></line>
+                <line x1="12" y1="2" x2="12" y2="22"></line>
+            </svg>
+        `;
+        bubble.title = 'Drag to move';
+
+        // Position bubble to the left of the card
+        bubble.style.left = (rect.left - 60) + 'px';
+        bubble.style.top = (rect.top + rect.height / 2 - 24) + 'px';
+
+        // Mouse/touch handlers for bubble
+        bubble.addEventListener('mousedown', (e) => this.onBubbleDragStart(e, card, el));
+        bubble.addEventListener('touchstart', (e) => this.onBubbleTouchStart(e, card, el), { passive: false });
+
+        document.body.appendChild(bubble);
+    },
+
+    hideCardActionBubble() {
+        const bubble = document.getElementById('canvas-card-bubble');
+        if (bubble) bubble.remove();
+        this.selectedCardForBubble = null;
+    },
+
+    /**
+     * Start dragging from bubble (mouse)
+     */
+    onBubbleDragStart(e, card, el) {
+        e.preventDefault();
+        e.stopPropagation();
+
+        CampaignCanvas.saveUndoState('Move card');
+
+        this.isDragging = true;
+        this.dragCard = card;
+        this.dragElement = el;
+
+        const rect = el.getBoundingClientRect();
+        this.dragOffsetX = rect.width / 2;
+        this.dragOffsetY = rect.height / 2;
+
+        el.classList.add('dragging');
+
+        document.addEventListener('mousemove', this.boundBubbleDrag = (e) => this.onBubbleDrag(e));
+        document.addEventListener('mouseup', this.boundBubbleDragEnd = (e) => this.onBubbleDragEnd(e));
+    },
+
+    /**
+     * Start dragging from bubble (touch)
+     */
+    onBubbleTouchStart(e, card, el) {
+        e.preventDefault();
+        e.stopPropagation();
+
+        CampaignCanvas.saveUndoState('Move card');
+
+        const touch = e.touches[0];
+        this.isDragging = true;
+        this.dragCard = card;
+        this.dragElement = el;
+
+        const rect = el.getBoundingClientRect();
+        this.dragOffsetX = rect.width / 2;
+        this.dragOffsetY = rect.height / 2;
+
+        el.classList.add('dragging');
+
+        document.addEventListener('touchmove', this.boundBubbleTouchDrag = (e) => this.onBubbleTouchDrag(e), { passive: false });
+        document.addEventListener('touchend', this.boundBubbleTouchEnd = (e) => this.onBubbleTouchEnd(e));
+    },
+
+    onBubbleDrag(e) {
+        if (!this.isDragging || !this.dragCard || !this.dragElement) return;
+
+        const pos = CampaignCanvas.screenToCanvas(e.clientX - this.dragOffsetX, e.clientY - this.dragOffsetY);
+        this.dragCard.x = pos.x;
+        this.dragCard.y = pos.y;
+        this.dragElement.style.left = this.dragCard.x + 'px';
+        this.dragElement.style.top = this.dragCard.y + 'px';
+
+        // Update bubble position
+        const rect = this.dragElement.getBoundingClientRect();
+        const bubble = document.getElementById('canvas-card-bubble');
+        if (bubble) {
+            bubble.style.left = (rect.left - 60) + 'px';
+            bubble.style.top = (rect.top + rect.height / 2 - 24) + 'px';
+        }
+
+        CanvasConnections.updateConnectionsForCard(this.dragCard.id);
+    },
+
+    onBubbleTouchDrag(e) {
+        if (!this.isDragging || !this.dragCard || !this.dragElement) return;
+        if (e.touches.length !== 1) return;
+        e.preventDefault();
+
+        const touch = e.touches[0];
+        const pos = CampaignCanvas.screenToCanvas(touch.clientX - this.dragOffsetX, touch.clientY - this.dragOffsetY);
+        this.dragCard.x = pos.x;
+        this.dragCard.y = pos.y;
+        this.dragElement.style.left = this.dragCard.x + 'px';
+        this.dragElement.style.top = this.dragCard.y + 'px';
+
+        // Update bubble position
+        const rect = this.dragElement.getBoundingClientRect();
+        const bubble = document.getElementById('canvas-card-bubble');
+        if (bubble) {
+            bubble.style.left = (rect.left - 60) + 'px';
+            bubble.style.top = (rect.top + rect.height / 2 - 24) + 'px';
+        }
+
+        CanvasConnections.updateConnectionsForCard(this.dragCard.id);
+    },
+
+    onBubbleDragEnd(e) {
+        if (this.isDragging) {
+            this.isDragging = false;
+            if (this.dragElement) {
+                this.dragElement.classList.remove('dragging');
+            }
+            CampaignCanvas.saveState();
+        }
+        document.removeEventListener('mousemove', this.boundBubbleDrag);
+        document.removeEventListener('mouseup', this.boundBubbleDragEnd);
+    },
+
+    onBubbleTouchEnd(e) {
+        if (this.isDragging) {
+            this.isDragging = false;
+            if (this.dragElement) {
+                this.dragElement.classList.remove('dragging');
+            }
+            CampaignCanvas.saveState();
+        }
+        document.removeEventListener('touchmove', this.boundBubbleTouchDrag);
+        document.removeEventListener('touchend', this.boundBubbleTouchEnd);
     },
 
     /**

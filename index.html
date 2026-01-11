@@ -13,6 +13,7 @@
     <link rel="stylesheet" href="css/item-card.css">
     <link rel="stylesheet" href="css/canvas.css">
     <link rel="stylesheet" href="css/vtt.css">
+    <link rel="stylesheet" href="css/srd.css">
     <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Scaly+Sans&display=swap" rel="stylesheet">
 </head>
 <body>
@@ -49,6 +50,10 @@
                 <li class="nav-item" data-panel="item">
                     <span class="nav-icon">&#9876;</span>
                     <span class="nav-label">Item</span>
+                </li>
+                <li class="nav-item" data-panel="srd">
+                    <span class="nav-icon">&#128214;</span>
+                    <span class="nav-label">SRD</span>
                 </li>
                 <li class="nav-divider"></li>
                 <li class="nav-item" data-panel="library">
@@ -854,6 +859,130 @@
                 </div>
             </div>
 
+            <!-- ==================== SRD REFERENCE PANEL ==================== -->
+            <div id="panel-srd" class="generator-panel">
+                <div class="srd-container">
+                    <!-- SRD Header -->
+                    <div class="srd-header">
+                        <h2>SRD 5.2 Reference</h2>
+                        <p>Official D&D System Reference Document content</p>
+                    </div>
+
+                    <!-- SRD Sub-tabs -->
+                    <div class="srd-tabs">
+                        <button class="srd-tab active" data-tab="monsters" onclick="SRDPanel.switchTab('monsters')">Monsters</button>
+                        <button class="srd-tab" data-tab="spells" onclick="SRDPanel.switchTab('spells')">Spells</button>
+                        <button class="srd-tab" data-tab="items" onclick="SRDPanel.switchTab('items')">Items</button>
+                        <button class="srd-tab" data-tab="classes" onclick="SRDPanel.switchTab('classes')">Classes</button>
+                    </div>
+
+                    <!-- SRD Search and Filters -->
+                    <div class="srd-toolbar">
+                        <div class="srd-search-wrapper">
+                            <input type="text" id="srd-search" class="srd-search" placeholder="Search..." oninput="SRDPanel.search(this.value)">
+                        </div>
+                        <div class="srd-filters" id="srd-filters">
+                            <!-- Filters populated by JavaScript based on active tab -->
+                        </div>
+                        <div class="srd-actions">
+                            <button class="srd-btn srd-btn-icon" id="srd-add-custom" onclick="SRDPanel.addCustom()" title="Add Custom Entry">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- SRD Content Area -->
+                    <div class="srd-content" id="srd-content">
+                        <!-- Monsters Tab -->
+                        <div class="srd-tab-content active" id="srd-monsters-content">
+                            <div class="srd-list" id="srd-monsters-list">
+                                <!-- Monster cards rendered by JavaScript -->
+                            </div>
+                        </div>
+
+                        <!-- Spells Tab -->
+                        <div class="srd-tab-content" id="srd-spells-content">
+                            <div class="srd-list srd-spells-list" id="srd-spells-list">
+                                <!-- Spell entries rendered by JavaScript -->
+                            </div>
+                        </div>
+
+                        <!-- Items Tab -->
+                        <div class="srd-tab-content" id="srd-items-content">
+                            <div class="srd-list srd-items-list" id="srd-items-list">
+                                <!-- Item entries rendered by JavaScript -->
+                            </div>
+                        </div>
+
+                        <!-- Classes Tab -->
+                        <div class="srd-tab-content" id="srd-classes-content">
+                            <div class="srd-list srd-classes-list" id="srd-classes-list">
+                                <!-- Class entries rendered by JavaScript -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SRD Monster Detail Modal -->
+            <div id="srd-monster-modal" class="modal hidden">
+                <div class="modal-backdrop" onclick="SRDPanel.closeMonsterModal()"></div>
+                <div class="modal-content srd-monster-modal-content">
+                    <div class="modal-header">
+                        <h2 id="srd-monster-modal-title">Monster Name</h2>
+                        <button type="button" class="modal-close" onclick="SRDPanel.closeMonsterModal()">&times;</button>
+                    </div>
+                    <div class="modal-body" id="srd-monster-modal-body">
+                        <!-- Monster statblock rendered here -->
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" onclick="SRDPanel.exportMonsterPng()">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 4px; vertical-align: middle;">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                <polyline points="7 10 12 15 17 10"></polyline>
+                                <line x1="12" y1="15" x2="12" y2="3"></line>
+                            </svg>
+                            Export PNG
+                        </button>
+                        <button type="button" class="btn btn-secondary" onclick="SRDPanel.addMonsterToCampaign()">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 4px; vertical-align: middle;">
+                                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                                <line x1="12" y1="8" x2="12" y2="16"></line>
+                                <line x1="8" y1="12" x2="16" y2="12"></line>
+                            </svg>
+                            Add to Campaign
+                        </button>
+                        <button type="button" class="btn btn-primary" onclick="SRDPanel.addMonsterToVTT()">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 4px; vertical-align: middle;">
+                                <circle cx="12" cy="12" r="10"></circle>
+                            </svg>
+                            Add to VTT
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SRD Custom Entry Modal -->
+            <div id="srd-custom-modal" class="modal hidden">
+                <div class="modal-backdrop" onclick="SRDPanel.closeCustomModal()"></div>
+                <div class="modal-content modal-edit">
+                    <div class="modal-header">
+                        <h2 id="srd-custom-modal-title">Add Custom Entry</h2>
+                        <button type="button" class="modal-close" onclick="SRDPanel.closeCustomModal()">&times;</button>
+                    </div>
+                    <div class="modal-body" id="srd-custom-modal-body">
+                        <!-- Custom entry form rendered by JavaScript -->
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" onclick="SRDPanel.closeCustomModal()">Cancel</button>
+                        <button type="button" class="btn btn-primary" onclick="SRDPanel.saveCustomEntry()">Save</button>
+                    </div>
+                </div>
+            </div>
+
             <!-- ==================== LIBRARY PANEL ==================== -->
             <div id="panel-library" class="generator-panel">
                 <div class="library-container">
@@ -929,6 +1058,17 @@
                                 </svg>
                             </button>
                             <span id="canvas-zoom-level">100%</span>
+                        </div>
+
+                        <div class="canvas-toolbar-divider"></div>
+
+                        <div class="canvas-toolbar-section">
+                            <button class="canvas-btn canvas-btn-icon" id="canvas-undo-btn" onclick="CampaignCanvas.undo()" title="Nothing to undo" disabled>
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M3 7v6h6"></path>
+                                    <path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13"></path>
+                                </svg>
+                            </button>
                         </div>
 
                         <div class="canvas-toolbar-divider"></div>
@@ -1038,6 +1178,24 @@
                                     <path d="M9 12l2-2"></path>
                                     <path d="M6 15l2-2"></path>
                                     <path d="M12 9l2-2"></path>
+                                </svg>
+                            </button>
+                            <button class="vtt-btn vtt-tool-btn" data-tool="map" onclick="VTTManager.setTool('map')" title="Move/Resize Map">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                                    <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                                    <polyline points="21 15 16 10 5 21"></polyline>
+                                </svg>
+                            </button>
+                        </div>
+
+                        <div class="vtt-toolbar-divider"></div>
+
+                        <div class="vtt-toolbar-section">
+                            <button class="vtt-btn vtt-btn-icon" id="vtt-undo-btn" onclick="VTTManager.undo()" title="Nothing to undo" disabled>
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M3 7v6h6"></path>
+                                    <path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13"></path>
                                 </svg>
                             </button>
                         </div>
@@ -1221,6 +1379,17 @@
                     <div id="vtt-canvas" class="vtt-canvas">
                         <div id="vtt-grid-layer" class="vtt-grid-layer"></div>
                         <div id="vtt-background-layer" class="vtt-background-layer"></div>
+                        <div id="vtt-map-controls" class="vtt-map-controls">
+                            <div class="vtt-map-handle vtt-map-handle-nw" data-handle="nw"></div>
+                            <div class="vtt-map-handle vtt-map-handle-n" data-handle="n"></div>
+                            <div class="vtt-map-handle vtt-map-handle-ne" data-handle="ne"></div>
+                            <div class="vtt-map-handle vtt-map-handle-w" data-handle="w"></div>
+                            <div class="vtt-map-handle vtt-map-handle-e" data-handle="e"></div>
+                            <div class="vtt-map-handle vtt-map-handle-sw" data-handle="sw"></div>
+                            <div class="vtt-map-handle vtt-map-handle-s" data-handle="s"></div>
+                            <div class="vtt-map-handle vtt-map-handle-se" data-handle="se"></div>
+                            <div class="vtt-map-move-handle"></div>
+                        </div>
                         <div id="vtt-token-layer" class="vtt-token-layer"></div>
                         <div id="vtt-tool-overlay" class="vtt-tool-overlay"></div>
                         <div id="vtt-fog-layer" class="vtt-fog-layer"></div>
@@ -1604,6 +1773,15 @@
 
     <!-- VTT Battlemap Manager -->
     <script src="js/vtt.js"></script>
+
+    <!-- SRD Reference -->
+    <script src="data/srd/monsters.js"></script>
+    <script src="data/srd/monsters2.js"></script>
+    <script src="data/srd/monsters3.js"></script>
+    <script src="data/srd/spells.js"></script>
+    <script src="data/srd/classes.js"></script>
+    <script src="data/srd/items.js"></script>
+    <script src="js/srd-panel.js"></script>
 
     <script src="js/app.js"></script>
 </body>

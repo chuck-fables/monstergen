@@ -18,6 +18,7 @@ const CampaignCanvas = {
     isPanning: false,
     panStartX: 0,
     panStartY: 0,
+    lastTouchDistance: 0,
 
     // Zoom limits
     minScale: 0.25,
@@ -31,6 +32,10 @@ const CampaignCanvas = {
     selectedCard: null,
     selectedConnection: null,
     selectedNote: null,
+
+    // Undo history
+    undoHistory: [],
+    maxUndoHistory: 50,
 
     /**
      * Initialize the canvas
@@ -151,6 +156,17 @@ const CampaignCanvas = {
      * Touch start
      */
     onTouchStart(e) {
+        // Two-finger pinch zoom
+        if (e.touches.length === 2) {
+            e.preventDefault();
+            this.isPanning = false;
+            const dx = e.touches[0].clientX - e.touches[1].clientX;
+            const dy = e.touches[0].clientY - e.touches[1].clientY;
+            this.lastTouchDistance = Math.sqrt(dx * dx + dy * dy);
+            return;
+        }
+
+        // Single finger pan
         if (e.touches.length === 1) {
             const touch = e.touches[0];
             if (e.target === this.canvas || e.target === this.viewport) {
@@ -165,6 +181,37 @@ const CampaignCanvas = {
      * Touch move
      */
     onTouchMove(e) {
+        // Two-finger pinch zoom
+        if (e.touches.length === 2) {
+            e.preventDefault();
+            const dx = e.touches[0].clientX - e.touches[1].clientX;
+            const dy = e.touches[0].clientY - e.touches[1].clientY;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+            const delta = distance - this.lastTouchDistance;
+            this.lastTouchDistance = distance;
+
+            // Calculate zoom center point
+            const centerX = (e.touches[0].clientX + e.touches[1].clientX) / 2;
+            const centerY = (e.touches[0].clientY + e.touches[1].clientY) / 2;
+            const rect = this.canvas.getBoundingClientRect();
+            const mouseX = centerX - rect.left;
+            const mouseY = centerY - rect.top;
+
+            // Apply zoom toward center point
+            const zoomFactor = 1 + delta * 0.005;
+            const newScale = Math.max(this.minScale, Math.min(this.maxScale, this.scale * zoomFactor));
+
+            if (newScale !== this.scale) {
+                const scaleChange = newScale / this.scale;
+                this.offsetX = mouseX - (mouseX - this.offsetX) * scaleChange;
+                this.offsetY = mouseY - (mouseY - this.offsetY) * scaleChange;
+                this.scale = newScale;
+                this.updateTransform();
+            }
+            return;
+        }
+
+        // Single finger pan
         if (this.isPanning && e.touches.length === 1) {
             e.preventDefault();
             const touch = e.touches[0];
@@ -179,6 +226,7 @@ const CampaignCanvas = {
      */
     onTouchEnd(e) {
         this.isPanning = false;
+        this.lastTouchDistance = 0;
         this.saveState();
     },
 
@@ -222,12 +270,15 @@ const CampaignCanvas = {
         // Delete selected item (only if not editing text)
         if ((e.key === 'Delete' || e.key === 'Backspace') && !isEditing) {
             if (this.selectedCard) {
+                this.saveUndoState('Delete card');
                 CanvasCards.removeCard(this.selectedCard);
                 this.selectedCard = null;
             } else if (this.selectedConnection) {
+                this.saveUndoState('Delete connection');
                 CanvasConnections.removeConnection(this.selectedConnection);
                 this.selectedConnection = null;
             } else if (this.selectedNote) {
+                this.saveUndoState('Delete note');
                 this.removeNote(this.selectedNote);
                 this.selectedNote = null;
             }
@@ -379,6 +430,7 @@ const CampaignCanvas = {
             const el = document.querySelector(`[data-canvas-id="${this.selectedCard}"]`);
             if (el) el.classList.remove('selected');
             this.selectedCard = null;
+            CanvasCards.hideCardActionBubble();
         }
         if (this.selectedConnection) {
             CanvasConnections.deselectConnection(this.selectedConnection);
@@ -848,6 +900,8 @@ const CampaignCanvas = {
         if (!this.currentBoard) return;
         if (!confirm('Clear all items from this board?')) return;
 
+        this.saveUndoState('Clear board');
+
         this.currentBoard.cards = [];
         this.currentBoard.connections = [];
         this.currentBoard.notes = [];
@@ -866,6 +920,62 @@ const CampaignCanvas = {
         select.innerHTML = this.boards.map(b =>
             `<option value="${b.id}" ${this.currentBoard && b.id === this.currentBoard.id ? 'selected' : ''}>${b.name}</option>`
         ).join('');
+    },
+
+    /**
+     * Undo system - save state before making changes
+     */
+    saveUndoState(action = 'change') {
+        if (!this.currentBoard) return;
+
+        const state = {
+            action: action,
+            timestamp: Date.now(),
+            cards: JSON.parse(JSON.stringify(this.currentBoard.cards || [])),
+            connections: JSON.parse(JSON.stringify(this.currentBoard.connections || [])),
+            notes: JSON.parse(JSON.stringify(this.currentBoard.notes || []))
+        };
+
+        this.undoHistory.push(state);
+
+        // Limit history size
+        if (this.undoHistory.length > this.maxUndoHistory) {
+            this.undoHistory.shift();
+        }
+
+        this.updateUndoButton();
+    },
+
+    undo() {
+        if (this.undoHistory.length === 0) return;
+
+        const state = this.undoHistory.pop();
+
+        // Restore state
+        this.currentBoard.cards = state.cards;
+        this.currentBoard.connections = state.connections;
+        this.currentBoard.notes = state.notes;
+
+        // Re-render
+        this.renderBoard();
+        this.saveState();
+
+        this.updateUndoButton();
+
+        // Show notification
+        if (typeof showNotification === 'function') {
+            showNotification(`Undid: ${state.action}`, 'info');
+        }
+    },
+
+    updateUndoButton() {
+        const undoBtn = document.getElementById('canvas-undo-btn');
+        if (undoBtn) {
+            undoBtn.disabled = this.undoHistory.length === 0;
+            undoBtn.title = this.undoHistory.length > 0
+                ? `Undo (${this.undoHistory.length} actions)`
+                : 'Nothing to undo';
+        }
     },
 
     /**

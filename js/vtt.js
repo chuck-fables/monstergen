@@ -22,6 +22,7 @@ const VTTManager = {
     panStartX: 0,
     panStartY: 0,
     lastTouchDistance: 0,
+    isPinching: false,
 
     // Grid settings
     gridSize: 50,
@@ -42,6 +43,27 @@ const VTTManager = {
 
     // Fog of war
     fogCells: [],
+
+    // Map manipulation state
+    mapX: 0,
+    mapY: 0,
+    mapWidth: 0,
+    mapHeight: 0,
+    mapDragging: false,
+    mapResizing: false,
+    mapResizeHandle: null,
+    mapDragStartScreenX: 0,
+    mapDragStartScreenY: 0,
+    mapResizeStartScreenX: 0,
+    mapResizeStartScreenY: 0,
+    mapStartWidth: 0,
+    mapStartHeight: 0,
+    mapOrigX: 0,
+    mapOrigY: 0,
+
+    // Undo history
+    undoHistory: [],
+    maxUndoHistory: 50,
 
     // Initiative
     initiative: [],
@@ -115,6 +137,7 @@ const VTTManager = {
         this.bindEvents();
         this.updateGrid();
         this.loadMonsterLibrary();
+        this.initMapControls();
     },
 
     /**
@@ -417,6 +440,14 @@ const VTTManager = {
     onTouchStart(e) {
         if (e.touches.length === 2) {
             e.preventDefault();
+            // Starting pinch gesture - cancel any token interaction
+            this.isPinching = true;
+            if (this.touchedToken) {
+                clearTimeout(this.longPressTimer);
+                this.touchedToken = null;
+                this.draggedToken = null;
+                this.touchMoved = false;
+            }
             const dx = e.touches[0].clientX - e.touches[1].clientX;
             const dy = e.touches[0].clientY - e.touches[1].clientY;
             this.lastTouchDistance = Math.sqrt(dx * dx + dy * dy);
@@ -504,6 +535,10 @@ const VTTManager = {
     onTouchEnd(e) {
         this.onMouseUp(e);
         this.lastTouchDistance = 0;
+        // Only reset pinching when all fingers are lifted
+        if (e.touches.length === 0) {
+            this.isPinching = false;
+        }
     },
 
     /**
@@ -588,6 +623,12 @@ const VTTManager = {
         const toolOverlay = document.getElementById('vtt-tool-overlay');
         if (toolOverlay) toolOverlay.style.transform = transform;
         // Note: measureLayer is NOT transformed - it uses screen coordinates
+        // Note: mapControls is NOT transformed - it uses screen coordinates calculated in updateMapControls()
+
+        // Update map controls position when transform changes (they use screen space)
+        if (this.currentTool === 'map') {
+            this.updateMapControls();
+        }
 
         document.getElementById('vtt-zoom-level').textContent = Math.round(this.scale * 100) + '%';
 
@@ -627,20 +668,273 @@ const VTTManager = {
 
         const reader = new FileReader();
         reader.onload = (e) => {
-            this.backgroundLayer.style.backgroundImage = `url(${e.target.result})`;
-            this.backgroundLayer.style.backgroundSize = 'contain';
-            if (this.currentMap) {
-                this.currentMap.background = e.target.result;
-                this.saveMaps();
-            }
+            const dataUrl = e.target.result;
+
+            // Load image to get natural dimensions
+            const img = new Image();
+            img.onload = () => {
+                // Get canvas dimensions for scaling
+                const canvasRect = this.canvas.getBoundingClientRect();
+                const canvasWidth = canvasRect.width;
+                const canvasHeight = canvasRect.height;
+
+                // Scale image to fit within canvas while maintaining aspect ratio
+                const scale = Math.min(
+                    canvasWidth / img.naturalWidth,
+                    canvasHeight / img.naturalHeight,
+                    1 // Don't upscale
+                );
+
+                this.mapWidth = Math.round(img.naturalWidth * scale);
+                this.mapHeight = Math.round(img.naturalHeight * scale);
+                this.mapX = 0;
+                this.mapY = 0;
+
+                // Apply the background with proper sizing
+                this.backgroundLayer.style.backgroundImage = `url(${dataUrl})`;
+                this.applyMapTransform();
+
+                if (this.currentMap) {
+                    this.currentMap.background = dataUrl;
+                    this.currentMap.mapX = this.mapX;
+                    this.currentMap.mapY = this.mapY;
+                    this.currentMap.mapWidth = this.mapWidth;
+                    this.currentMap.mapHeight = this.mapHeight;
+                    this.saveMaps();
+                }
+
+                // Update controls if map tool is active
+                if (this.currentTool === 'map') {
+                    this.updateMapControls();
+                }
+            };
+            img.src = dataUrl;
         };
         reader.readAsDataURL(file);
     },
 
     clearBackground() {
         this.backgroundLayer.style.backgroundImage = 'none';
+        this.mapWidth = 0;
+        this.mapHeight = 0;
+        this.mapX = 0;
+        this.mapY = 0;
         if (this.currentMap) {
             this.currentMap.background = null;
+            this.currentMap.mapX = 0;
+            this.currentMap.mapY = 0;
+            this.currentMap.mapWidth = 0;
+            this.currentMap.mapHeight = 0;
+            this.saveMaps();
+        }
+        this.updateMapControls();
+    },
+
+    /**
+     * Map manipulation
+     */
+    initMapControls() {
+        const mapControls = document.getElementById('vtt-map-controls');
+        if (!mapControls) return;
+
+        // Mouse events for handles
+        mapControls.querySelectorAll('.vtt-map-handle').forEach(handle => {
+            handle.addEventListener('mousedown', (e) => this.onMapResizeStart(e, handle.dataset.handle));
+            handle.addEventListener('touchstart', (e) => this.onMapResizeTouchStart(e, handle.dataset.handle), { passive: false });
+        });
+
+        // Mouse events for move handle
+        const moveHandle = mapControls.querySelector('.vtt-map-move-handle');
+        if (moveHandle) {
+            moveHandle.addEventListener('mousedown', (e) => this.onMapMoveStart(e));
+            moveHandle.addEventListener('touchstart', (e) => this.onMapMoveTouchStart(e), { passive: false });
+        }
+
+        // Global mouse/touch move and end
+        document.addEventListener('mousemove', (e) => this.onMapDrag(e));
+        document.addEventListener('mouseup', (e) => this.onMapDragEnd(e));
+        document.addEventListener('touchmove', (e) => this.onMapTouchDrag(e), { passive: false });
+        document.addEventListener('touchend', (e) => this.onMapTouchEnd(e));
+    },
+
+    updateMapControls() {
+        const mapControls = document.getElementById('vtt-map-controls');
+        if (!mapControls) return;
+
+        // Only update if we have a valid map with dimensions
+        if (this.mapWidth <= 0 || this.mapHeight <= 0) {
+            // Hide by removing dimensions - CSS .active will still set display:block
+            // but the element will be 0x0
+            mapControls.style.width = '0';
+            mapControls.style.height = '0';
+            return;
+        }
+
+        // Calculate SCREEN-SPACE coordinates for the map controls
+        // The map image is in world space (transformed by translate + scale)
+        // The controls are NOT transformed, so we calculate their screen position directly
+        const screenX = this.mapX * this.scale + this.offsetX;
+        const screenY = this.mapY * this.scale + this.offsetY;
+        const screenWidth = this.mapWidth * this.scale;
+        const screenHeight = this.mapHeight * this.scale;
+
+        // Position and size the controls in screen space
+        mapControls.style.left = screenX + 'px';
+        mapControls.style.top = screenY + 'px';
+        mapControls.style.width = screenWidth + 'px';
+        mapControls.style.height = screenHeight + 'px';
+
+        // Apply the background image transform (world space)
+        this.applyMapTransform();
+    },
+
+    applyMapTransform() {
+        if (this.mapWidth > 0 && this.mapHeight > 0) {
+            this.backgroundLayer.style.backgroundSize = `${this.mapWidth}px ${this.mapHeight}px`;
+            this.backgroundLayer.style.backgroundPosition = `${this.mapX}px ${this.mapY}px`;
+            this.backgroundLayer.style.backgroundRepeat = 'no-repeat';
+        }
+    },
+
+    onMapMoveStart(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        this.saveUndoState('Move map');
+        this.mapDragging = true;
+        // Store starting screen position and original map position
+        this.mapDragStartScreenX = e.clientX;
+        this.mapDragStartScreenY = e.clientY;
+        this.mapOrigX = this.mapX;
+        this.mapOrigY = this.mapY;
+    },
+
+    onMapMoveTouchStart(e) {
+        if (e.touches.length !== 1) return;
+        e.preventDefault();
+        e.stopPropagation();
+        this.saveUndoState('Move map');
+        const touch = e.touches[0];
+        this.mapDragging = true;
+        this.mapDragStartScreenX = touch.clientX;
+        this.mapDragStartScreenY = touch.clientY;
+        this.mapOrigX = this.mapX;
+        this.mapOrigY = this.mapY;
+    },
+
+    onMapResizeStart(e, handle) {
+        e.preventDefault();
+        e.stopPropagation();
+        this.saveUndoState('Resize map');
+        this.mapResizing = true;
+        this.mapResizeHandle = handle;
+        this.mapResizeStartScreenX = e.clientX;
+        this.mapResizeStartScreenY = e.clientY;
+        this.mapStartWidth = this.mapWidth;
+        this.mapStartHeight = this.mapHeight;
+        this.mapOrigX = this.mapX;
+        this.mapOrigY = this.mapY;
+    },
+
+    onMapResizeTouchStart(e, handle) {
+        if (e.touches.length !== 1) return;
+        e.preventDefault();
+        e.stopPropagation();
+        this.saveUndoState('Resize map');
+        const touch = e.touches[0];
+        this.mapResizing = true;
+        this.mapResizeHandle = handle;
+        this.mapResizeStartScreenX = touch.clientX;
+        this.mapResizeStartScreenY = touch.clientY;
+        this.mapStartWidth = this.mapWidth;
+        this.mapStartHeight = this.mapHeight;
+        this.mapOrigX = this.mapX;
+        this.mapOrigY = this.mapY;
+    },
+
+    onMapDrag(e) {
+        if (this.mapDragging) {
+            // Convert screen delta to canvas delta (account for zoom scale)
+            const dx = (e.clientX - this.mapDragStartScreenX) / this.scale;
+            const dy = (e.clientY - this.mapDragStartScreenY) / this.scale;
+            this.mapX = this.mapOrigX + dx;
+            this.mapY = this.mapOrigY + dy;
+            this.updateMapControls();
+        } else if (this.mapResizing) {
+            this.handleMapResize(e.clientX, e.clientY);
+        }
+    },
+
+    onMapTouchDrag(e) {
+        if (!this.mapDragging && !this.mapResizing) return;
+        if (e.touches.length !== 1) return;
+        e.preventDefault();
+        const touch = e.touches[0];
+
+        if (this.mapDragging) {
+            // Convert screen delta to canvas delta (account for zoom scale)
+            const dx = (touch.clientX - this.mapDragStartScreenX) / this.scale;
+            const dy = (touch.clientY - this.mapDragStartScreenY) / this.scale;
+            this.mapX = this.mapOrigX + dx;
+            this.mapY = this.mapOrigY + dy;
+            this.updateMapControls();
+        } else if (this.mapResizing) {
+            this.handleMapResize(touch.clientX, touch.clientY);
+        }
+    },
+
+    handleMapResize(clientX, clientY) {
+        // Convert screen delta to canvas delta (account for zoom scale)
+        const dx = (clientX - this.mapResizeStartScreenX) / this.scale;
+        const dy = (clientY - this.mapResizeStartScreenY) / this.scale;
+        const handle = this.mapResizeHandle;
+
+        let newWidth = this.mapStartWidth;
+        let newHeight = this.mapStartHeight;
+        let newX = this.mapOrigX;
+        let newY = this.mapOrigY;
+
+        // Handle resize based on which handle is being dragged
+        if (handle.includes('e')) {
+            newWidth = Math.max(50, this.mapStartWidth + dx);
+        }
+        if (handle.includes('w')) {
+            newWidth = Math.max(50, this.mapStartWidth - dx);
+            newX = this.mapOrigX + (this.mapStartWidth - newWidth);
+        }
+        if (handle.includes('s')) {
+            newHeight = Math.max(50, this.mapStartHeight + dy);
+        }
+        if (handle.includes('n')) {
+            newHeight = Math.max(50, this.mapStartHeight - dy);
+            newY = this.mapOrigY + (this.mapStartHeight - newHeight);
+        }
+
+        this.mapWidth = newWidth;
+        this.mapHeight = newHeight;
+        this.mapX = newX;
+        this.mapY = newY;
+        this.updateMapControls();
+    },
+
+    onMapDragEnd(e) {
+        if (this.mapDragging || this.mapResizing) {
+            this.mapDragging = false;
+            this.mapResizing = false;
+            this.mapResizeHandle = null;
+            this.saveMapPosition();
+        }
+    },
+
+    onMapTouchEnd(e) {
+        this.onMapDragEnd(e);
+    },
+
+    saveMapPosition() {
+        if (this.currentMap) {
+            this.currentMap.mapX = this.mapX;
+            this.currentMap.mapY = this.mapY;
+            this.currentMap.mapWidth = this.mapWidth;
+            this.currentMap.mapHeight = this.mapHeight;
             this.saveMaps();
         }
     },
@@ -662,10 +956,21 @@ const VTTManager = {
         // Show/hide tool overlay to block token interaction
         const toolOverlay = document.getElementById('vtt-tool-overlay');
         if (toolOverlay) {
-            if (tool === 'fog' || tool === 'eraser' || tool === 'ruler') {
+            if (tool === 'fog' || tool === 'eraser' || tool === 'ruler' || tool === 'map') {
                 toolOverlay.classList.add('active');
             } else {
                 toolOverlay.classList.remove('active');
+            }
+        }
+
+        // Show/hide map controls
+        const mapControls = document.getElementById('vtt-map-controls');
+        if (mapControls) {
+            if (tool === 'map') {
+                this.updateMapControls();
+                mapControls.classList.add('active');
+            } else {
+                mapControls.classList.remove('active');
             }
         }
 
@@ -674,6 +979,8 @@ const VTTManager = {
             this.canvas.style.cursor = 'crosshair';
         } else if (tool === 'ruler') {
             this.canvas.style.cursor = 'crosshair';
+        } else if (tool === 'map') {
+            this.canvas.style.cursor = 'default';
         } else {
             this.canvas.style.cursor = 'grab';
         }
@@ -974,6 +1281,8 @@ const VTTManager = {
         if (e.button !== 0) return;
         e.stopPropagation();
 
+        this.saveUndoState(`Move ${token.name}`);
+
         this.draggedToken = token;
         const rect = this.tokenLayer.getBoundingClientRect();
         this.dragOffsetX = e.clientX - rect.left - token.x * this.scale;
@@ -983,6 +1292,11 @@ const VTTManager = {
     },
 
     onTokenTouchStart(e, token) {
+        // If this is a multi-touch gesture (pinch zoom), don't start token interaction
+        if (e.touches.length >= 2 || this.isPinching) {
+            return;
+        }
+
         e.preventDefault();
         e.stopPropagation();
 
@@ -1017,6 +1331,16 @@ const VTTManager = {
     },
 
     onTokenTouchMove(e, token) {
+        // If pinching, cancel token interaction
+        if (this.isPinching || e.touches.length >= 2) {
+            if (this.touchedToken) {
+                clearTimeout(this.longPressTimer);
+                this.touchedToken = null;
+                this.draggedToken = null;
+            }
+            return;
+        }
+
         if (!this.touchedToken) return;
 
         const touch = e.touches[0];
@@ -1471,6 +1795,9 @@ const VTTManager = {
     },
 
     removeToken(tokenId) {
+        const token = this.tokens.find(t => t.id === tokenId);
+        this.saveUndoState(`Remove ${token?.name || 'token'}`);
+
         this.tokens = this.tokens.filter(t => t.id !== tokenId);
         if (this.selectedToken?.id === tokenId) {
             this.selectedToken = null;
@@ -1488,6 +1815,8 @@ const VTTManager = {
     clearAllTokens() {
         if (this.tokens.length === 0) return;
         if (!confirm('Remove all tokens from the map?')) return;
+
+        this.saveUndoState('Clear all tokens');
 
         this.tokens = [];
         this.selectedToken = null;
@@ -1613,6 +1942,8 @@ const VTTManager = {
         e.preventDefault();
         e.stopPropagation();
 
+        this.saveUndoState(`Move ${token.name}`);
+
         this.draggedToken = token;
         const rect = this.tokenLayer.getBoundingClientRect();
 
@@ -1629,6 +1960,8 @@ const VTTManager = {
     onMoveBubbleTouchStart(e, token) {
         e.preventDefault();
         e.stopPropagation();
+
+        this.saveUndoState(`Move ${token.name}`);
 
         const touch = e.touches[0];
         this.draggedToken = token;
@@ -1679,6 +2012,7 @@ const VTTManager = {
      * Fog of War
      */
     startFog(x, y) {
+        this.saveUndoState('Add fog');
         this.isDrawing = true;
         this.drawStartX = x;
         this.drawStartY = y;
@@ -1686,6 +2020,7 @@ const VTTManager = {
     },
 
     startErase(x, y) {
+        this.saveUndoState('Erase fog');
         this.isDrawing = true;
         this.eraseFogCell(x, y);
     },
@@ -2154,12 +2489,49 @@ const VTTManager = {
 
         if (map.background) {
             this.backgroundLayer.style.backgroundImage = `url(${map.background})`;
+            // Restore map position and size
+            this.mapX = map.mapX || 0;
+            this.mapY = map.mapY || 0;
+            this.mapWidth = map.mapWidth || 0;
+            this.mapHeight = map.mapHeight || 0;
+
+            // If we have saved dimensions, apply them
+            if (this.mapWidth > 0 && this.mapHeight > 0) {
+                this.applyMapTransform();
+                // Always update map controls when we have dimensions
+                this.updateMapControls();
+            } else {
+                // Otherwise detect from image
+                const img = new Image();
+                img.onload = () => {
+                    const canvasRect = this.canvas.getBoundingClientRect();
+                    const scale = Math.min(
+                        canvasRect.width / img.naturalWidth,
+                        canvasRect.height / img.naturalHeight,
+                        1
+                    );
+                    this.mapWidth = Math.round(img.naturalWidth * scale);
+                    this.mapHeight = Math.round(img.naturalHeight * scale);
+                    this.applyMapTransform();
+                    this.updateMapControls();
+                };
+                img.src = map.background;
+            }
         } else {
             this.backgroundLayer.style.backgroundImage = 'none';
+            this.mapX = 0;
+            this.mapY = 0;
+            this.mapWidth = 0;
+            this.mapHeight = 0;
         }
 
         this.renderTokens();
         this.renderFog();
+
+        // Update map controls if active
+        if (this.currentTool === 'map') {
+            this.updateMapControls();
+        }
 
         localStorage.setItem('dmtk_vtt_active', mapId);
     },
@@ -2175,6 +2547,88 @@ const VTTManager = {
         this.currentMap.currentTurn = this.currentTurn;
 
         this.saveMaps();
+    },
+
+    /**
+     * Undo system - save state before making changes
+     */
+    saveUndoState(action = 'change') {
+        if (!this.currentMap) return;
+
+        const state = {
+            action: action,
+            timestamp: Date.now(),
+            tokens: JSON.parse(JSON.stringify(this.tokens)),
+            fogCells: JSON.parse(JSON.stringify(this.fogCells)),
+            mapX: this.mapX,
+            mapY: this.mapY,
+            mapWidth: this.mapWidth,
+            mapHeight: this.mapHeight,
+            initiative: JSON.parse(JSON.stringify(this.initiative)),
+            round: this.round,
+            currentTurn: this.currentTurn
+        };
+
+        this.undoHistory.push(state);
+
+        // Limit history size
+        if (this.undoHistory.length > this.maxUndoHistory) {
+            this.undoHistory.shift();
+        }
+
+        this.updateUndoButton();
+    },
+
+    undo() {
+        if (this.undoHistory.length === 0) return;
+
+        const state = this.undoHistory.pop();
+
+        // Restore state
+        this.tokens = state.tokens;
+        this.fogCells = state.fogCells;
+        this.mapX = state.mapX;
+        this.mapY = state.mapY;
+        this.mapWidth = state.mapWidth;
+        this.mapHeight = state.mapHeight;
+        this.initiative = state.initiative;
+        this.round = state.round;
+        this.currentTurn = state.currentTurn;
+
+        // Apply map transform
+        if (this.mapWidth > 0 && this.mapHeight > 0) {
+            this.applyMapTransform();
+        }
+
+        // Re-render everything
+        this.renderTokens();
+        this.renderFog();
+        this.renderInitiative();
+
+        // Update map controls if active
+        if (this.currentTool === 'map') {
+            this.updateMapControls();
+        }
+
+        // Save changes
+        this.saveState();
+
+        this.updateUndoButton();
+
+        // Show notification
+        if (typeof showNotification === 'function') {
+            showNotification(`Undid: ${state.action}`, 'info');
+        }
+    },
+
+    updateUndoButton() {
+        const undoBtn = document.getElementById('vtt-undo-btn');
+        if (undoBtn) {
+            undoBtn.disabled = this.undoHistory.length === 0;
+            undoBtn.title = this.undoHistory.length > 0
+                ? `Undo (${this.undoHistory.length} actions)`
+                : 'Nothing to undo';
+        }
     },
 
     saveMaps() {

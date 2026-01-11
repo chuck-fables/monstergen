@@ -511,10 +511,9 @@
     position: absolute;
     top: 0;
     left: 0;
-    width: 100%;
-    height: 100%;
-    background-size: contain;
-    background-position: center;
+    width: 5000px;
+    height: 5000px;
+    /* No default background-size/position - let JS control it */
     background-repeat: no-repeat;
     pointer-events: none;
     z-index: 1;
@@ -548,6 +547,101 @@
     pointer-events: none;
     z-index: 3;
     transform-origin: 0 0;
+}
+
+/* Map Controls - for moving/resizing background map */
+/* NOTE: Map controls use SCREEN SPACE coordinates, NOT world space */
+/* Position/size is calculated in JS by updateMapControls() */
+.vtt-map-controls {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 50; /* Above other layers so handles are clickable */
+    pointer-events: none;
+    display: none;
+    border: 2px dashed #c9a227;
+    box-sizing: border-box;
+    /* NO transform - controls are positioned in screen space */
+    transform: none !important;
+}
+
+.vtt-map-controls.active {
+    display: block;
+    pointer-events: auto;
+}
+
+.vtt-map-handle {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    background: #c9a227;
+    border: 2px solid #1a1a1e;
+    border-radius: 4px;
+    pointer-events: auto;
+    z-index: 10;
+}
+
+/* Corner handles */
+.vtt-map-handle-nw { top: -10px; left: -10px; cursor: nw-resize; }
+.vtt-map-handle-ne { top: -10px; right: -10px; cursor: ne-resize; }
+.vtt-map-handle-sw { bottom: -10px; left: -10px; cursor: sw-resize; }
+.vtt-map-handle-se { bottom: -10px; right: -10px; cursor: se-resize; }
+
+/* Edge handles */
+.vtt-map-handle-n { top: -10px; left: 50%; transform: translateX(-50%); cursor: n-resize; }
+.vtt-map-handle-s { bottom: -10px; left: 50%; transform: translateX(-50%); cursor: s-resize; }
+.vtt-map-handle-w { top: 50%; left: -10px; transform: translateY(-50%); cursor: w-resize; }
+.vtt-map-handle-e { top: 50%; right: -10px; transform: translateY(-50%); cursor: e-resize; }
+
+/* Move handle - center of map */
+.vtt-map-move-handle {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 48px;
+    height: 48px;
+    background: rgba(201, 162, 39, 0.8);
+    border: 2px solid #1a1a1e;
+    border-radius: 50%;
+    cursor: move;
+    pointer-events: auto;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.vtt-map-move-handle::before {
+    content: '⊕';
+    font-size: 24px;
+    color: #1a1a1e;
+}
+
+/* Mobile - larger touch targets */
+@media (max-width: 768px) {
+    .vtt-map-handle {
+        width: 32px;
+        height: 32px;
+    }
+
+    .vtt-map-handle-nw { top: -16px; left: -16px; }
+    .vtt-map-handle-ne { top: -16px; right: -16px; }
+    .vtt-map-handle-sw { bottom: -16px; left: -16px; }
+    .vtt-map-handle-se { bottom: -16px; right: -16px; }
+    .vtt-map-handle-n { top: -16px; }
+    .vtt-map-handle-s { bottom: -16px; }
+    .vtt-map-handle-w { left: -16px; }
+    .vtt-map-handle-e { right: -16px; }
+
+    .vtt-map-move-handle {
+        width: 64px;
+        height: 64px;
+    }
+
+    .vtt-map-move-handle::before {
+        font-size: 32px;
+    }
 }
 
 /* Tool Overlay - blocks token interaction when tools are active */
