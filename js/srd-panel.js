@@ -695,13 +695,14 @@ const SRDPanel = {
 
                     <div class="srd-class-features">
                         <h4>Features</h4>
-                        ${cls.features.slice(0, 5).map(f => `
-                            <div class="srd-feature">
-                                <strong>Level ${f.level}: ${f.name}</strong>
-                                <p>${f.description}</p>
-                            </div>
-                        `).join('')}
-                        ${cls.features.length > 5 ? `<p class="srd-more">...and ${cls.features.length - 5} more features</p>` : ''}
+                        <div class="srd-features-list">
+                            ${cls.features.map(f => `
+                                <div class="srd-feature">
+                                    <strong>Level ${f.level}: ${f.name}</strong>
+                                    <p>${f.description}</p>
+                                </div>
+                            `).join('')}
+                        </div>
                     </div>
 
                     ${subclassesHtml}

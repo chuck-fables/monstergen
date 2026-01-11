@@ -89,47 +89,65 @@
     min-width: 200px;
 }
 
-/* Search input - DARK background with visible text */
-.srd-search {
+/* Search input - DARK background with visible text - ENFORCED */
+.srd-search,
+.srd-container input[type="text"],
+.srd-container input[type="search"] {
     width: 100%;
     padding: 0.6rem 1rem;
-    border: 1px solid var(--border-color, #444);
+    border: 1px solid #444 !important;
     border-radius: 4px;
     font-size: 0.9rem;
-    background: var(--input-bg, #2a2a2e);
-    color: var(--text-color, #e0e0e0);
+    background: #2a2a2e !important;
+    background-color: #2a2a2e !important;
+    color: #e0e0e0 !important;
+    -webkit-text-fill-color: #e0e0e0 !important;
 }
 
-.srd-search::placeholder {
-    color: var(--text-muted, #888);
+.srd-search::placeholder,
+.srd-container input::placeholder {
+    color: #888 !important;
+    -webkit-text-fill-color: #888 !important;
+    opacity: 1;
 }
 
-.srd-search:focus {
+.srd-search:focus,
+.srd-container input:focus {
     outline: none;
-    border-color: var(--srd-border);
+    border-color: var(--srd-border) !important;
     box-shadow: 0 0 0 2px rgba(158, 42, 43, 0.3);
 }
 
-/* Filters - Dark themed dropdowns */
+/* Filters - Dark themed dropdowns - ENFORCED */
 .srd-filters {
     display: flex;
     gap: 0.5rem;
     flex-wrap: wrap;
 }
 
-.srd-filters select {
+.srd-filters select,
+.srd-container select {
     padding: 0.6rem 0.75rem;
-    border: 1px solid var(--border-color, #444);
+    border: 1px solid #444 !important;
     border-radius: 4px;
     font-size: 0.85rem;
-    background: var(--input-bg, #2a2a2e);
-    color: var(--text-color, #e0e0e0);
+    background: #2a2a2e !important;
+    background-color: #2a2a2e !important;
+    color: #e0e0e0 !important;
+    -webkit-text-fill-color: #e0e0e0 !important;
     cursor: pointer;
 }
 
-.srd-filters select:focus {
+.srd-filters select option,
+.srd-container select option {
+    background: #2a2a2e !important;
+    color: #e0e0e0 !important;
+}
+
+.srd-filters select:focus,
+.srd-container select:focus {
     outline: none;
-    border-color: var(--srd-border);
+    border-color: var(--srd-border) !important;
 }
 
 .srd-actions {
@@ -417,9 +435,23 @@
     line-height: 1.5;
 }
 
-.srd-more {
-    font-style: italic;
-    color: var(--srd-text-dark);
+.srd-features-list {
+    max-height: 400px;
+    overflow-y: auto;
+    padding-right: 0.5rem;
+}
+
+.srd-features-list::-webkit-scrollbar {
+    width: 6px;
+}
+
+.srd-features-list::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.1);
+}
+
+.srd-features-list::-webkit-scrollbar-thumb {
+    background: var(--srd-gold);
+    border-radius: 3px;
 }
 
 /* Subclasses */
