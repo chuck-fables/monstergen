@@ -490,28 +490,36 @@
 }
 
 /* ================================
-   Monster Modal - Centered
+   Monster Modal - Centered (Fixed)
    ================================ */
-#srd-monster-modal .modal-content {
-    max-width: 600px;
-    max-height: 85vh;
-    overflow-y: auto;
-    /* CENTER the modal */
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    margin: 0;
+/* Modal container - force centered overlay */
+#srd-monster-modal {
+    position: fixed !important;
+    inset: 0 !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    z-index: 10000 !important;
+    background: rgba(0, 0, 0, 0.7);
+}
+
+#srd-monster-modal.hidden {
+    display: none !important;
 }
 
 #srd-monster-modal .modal-backdrop {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.7);
-    z-index: 999;
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+}
+
+#srd-monster-modal .modal-content {
+    position: relative;
+    max-width: 600px;
+    max-height: 85vh;
+    overflow-y: auto;
+    margin: 0;
+    z-index: 1;
 }
 
 .srd-monster-modal-content {

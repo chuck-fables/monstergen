@@ -611,7 +611,10 @@ const CanvasCards = {
 
         switch (card.type) {
             case 'monster':
-                return `AC ${data.armorClass?.value || '?'} | HP ${data.hitPoints?.average || '?'}`;
+                // Support both generated monsters (armorClass.value, hitPoints.average) and SRD monsters (ac, hp)
+                const ac = data.ac ?? data.armorClass?.value ?? '?';
+                const hp = data.hp ?? data.hitPoints?.average ?? '?';
+                return `AC ${ac} | HP ${hp}`;
             case 'npc':
                 return data.personality ? data.personality.substring(0, 80) + '...' : '';
             case 'loot':

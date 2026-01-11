@@ -198,13 +198,26 @@ const SRDPanel = {
 
     getAllMonsters() {
         // Combine SRD monsters with custom monsters
-        const srd = [...(window.SRDMonsters || []), ...(window.SRDMonsters2 || []), ...(window.SRDMonsters3 || [])];
+        const srd = [
+            ...(window.SRDMonsters || []),
+            ...(window.SRDMonsters2 || []),
+            ...(window.SRDMonsters3 || []),
+            ...(window.SRDMonsters4a || []),
+            ...(window.SRDMonsters4b || []),
+            ...(window.SRDMonsters5 || []),
+            ...(window.SRDMonsters6a || [])
+        ];
         const custom = this.customEntries.monsters.map(m => ({ ...m, isCustom: true }));
         return [...srd, ...custom];
     },
 
     getAllSpells() {
-        const srd = window.SRDSpells || [];
+        const srd = [
+            ...(window.SRDSpells || []),
+            ...(window.SRDSpells2a || []),
+            ...(window.SRDSpells3a || []),
+            ...(window.SRDSpells3b || [])
+        ];
         const custom = this.customEntries.spells.map(s => ({ ...s, isCustom: true }));
         return [...srd, ...custom];
     },
