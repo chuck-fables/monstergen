@@ -1013,6 +1013,7 @@ const VTTManager = {
         // Refresh content when showing
         if (panel === 'tokens') {
             this.loadMonsterLibrary();
+            this.filterSRDMonsters(); // Load SRD monsters list
         }
         if (panel === 'initiative') {
             this.renderInitiativeList();
@@ -1093,9 +1094,60 @@ const VTTManager = {
     /**
      * Monster Tokens
      */
+    /**
+     * Add a token directly with explicit values (for SRD panel integration)
+     */
+    addToken(tokenData) {
+        // Handle direct values from SRD panel
+        const sizeMultipliers = {
+            'tiny': 0.5,
+            'small': 1,
+            'medium': 1,
+            'large': 2,
+            'huge': 3,
+            'gargantuan': 4
+        };
+
+        // Parse size from monster data or use default
+        let monsterSize = 'medium';
+        if (tokenData.monster?.size) {
+            monsterSize = tokenData.monster.size.toLowerCase();
+        }
+        const sizeMultiplier = sizeMultipliers[monsterSize] || 1;
+
+        // Calculate snap position at center of viewport
+        const centerX = (this.canvas.offsetWidth / 2 - this.offsetX) / this.scale;
+        const centerY = (this.canvas.offsetHeight / 2 - this.offsetY) / this.scale;
+        const snappedX = Math.round(centerX / this.gridSize) * this.gridSize;
+        const snappedY = Math.round(centerY / this.gridSize) * this.gridSize;
+
+        const token = {
+            id: tokenData.id || 'token_' + Date.now(),
+            type: tokenData.type || 'monster',
+            name: tokenData.name,
+            x: snappedX,
+            y: snappedY,
+            sizeMultiplier: sizeMultiplier,
+            maxHP: tokenData.maxHp || tokenData.hp || 10,
+            currentHP: tokenData.hp || tokenData.maxHp || 10,
+            ac: tokenData.ac || 10,
+            color: tokenData.color || '#8b0000',
+            customImage: null,
+            conditions: [],
+            initiative: null,
+            monster: tokenData.monster // Store full monster data for reference
+        };
+
+        this.tokens.push(token);
+        this.renderTokens();
+        this.saveState();
+        return token;
+    },
+
     addMonsterToken(monster) {
-        const hp = monster.hitPoints?.average || monster.hp?.average || 10;
-        const ac = monster.armorClass?.value || monster.ac?.value || 10;
+        // Handle both generated monsters (with nested objects) and SRD monsters (with direct values)
+        const hp = monster.hitPoints?.average || monster.hp?.average || monster.hp || 10;
+        const ac = monster.armorClass?.value || monster.ac?.value || monster.ac || 10;
 
         // Get size multiplier based on monster size
         const sizeMultipliers = {
@@ -2296,6 +2348,126 @@ const VTTManager = {
         try {
             localStorage.setItem('dmtk_vtt_favorites', JSON.stringify(this.favorites));
         } catch (e) {}
+    },
+
+    /**
+     * SRD Monster Browser
+     */
+    loadSRDMonsters() {
+        // Get all SRD monsters from global arrays
+        const allMonsters = [
+            ...(window.SRDMonsters || []),
+            ...(window.SRDMonsters2 || []),
+            ...(window.SRDMonsters3 || []),
+            ...(window.SRDMonsters4 || []),
+            ...(window.SRDMonsters5 || []),
+            ...(window.SRDMonsters6 || [])
+        ];
+        return allMonsters;
+    },
+
+    filterSRDMonsters(searchQuery = null) {
+        const search = searchQuery !== null ? searchQuery : (document.getElementById('vtt-srd-search')?.value || '');
+        const typeFilter = document.getElementById('vtt-srd-type-filter')?.value || '';
+        const crFilter = document.getElementById('vtt-srd-cr-filter')?.value || '';
+
+        let monsters = this.loadSRDMonsters();
+
+        // Apply search filter
+        if (search) {
+            const query = search.toLowerCase();
+            monsters = monsters.filter(m => m.name.toLowerCase().includes(query));
+        }
+
+        // Apply type filter
+        if (typeFilter) {
+            monsters = monsters.filter(m => m.type.toLowerCase() === typeFilter);
+        }
+
+        // Apply CR filter
+        if (crFilter) {
+            monsters = monsters.filter(m => {
+                const cr = this.parseCR(m.cr);
+                switch (crFilter) {
+                    case '0-1': return cr <= 1;
+                    case '2-4': return cr >= 2 && cr <= 4;
+                    case '5-10': return cr >= 5 && cr <= 10;
+                    case '11-16': return cr >= 11 && cr <= 16;
+                    case '17+': return cr >= 17;
+                    default: return true;
+                }
+            });
+        }
+
+        this.renderSRDMonsterList(monsters);
+    },
+
+    parseCR(cr) {
+        if (typeof cr === 'number') return cr;
+        if (cr === '1/8') return 0.125;
+        if (cr === '1/4') return 0.25;
+        if (cr === '1/2') return 0.5;
+        return parseFloat(cr) || 0;
+    },
+
+    formatCR(cr) {
+        if (cr === 0.125 || cr === '0.125') return '1/8';
+        if (cr === 0.25 || cr === '0.25') return '1/4';
+        if (cr === 0.5 || cr === '0.5') return '1/2';
+        return cr;
+    },
+
+    renderSRDMonsterList(monsters) {
+        const list = document.getElementById('vtt-srd-monster-list');
+        if (!list) return;
+
+        if (!monsters || monsters.length === 0) {
+            list.innerHTML = '<div class="vtt-empty-state">No SRD monsters found</div>';
+            return;
+        }
+
+        // Sort alphabetically
+        monsters.sort((a, b) => a.name.localeCompare(b.name));
+
+        // Limit to first 100 for performance
+        const display = monsters.slice(0, 100);
+
+        list.innerHTML = display.map(m => {
+            const cr = this.formatCR(m.cr);
+            return `
+                <div class="vtt-monster-item" onclick="VTTManager.addSRDMonsterToken('${m.name.replace(/'/g, "\\'")}')">
+                    <span class="vtt-monster-item-name">${m.name}</span>
+                    <span class="vtt-monster-item-cr">CR ${cr}</span>
+                </div>
+            `;
+        }).join('');
+
+        if (monsters.length > 100) {
+            list.innerHTML += `<div class="vtt-empty-state" style="font-size: 0.75rem; padding: 0.5rem;">Showing 100 of ${monsters.length} results. Refine your search.</div>`;
+        }
+    },
+
+    addSRDMonsterToken(monsterName) {
+        const monsters = this.loadSRDMonsters();
+        const monster = monsters.find(m => m.name === monsterName);
+        if (!monster) return;
+
+        // Use the new addToken method which handles SRD format
+        this.addToken({
+            id: 'srd-token-' + Date.now(),
+            name: monster.name,
+            hp: monster.hp,
+            maxHp: monster.hp,
+            ac: monster.ac,
+            type: 'monster',
+            color: '#8b0000',
+            monster: monster
+        });
+
+        // Show notification
+        if (typeof showNotification === 'function') {
+            showNotification(`Added ${monster.name} to map`, 'success');
+        }
     },
 
     /**

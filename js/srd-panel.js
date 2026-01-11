@@ -455,19 +455,21 @@ const SRDPanel = {
     },
 
     addMonsterToCampaign() {
-        if (!this.selectedMonster || typeof CampaignCanvas === 'undefined') return;
+        if (!this.selectedMonster) return;
 
-        // Convert SRD monster to canvas card format
-        const cardData = {
+        // Check if CanvasCards exists
+        if (typeof CanvasCards === 'undefined') {
+            alert('Campaign canvas is not available. Please navigate to the Campaign panel first.');
+            return;
+        }
+
+        // Add card using CanvasCards module with SRD monster data
+        CanvasCards.addCard('monster', {
             id: 'srd-monster-' + Date.now(),
-            type: 'monster',
             name: this.selectedMonster.name,
-            data: this.selectedMonster,
-            x: 100,
-            y: 100
-        };
+            ...this.selectedMonster
+        });
 
-        CampaignCanvas.addCard(cardData);
         this.closeMonsterModal();
 
         // Switch to campaign panel
