@@ -114,23 +114,23 @@ const VTTManager = {
         { id: 'concentration', name: 'Concentration', icon: 'Co' }
     ],
 
-    // Monster type icons (SVG paths for token display)
+    // Monster type icons (SVG text labels for token display)
     monsterTypeIcons: {
-        aberration: '<svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="10" r="6"/><circle cx="12" cy="10" r="3" fill="white"/><circle cx="12" cy="10" r="1.5"/><path d="M6 10c-2-1-3-3-2-5M18 10c2-1 3-3 2-5M8 16c-1 2-1 4 0 5M16 16c1 2 1 4 0 5M12 16v5" stroke="currentColor" stroke-width="1.5" fill="none"/></svg>',
-        beast: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 4c-1 0-2 1-3 2-1-1-3-1-4 0s-1 3 0 4c-2 1-3 3-2 5 0 2 2 3 4 3h10c2 0 4-1 4-3 1-2 0-4-2-5 1-1 1-3 0-4s-3-1-4 0c-1-1-2-2-3-2z"/><circle cx="9" cy="11" r="1.5" fill="white"/><circle cx="15" cy="11" r="1.5" fill="white"/><ellipse cx="12" cy="14" rx="2" ry="1.5"/></svg>',
-        celestial: '<svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="4"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4M5.6 5.6l2.8 2.8M15.6 15.6l2.8 2.8M5.6 18.4l2.8-2.8M15.6 8.4l2.8-2.8" stroke="currentColor" stroke-width="2" fill="none"/></svg>',
-        construct: '<svg viewBox="0 0 24 24" fill="currentColor"><rect x="7" y="4" width="10" height="8" rx="1"/><rect x="9" y="14" width="6" height="6" rx="1"/><circle cx="10" cy="8" r="1.5" fill="white"/><circle cx="14" cy="8" r="1.5" fill="white"/><rect x="6" y="14" width="3" height="4" rx="0.5"/><rect x="15" y="14" width="3" height="4" rx="0.5"/></svg>',
+        aberration: '<svg viewBox="0 0 44 24" fill="currentColor"><text x="22" y="15" text-anchor="middle" font-size="6" font-weight="bold" font-family="sans-serif">Aberration</text></svg>',
+        beast: '<svg viewBox="0 0 28 24" fill="currentColor"><text x="14" y="15" text-anchor="middle" font-size="6" font-weight="bold" font-family="sans-serif">Beast</text></svg>',
+        celestial: '<svg viewBox="0 0 36 24" fill="currentColor"><text x="18" y="15" text-anchor="middle" font-size="6" font-weight="bold" font-family="sans-serif">Celestial</text></svg>',
+        construct: '<svg viewBox="0 0 40 24" fill="currentColor"><text x="20" y="15" text-anchor="middle" font-size="6" font-weight="bold" font-family="sans-serif">Construct</text></svg>',
         dragon: '<svg viewBox="0 0 32 24" fill="currentColor"><text x="16" y="15" text-anchor="middle" font-size="6" font-weight="bold" font-family="sans-serif">Dragon</text></svg>',
-        elemental: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3c-1 2-4 4-4 7 0 3 2 5 4 5s4-2 4-5c0-3-3-5-4-7z"/><path d="M12 8c-.5 1-2 2-2 3.5 0 1.5 1 2.5 2 2.5s2-1 2-2.5c0-1.5-1.5-2.5-2-3.5z" fill="white"/><path d="M8 17c-2 1-4 2-4 4h16c0-2-2-3-4-4" fill="currentColor"/></svg>',
-        fey: '<svg viewBox="0 0 24 24" fill="currentColor"><ellipse cx="12" cy="13" rx="4" ry="5"/><path d="M8 8c-3-2-6-1-7 1 2 1 4 2 5 4M16 8c3-2 6-1 7 1-2 1-4 2-5 4" fill="currentColor"/><circle cx="10" cy="12" r="1" fill="white"/><circle cx="14" cy="12" r="1" fill="white"/><path d="M12 6v-3M10 4l2-2 2 2" stroke="currentColor" stroke-width="1" fill="none"/></svg>',
-        fiend: '<svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="13" r="6"/><path d="M6 8c-1-3 0-5 2-6l1 4M18 8c1-3 0-5-2-6l-1 4"/><circle cx="9" cy="12" r="1.5" fill="white"/><circle cx="15" cy="12" r="1.5" fill="white"/><path d="M9 16c1.5 1 4.5 1 6 0" stroke="white" stroke-width="1" fill="none"/></svg>',
-        giant: '<svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="8" r="5"/><path d="M7 14h10v6c0 1-2 2-5 2s-5-1-5-2v-6z"/><circle cx="10" cy="7" r="1.5" fill="white"/><circle cx="14" cy="7" r="1.5" fill="white"/><rect x="9" y="10" width="6" height="2" rx="1"/></svg>',
-        humanoid: '<svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="6" r="4"/><path d="M12 10c-4 0-7 2-7 5v5h14v-5c0-3-3-5-7-5z"/></svg>',
-        monstrosity: '<svg viewBox="0 0 24 24" fill="currentColor"><ellipse cx="12" cy="12" rx="7" ry="6"/><circle cx="8" cy="10" r="1.5" fill="white"/><circle cx="12" cy="9" r="1.5" fill="white"/><circle cx="16" cy="10" r="1.5" fill="white"/><path d="M6 6l-2-3M18 6l2-3M6 18l-2 3M18 18l2 3M12 18v3" stroke="currentColor" stroke-width="1.5" fill="none"/><path d="M8 14c2 1.5 6 1.5 8 0" stroke="white" stroke-width="1" fill="none"/></svg>',
-        ooze: '<svg viewBox="0 0 24 24" fill="currentColor"><ellipse cx="12" cy="14" rx="8" ry="5"/><ellipse cx="8" cy="10" rx="3" ry="2"/><ellipse cx="16" cy="11" rx="2" ry="1.5"/><circle cx="10" cy="14" r="1.5" fill="white"/><circle cx="15" cy="13" r="1" fill="white"/></svg>',
-        plant: '<svg viewBox="0 0 24 24" fill="currentColor"><ellipse cx="12" cy="16" rx="5" ry="4"/><path d="M12 12V6M9 8c-2-2-2-5 0-6 1 2 2 4 3 6M15 8c2-2 2-5 0-6-1 2-2 4-3 6"/><circle cx="10" cy="15" r="1" fill="white"/><circle cx="14" cy="15" r="1" fill="white"/><path d="M10 18c1 .5 3 .5 4 0" stroke="white" stroke-width="1" fill="none"/></svg>',
-        undead: '<svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="10" r="7"/><ellipse cx="9" cy="9" rx="2" ry="2.5" fill="white"/><ellipse cx="15" cy="9" rx="2" ry="2.5" fill="white"/><circle cx="9" cy="9" r="1"/><circle cx="15" cy="9" r="1"/><ellipse cx="12" cy="14" rx="1.5" ry="1"/><path d="M8 17v4M10 17v3M12 17v4M14 17v3M16 17v4" stroke="currentColor" stroke-width="1.5" fill="none"/></svg>',
-        swarm: '<svg viewBox="0 0 24 24" fill="currentColor"><circle cx="8" cy="8" r="3"/><circle cx="16" cy="7" r="2.5"/><circle cx="12" cy="12" r="3"/><circle cx="6" cy="14" r="2"/><circle cx="17" cy="14" r="2.5"/><circle cx="10" cy="17" r="2"/><circle cx="15" cy="18" r="2"/></svg>'
+        elemental: '<svg viewBox="0 0 40 24" fill="currentColor"><text x="20" y="15" text-anchor="middle" font-size="6" font-weight="bold" font-family="sans-serif">Elemental</text></svg>',
+        fey: '<svg viewBox="0 0 20 24" fill="currentColor"><text x="10" y="15" text-anchor="middle" font-size="6" font-weight="bold" font-family="sans-serif">Fey</text></svg>',
+        fiend: '<svg viewBox="0 0 28 24" fill="currentColor"><text x="14" y="15" text-anchor="middle" font-size="6" font-weight="bold" font-family="sans-serif">Fiend</text></svg>',
+        giant: '<svg viewBox="0 0 28 24" fill="currentColor"><text x="14" y="15" text-anchor="middle" font-size="6" font-weight="bold" font-family="sans-serif">Giant</text></svg>',
+        humanoid: '<svg viewBox="0 0 40 24" fill="currentColor"><text x="20" y="15" text-anchor="middle" font-size="6" font-weight="bold" font-family="sans-serif">Humanoid</text></svg>',
+        monstrosity: '<svg viewBox="0 0 48 24" fill="currentColor"><text x="24" y="15" text-anchor="middle" font-size="6" font-weight="bold" font-family="sans-serif">Monstrosity</text></svg>',
+        ooze: '<svg viewBox="0 0 24 24" fill="currentColor"><text x="12" y="15" text-anchor="middle" font-size="6" font-weight="bold" font-family="sans-serif">Ooze</text></svg>',
+        plant: '<svg viewBox="0 0 26 24" fill="currentColor"><text x="13" y="15" text-anchor="middle" font-size="6" font-weight="bold" font-family="sans-serif">Plant</text></svg>',
+        undead: '<svg viewBox="0 0 32 24" fill="currentColor"><text x="16" y="15" text-anchor="middle" font-size="6" font-weight="bold" font-family="sans-serif">Undead</text></svg>',
+        swarm: '<svg viewBox="0 0 30 24" fill="currentColor"><text x="15" y="15" text-anchor="middle" font-size="6" font-weight="bold" font-family="sans-serif">Swarm</text></svg>'
     },
 
     /**
