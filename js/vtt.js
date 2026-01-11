@@ -660,12 +660,16 @@ const VTTManager = {
 
         // Snap to grid if not fine movement
         if (!fine) {
-            this.selectedToken.x = Math.round(this.selectedToken.x / this.gridSize) * this.gridSize;
-            this.selectedToken.y = Math.round(this.selectedToken.y / this.gridSize) * this.gridSize;
+            const snapped = this.snapToGrid(this.selectedToken.x, this.selectedToken.y, this.selectedToken.sizeMultiplier || 1);
+            this.selectedToken.x = snapped.x;
+            this.selectedToken.y = snapped.y;
         }
 
         this.renderTokens();
         this.saveState();
+
+        // Update action bubbles position to follow the token
+        setTimeout(() => this.showTokenActionBubbles(this.selectedToken), 0);
     },
 
     /**
@@ -1150,19 +1154,18 @@ const VTTManager = {
         const maxHP = parseInt(prompt('Max HP (optional):', '')) || null;
         const ac = parseInt(prompt('AC (optional):', '')) || null;
 
-        // Calculate snap position at center of viewport
+        // Calculate snap position at center of viewport (centered for small tokens)
         const centerX = (this.canvas.offsetWidth / 2 - this.offsetX) / this.scale;
         const centerY = (this.canvas.offsetHeight / 2 - this.offsetY) / this.scale;
-        const snappedX = Math.round(centerX / this.gridSize) * this.gridSize;
-        const snappedY = Math.round(centerY / this.gridSize) * this.gridSize;
+        const snapped = this.snapToGrid(centerX, centerY, 1);
 
         const token = {
             id: 'token_' + Date.now(),
             type: 'player',
             color: color,
             name: name,
-            x: snappedX,
-            y: snappedY,
+            x: snapped.x,
+            y: snapped.y,
             sizeMultiplier: 1,  // Store multiplier instead of absolute size
             maxHP: maxHP,
             currentHP: maxHP,
@@ -1201,18 +1204,17 @@ const VTTManager = {
         }
         const sizeMultiplier = sizeMultipliers[monsterSize] || 1;
 
-        // Calculate snap position at center of viewport
+        // Calculate snap position at center of viewport (centered for small tokens)
         const centerX = (this.canvas.offsetWidth / 2 - this.offsetX) / this.scale;
         const centerY = (this.canvas.offsetHeight / 2 - this.offsetY) / this.scale;
-        const snappedX = Math.round(centerX / this.gridSize) * this.gridSize;
-        const snappedY = Math.round(centerY / this.gridSize) * this.gridSize;
+        const snapped = this.snapToGrid(centerX, centerY, sizeMultiplier);
 
         const token = {
             id: tokenData.id || 'token_' + Date.now(),
             type: tokenData.type || 'monster',
             name: tokenData.name,
-            x: snappedX,
-            y: snappedY,
+            x: snapped.x,
+            y: snapped.y,
             sizeMultiplier: sizeMultiplier,
             maxHP: tokenData.maxHp || tokenData.hp || 10,
             currentHP: tokenData.hp || tokenData.maxHp || 10,
@@ -1247,19 +1249,18 @@ const VTTManager = {
         const monsterSize = (monster.size || 'medium').toLowerCase();
         const sizeMultiplier = sizeMultipliers[monsterSize] || 1;
 
-        // Calculate snap position at center of viewport
+        // Calculate snap position at center of viewport (centered for small tokens)
         const centerX = (this.canvas.offsetWidth / 2 - this.offsetX) / this.scale;
         const centerY = (this.canvas.offsetHeight / 2 - this.offsetY) / this.scale;
-        const snappedX = Math.round(centerX / this.gridSize) * this.gridSize;
-        const snappedY = Math.round(centerY / this.gridSize) * this.gridSize;
+        const snapped = this.snapToGrid(centerX, centerY, sizeMultiplier);
 
         const token = {
             id: 'token_' + Date.now(),
             type: 'monster',
             monsterId: monster.id,
             name: monster.name,
-            x: snappedX,
-            y: snappedY,
+            x: snapped.x,
+            y: snapped.y,
             sizeMultiplier: sizeMultiplier,  // Store multiplier instead of absolute size
             maxHP: hp,
             currentHP: hp,
@@ -1404,6 +1405,23 @@ const VTTManager = {
         return colors[color] || colors.blue;
     },
 
+    // Snap position to grid, centering small tokens in the square
+    snapToGrid(x, y, sizeMultiplier = 1) {
+        // Snap to grid corner first
+        let snappedX = Math.round(x / this.gridSize) * this.gridSize;
+        let snappedY = Math.round(y / this.gridSize) * this.gridSize;
+
+        // For small tokens (size <= 1 grid), center them in the square
+        if (sizeMultiplier <= 1) {
+            const tokenSize = this.gridSize * sizeMultiplier;
+            const offset = (this.gridSize - tokenSize) / 2;
+            snappedX += offset;
+            snappedY += offset;
+        }
+
+        return { x: snappedX, y: snappedY };
+    },
+
     selectToken(token) {
         const previousToken = this.selectedToken;
         this.selectedToken = token;
@@ -1534,12 +1552,11 @@ const VTTManager = {
         let x = (clientX - rect.left - this.dragOffsetX) / this.scale;
         let y = (clientY - rect.top - this.dragOffsetY) / this.scale;
 
-        // Snap to grid
-        x = Math.round(x / this.gridSize) * this.gridSize;
-        y = Math.round(y / this.gridSize) * this.gridSize;
+        // Snap to grid (centers small tokens)
+        const snapped = this.snapToGrid(x, y, this.draggedToken.sizeMultiplier || 1);
 
-        this.draggedToken.x = x;
-        this.draggedToken.y = y;
+        this.draggedToken.x = snapped.x;
+        this.draggedToken.y = snapped.y;
         this.renderTokens();
     },
 
@@ -2708,20 +2725,20 @@ const VTTManager = {
         const template = this.savedTokens.find(t => t.id === templateId);
         if (!template) return;
 
-        // Calculate snap position at center of viewport
+        // Calculate snap position at center of viewport (centered for small tokens)
+        const sizeMultiplier = template.sizeMultiplier || 1;
         const centerX = (this.canvas.offsetWidth / 2 - this.offsetX) / this.scale;
         const centerY = (this.canvas.offsetHeight / 2 - this.offsetY) / this.scale;
-        const snappedX = Math.round(centerX / this.gridSize) * this.gridSize;
-        const snappedY = Math.round(centerY / this.gridSize) * this.gridSize;
+        const snapped = this.snapToGrid(centerX, centerY, sizeMultiplier);
 
         const token = {
             id: 'token_' + Date.now(),
             type: template.type || 'player',
             color: template.color || 'blue',
             name: template.name,
-            x: snappedX,
-            y: snappedY,
-            sizeMultiplier: template.sizeMultiplier || 1,
+            x: snapped.x,
+            y: snapped.y,
+            sizeMultiplier: sizeMultiplier,
             maxHP: template.maxHP,
             currentHP: template.maxHP,
             ac: template.ac,
