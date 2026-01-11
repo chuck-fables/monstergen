@@ -666,6 +666,8 @@ const VTTManager = {
             // Events
             el.addEventListener('mousedown', (e) => this.onTokenMouseDown(e, token));
             el.addEventListener('touchstart', (e) => this.onTokenTouchStart(e, token), { passive: false });
+            el.addEventListener('touchmove', (e) => this.onTokenTouchMove(e, token), { passive: false });
+            el.addEventListener('touchend', (e) => this.onTokenTouchEnd(e, token));
             el.addEventListener('contextmenu', (e) => this.showTokenContextMenu(e, token));
             el.addEventListener('click', (e) => {
                 e.stopPropagation();
@@ -713,12 +715,69 @@ const VTTManager = {
         e.stopPropagation();
 
         const touch = e.touches[0];
-        this.draggedToken = token;
+        this.touchStartTime = Date.now();
+        this.touchStartX = touch.clientX;
+        this.touchStartY = touch.clientY;
+        this.touchedToken = token;
+        this.touchMoved = false;
+
+        // Select immediately for visual feedback
+        this.selectToken(token);
+
+        // Set up long-press timer for context menu (500ms)
+        this.longPressTimer = setTimeout(() => {
+            if (!this.touchMoved && this.touchedToken) {
+                // Show context menu on long press
+                this.showTokenContextMenu({
+                    preventDefault: () => {},
+                    stopPropagation: () => {},
+                    clientX: this.touchStartX,
+                    clientY: this.touchStartY
+                }, token);
+                this.touchedToken = null;
+            }
+        }, 500);
+
+        // Prepare for dragging
         const rect = this.tokenLayer.getBoundingClientRect();
         this.dragOffsetX = touch.clientX - rect.left - token.x * this.scale;
         this.dragOffsetY = touch.clientY - rect.top - token.y * this.scale;
+    },
 
-        this.selectToken(token);
+    onTokenTouchMove(e, token) {
+        if (!this.touchedToken) return;
+
+        const touch = e.touches[0];
+        const dx = touch.clientX - this.touchStartX;
+        const dy = touch.clientY - this.touchStartY;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+
+        // If moved more than 10px, it's a drag not a tap/long-press
+        if (distance > 10) {
+            this.touchMoved = true;
+            clearTimeout(this.longPressTimer);
+            this.draggedToken = this.touchedToken;
+            this.moveToken(touch.clientX, touch.clientY);
+        }
+    },
+
+    onTokenTouchEnd(e, token) {
+        clearTimeout(this.longPressTimer);
+
+        const touchDuration = Date.now() - this.touchStartTime;
+
+        // If it was a short tap (< 300ms) without movement, just select
+        if (touchDuration < 300 && !this.touchMoved) {
+            this.selectToken(token);
+        }
+
+        // If we were dragging, drop the token
+        if (this.draggedToken) {
+            this.dropToken();
+        }
+
+        this.touchedToken = null;
+        this.touchMoved = false;
     },
 
     moveToken(clientX, clientY) {
