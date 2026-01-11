@@ -209,6 +209,7 @@ const VTTManager = {
         const container = document.querySelector('.vtt-container');
         const toolbar = document.querySelector('.vtt-toolbar');
         const sidebar = document.getElementById('vtt-sidebar');
+        const mobileActions = document.querySelector('.vtt-mobile-actions');
         if (!diceRoller || !container) return;
 
         // Check if we've moved enough to consider it a drag
@@ -223,16 +224,17 @@ const VTTManager = {
         const containerRect = container.getBoundingClientRect();
         const toolbarHeight = toolbar ? toolbar.offsetHeight : 60;
         const sidebarWidth = sidebar && sidebar.classList.contains('open') ? sidebar.offsetWidth : 0;
+        const mobileActionsHeight = mobileActions ? mobileActions.offsetHeight : 0;
 
         // Calculate new position relative to container
         let newX = e.clientX - containerRect.left - this.diceRollerOffsetX;
         let newY = e.clientY - containerRect.top - this.diceRollerOffsetY;
 
-        // Constrain to map area only (below toolbar, left of sidebar)
+        // Constrain to map area only (below toolbar, left of sidebar, above mobile actions)
         const minX = 8;
-        const minY = toolbarHeight + 8;
+        const minY = toolbarHeight + 16;
         const maxX = containerRect.width - diceRoller.offsetWidth - sidebarWidth - 8;
-        const maxY = containerRect.height - diceRoller.offsetHeight - 8;
+        const maxY = containerRect.height - diceRoller.offsetHeight - mobileActionsHeight - 8;
 
         newX = Math.max(minX, Math.min(newX, maxX));
         newY = Math.max(minY, Math.min(newY, maxY));
@@ -274,9 +276,10 @@ const VTTManager = {
         this.diceRollerStartY = touch.clientY;
         diceRoller.classList.add('dragging');
 
-        const rect = diceRoller.getBoundingClientRect();
-        this.diceRollerOffsetX = touch.clientX - rect.left;
-        this.diceRollerOffsetY = touch.clientY - rect.top;
+        // Store the offset from the touch point to the dice roller's position
+        const rollerRect = diceRoller.getBoundingClientRect();
+        this.diceRollerOffsetX = touch.clientX - rollerRect.left;
+        this.diceRollerOffsetY = touch.clientY - rollerRect.top;
 
         e.preventDefault();
     },
@@ -288,6 +291,7 @@ const VTTManager = {
         const container = document.querySelector('.vtt-container');
         const toolbar = document.querySelector('.vtt-toolbar');
         const sidebar = document.getElementById('vtt-sidebar');
+        const mobileActions = document.querySelector('.vtt-mobile-actions');
         if (!diceRoller || !container) return;
 
         const touch = e.touches[0];
@@ -304,15 +308,16 @@ const VTTManager = {
         const containerRect = container.getBoundingClientRect();
         const toolbarHeight = toolbar ? toolbar.offsetHeight : 60;
         const sidebarWidth = sidebar && sidebar.classList.contains('open') ? sidebar.offsetWidth : 0;
+        const mobileActionsHeight = mobileActions ? mobileActions.offsetHeight : 0;
 
         let newX = touch.clientX - containerRect.left - this.diceRollerOffsetX;
         let newY = touch.clientY - containerRect.top - this.diceRollerOffsetY;
 
-        // Constrain to map area only (below toolbar, left of sidebar)
+        // Constrain to map area only (below toolbar, left of sidebar, above mobile actions)
         const minX = 8;
-        const minY = toolbarHeight + 8;
+        const minY = toolbarHeight + 16;
         const maxX = containerRect.width - diceRoller.offsetWidth - sidebarWidth - 8;
-        const maxY = containerRect.height - diceRoller.offsetHeight - 8;
+        const maxY = containerRect.height - diceRoller.offsetHeight - mobileActionsHeight - 8;
 
         newX = Math.max(minX, Math.min(newX, maxX));
         newY = Math.max(minY, Math.min(newY, maxY));
