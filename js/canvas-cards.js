@@ -95,8 +95,7 @@ const CanvasCards = {
             dataId: data.id,
             data: data,
             x: x,
-            y: y,
-            collapsed: false
+            y: y
         };
 
         CampaignCanvas.currentBoard.cards.push(card);
@@ -118,7 +117,7 @@ const CanvasCards = {
         const icon = this.icons[card.type] || '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>';
 
         const el = document.createElement('div');
-        el.className = `canvas-card canvas-card-${card.type}${card.collapsed ? ' collapsed' : ''}`;
+        el.className = `canvas-card canvas-card-${card.type}`;
         el.dataset.canvasId = card.id;
         el.dataset.cardType = card.type;
         el.style.left = card.x + 'px';
@@ -141,7 +140,6 @@ const CanvasCards = {
                             <line x1="3" y1="21" x2="10" y2="14"></line>
                         </svg>
                     </button>
-                    <button class="canvas-card-btn collapse-btn" title="Collapse/Expand">&#9660;</button>
                     <button class="canvas-card-btn delete-btn" title="Remove from canvas">&times;</button>
                 </div>
             </div>
@@ -214,15 +212,6 @@ const CanvasCards = {
         el.querySelector('.expand-btn').addEventListener('click', (e) => {
             e.stopPropagation();
             this.viewFullCard(card);
-        });
-
-        // Collapse button
-        el.querySelector('.collapse-btn').addEventListener('click', (e) => {
-            e.stopPropagation();
-            card.collapsed = !card.collapsed;
-            el.classList.toggle('collapsed', card.collapsed);
-            CampaignCanvas.saveState();
-            CanvasConnections.updateAllConnections();
         });
 
         // Delete button
