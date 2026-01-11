@@ -47,12 +47,16 @@ const SRDPanel = {
         // Sort spell names by length (longest first) to avoid partial matches
         const spellNames = Array.from(spellMap.keys()).sort((a, b) => b.length - a.length);
 
-        // Create regex pattern for all spell names (case insensitive)
-        // Only match whole words
-        let result = text;
-        spellNames.forEach(spellName => {
-            const regex = new RegExp(`\\b(${spellName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})\\b`, 'gi');
-            result = result.replace(regex, '<a href="#" class="spell-link" data-spell="$1" onclick="SRDPanel.showSpellModal(\'$1\'); return false;">$1</a>');
+        // Escape special regex characters in spell names
+        const escapedNames = spellNames.map(name => name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
+
+        // Create a single regex that matches all spell names (longest first)
+        const combinedRegex = new RegExp(`\\b(${escapedNames.join('|')})\\b`, 'gi');
+
+        // Replace all matches in a single pass
+        const result = text.replace(combinedRegex, (match) => {
+            const spellNameEscaped = match.replace(/'/g, "\\'");
+            return `<a href="#" class="spell-link" data-spell="${match}" onclick="SRDPanel.showSpellModal('${spellNameEscaped}'); return false;">${match}</a>`;
         });
 
         return result;
