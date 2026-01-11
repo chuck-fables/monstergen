@@ -182,6 +182,7 @@ const VTTManager = {
 
         if (this.draggedToken) {
             this.moveToken(e.clientX, e.clientY);
+            this.updateBubblePositions(this.draggedToken);
         } else if (this.isPanning) {
             this.offsetX = e.clientX - this.panStartX;
             this.offsetY = e.clientY - this.panStartY;
@@ -271,6 +272,7 @@ const VTTManager = {
         if (this.draggedToken) {
             e.preventDefault();
             this.moveToken(touch.clientX, touch.clientY);
+            this.updateBubblePositions(this.draggedToken);
         } else if (this.isPanning) {
             e.preventDefault();
             this.offsetX = touch.clientX - this.panStartX;
@@ -776,6 +778,7 @@ const VTTManager = {
             clearTimeout(this.longPressTimer);
             this.draggedToken = this.touchedToken;
             this.moveToken(touch.clientX, touch.clientY);
+            this.updateBubblePositions(this.touchedToken);
         }
     },
 

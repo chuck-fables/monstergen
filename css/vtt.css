@@ -1267,12 +1267,10 @@
 }
 
 /* ==================== Token Action Bubbles ==================== */
-/* Hidden on desktop, shown only on mobile */
 .vtt-token-action-bubbles {
     position: fixed;
     z-index: 400;
     pointer-events: none;
-    display: none;
 }
 
 .vtt-action-bubble {
@@ -1341,12 +1339,8 @@
     animation: bubblePop 0.2s ease-out;
 }
 
-/* Mobile - show action bubbles */
+/* Mobile - larger action bubbles for touch */
 @media (max-width: 768px) {
-    .vtt-token-action-bubbles {
-        display: block;
-    }
-
     .vtt-action-bubble {
         width: 48px;
         height: 48px;
