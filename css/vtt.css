@@ -1265,3 +1265,89 @@
     background: rgba(220, 53, 69, 0.2);
     color: #dc3545;
 }
+
+/* ==================== Token Action Bubbles ==================== */
+.vtt-token-action-bubbles {
+    position: fixed;
+    z-index: 400;
+    pointer-events: none;
+}
+
+.vtt-action-bubble {
+    position: fixed;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    pointer-events: auto;
+    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+}
+
+.vtt-action-bubble:hover {
+    transform: scale(1.1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+
+.vtt-action-bubble:active {
+    transform: scale(0.95);
+}
+
+.vtt-action-bubble svg {
+    stroke: white;
+}
+
+/* Move bubble - blue */
+.vtt-action-move {
+    background: linear-gradient(135deg, #4a90d9 0%, #2e6db3 100%);
+    border: 2px solid rgba(255, 255, 255, 0.5);
+}
+
+.vtt-action-move:hover {
+    background: linear-gradient(135deg, #5aa0e9 0%, #3e7dc3 100%);
+}
+
+/* Menu bubble - orange/gold */
+.vtt-action-menu {
+    background: linear-gradient(135deg, #c9a227 0%, #9b7a1a 100%);
+    border: 2px solid rgba(255, 255, 255, 0.5);
+}
+
+.vtt-action-menu:hover {
+    background: linear-gradient(135deg, #d9b237 0%, #ab8a2a 100%);
+}
+
+/* Animation when bubbles appear */
+@keyframes bubblePop {
+    0% {
+        transform: scale(0);
+        opacity: 0;
+    }
+    70% {
+        transform: scale(1.1);
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.vtt-action-bubble {
+    animation: bubblePop 0.2s ease-out;
+}
+
+/* Mobile adjustments for bubbles */
+@media (max-width: 768px) {
+    .vtt-action-bubble {
+        width: 48px;
+        height: 48px;
+    }
+
+    .vtt-action-bubble svg {
+        width: 24px;
+        height: 24px;
+    }
+}

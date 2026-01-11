@@ -135,10 +135,14 @@ const VTTManager = {
         // Context menu
         this.canvas.addEventListener('contextmenu', (e) => this.onContextMenu(e));
 
-        // Close context menu on click elsewhere
+        // Close context menu and deselect token on click elsewhere
         document.addEventListener('click', (e) => {
             if (!e.target.closest('.vtt-context-menu')) {
                 this.closeContextMenu();
+            }
+            // Deselect token when clicking on canvas (not on token or action bubbles)
+            if (e.target.closest('.vtt-canvas') && !e.target.closest('.vtt-token') && !e.target.closest('.vtt-action-bubble')) {
+                this.deselectToken();
             }
         });
 
@@ -318,9 +322,8 @@ const VTTManager = {
             this.removeToken(this.selectedToken.id);
         }
         if (e.key === 'Escape') {
-            this.selectedToken = null;
+            this.deselectToken();
             this.closeContextMenu();
-            this.renderTokens();
         }
         if (e.key === '1') this.setTool('select');
         if (e.key === '2') this.setTool('fog');
@@ -691,7 +694,22 @@ const VTTManager = {
     },
 
     selectToken(token) {
+        const previousToken = this.selectedToken;
         this.selectedToken = token;
+        this.renderTokens();
+
+        // Show action bubbles for the selected token
+        if (token) {
+            // Use setTimeout to ensure DOM is updated before positioning bubbles
+            setTimeout(() => this.showTokenActionBubbles(token), 0);
+        } else {
+            this.hideTokenActionBubbles();
+        }
+    },
+
+    deselectToken() {
+        this.selectedToken = null;
+        this.hideTokenActionBubbles();
         this.renderTokens();
     },
 
@@ -973,6 +991,203 @@ const VTTManager = {
         this.renderInitiativeList();
         this.saveState();
         this.closeContextMenu();
+        this.hideTokenActionBubbles();
+    },
+
+    /**
+     * Clear all tokens from the map
+     */
+    clearAllTokens() {
+        if (this.tokens.length === 0) return;
+        if (!confirm('Remove all tokens from the map?')) return;
+
+        this.tokens = [];
+        this.selectedToken = null;
+        this.renderTokens();
+        this.renderInitiativeList();
+        this.saveState();
+        this.hideTokenActionBubbles();
+    },
+
+    /**
+     * Mobile Action Bubbles
+     * Shows move and menu bubbles when a token is selected for easier mobile interaction
+     */
+    showTokenActionBubbles(token) {
+        this.hideTokenActionBubbles();
+
+        const tokenEl = document.querySelector(`[data-token-id="${token.id}"]`);
+        if (!tokenEl) return;
+
+        const tokenRect = tokenEl.getBoundingClientRect();
+        const tokenSize = token.sizeMultiplier ? this.gridSize * token.sizeMultiplier * this.scale : this.gridSize * this.scale;
+
+        // Create bubble container
+        const bubbles = document.createElement('div');
+        bubbles.className = 'vtt-token-action-bubbles';
+        bubbles.id = 'vtt-action-bubbles';
+
+        // Move bubble (left side)
+        const moveBubble = document.createElement('div');
+        moveBubble.className = 'vtt-action-bubble vtt-action-move';
+        moveBubble.innerHTML = `
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="5 9 2 12 5 15"></polyline>
+                <polyline points="9 5 12 2 15 5"></polyline>
+                <polyline points="15 19 12 22 9 19"></polyline>
+                <polyline points="19 9 22 12 19 15"></polyline>
+                <line x1="2" y1="12" x2="22" y2="12"></line>
+                <line x1="12" y1="2" x2="12" y2="22"></line>
+            </svg>
+        `;
+        moveBubble.title = 'Drag to move';
+
+        // Menu bubble (right side)
+        const menuBubble = document.createElement('div');
+        menuBubble.className = 'vtt-action-bubble vtt-action-menu';
+        menuBubble.innerHTML = `
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="1"></circle>
+                <circle cx="12" cy="5" r="1"></circle>
+                <circle cx="12" cy="19" r="1"></circle>
+            </svg>
+        `;
+        menuBubble.title = 'Open menu';
+
+        bubbles.appendChild(moveBubble);
+        bubbles.appendChild(menuBubble);
+        document.body.appendChild(bubbles);
+
+        // Position bubbles relative to token
+        this.updateBubblePositions(token);
+
+        // Move bubble - drag events
+        moveBubble.addEventListener('mousedown', (e) => this.onMoveBubbleStart(e, token));
+        moveBubble.addEventListener('touchstart', (e) => this.onMoveBubbleTouchStart(e, token), { passive: false });
+
+        // Menu bubble - click/tap to open menu
+        menuBubble.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            this.showTokenContextMenu({
+                preventDefault: () => {},
+                stopPropagation: () => {},
+                clientX: e.clientX,
+                clientY: e.clientY
+            }, token);
+        });
+
+        menuBubble.addEventListener('touchend', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            const touch = e.changedTouches[0];
+            this.showTokenContextMenu({
+                preventDefault: () => {},
+                stopPropagation: () => {},
+                clientX: touch.clientX,
+                clientY: touch.clientY
+            }, token);
+        });
+    },
+
+    updateBubblePositions(token) {
+        const bubbles = document.getElementById('vtt-action-bubbles');
+        if (!bubbles || !token) return;
+
+        const tokenEl = document.querySelector(`[data-token-id="${token.id}"]`);
+        if (!tokenEl) return;
+
+        const tokenRect = tokenEl.getBoundingClientRect();
+        const centerX = tokenRect.left + tokenRect.width / 2;
+        const centerY = tokenRect.top + tokenRect.height / 2;
+
+        // Position move bubble to the left
+        const moveBubble = bubbles.querySelector('.vtt-action-move');
+        if (moveBubble) {
+            moveBubble.style.left = (tokenRect.left - 50) + 'px';
+            moveBubble.style.top = (centerY - 20) + 'px';
+        }
+
+        // Position menu bubble to the right
+        const menuBubble = bubbles.querySelector('.vtt-action-menu');
+        if (menuBubble) {
+            menuBubble.style.left = (tokenRect.right + 10) + 'px';
+            menuBubble.style.top = (centerY - 20) + 'px';
+        }
+    },
+
+    hideTokenActionBubbles() {
+        const bubbles = document.getElementById('vtt-action-bubbles');
+        if (bubbles) bubbles.remove();
+    },
+
+    onMoveBubbleStart(e, token) {
+        e.preventDefault();
+        e.stopPropagation();
+
+        this.draggedToken = token;
+        const tokenEl = document.querySelector(`[data-token-id="${token.id}"]`);
+        if (!tokenEl) return;
+
+        const tokenRect = tokenEl.getBoundingClientRect();
+        const rect = this.tokenLayer.getBoundingClientRect();
+
+        // Calculate offset from token center
+        this.dragOffsetX = (tokenRect.left + tokenRect.width / 2) - rect.left - token.x * this.scale - (this.gridSize * (token.sizeMultiplier || 1) * this.scale / 2);
+        this.dragOffsetY = (tokenRect.top + tokenRect.height / 2) - rect.top - token.y * this.scale - (this.gridSize * (token.sizeMultiplier || 1) * this.scale / 2);
+
+        // Add global mouse listeners
+        document.addEventListener('mousemove', this.boundBubbleDrag = (e) => this.onBubbleDrag(e, token));
+        document.addEventListener('mouseup', this.boundBubbleDragEnd = (e) => this.onBubbleDragEnd(e, token));
+    },
+
+    onMoveBubbleTouchStart(e, token) {
+        e.preventDefault();
+        e.stopPropagation();
+
+        const touch = e.touches[0];
+        this.draggedToken = token;
+        const tokenEl = document.querySelector(`[data-token-id="${token.id}"]`);
+        if (!tokenEl) return;
+
+        const tokenRect = tokenEl.getBoundingClientRect();
+        const rect = this.tokenLayer.getBoundingClientRect();
+
+        // Calculate offset from touch point to token position
+        this.dragOffsetX = touch.clientX - rect.left - token.x * this.scale;
+        this.dragOffsetY = touch.clientY - rect.top - token.y * this.scale;
+
+        // Add global touch listeners
+        document.addEventListener('touchmove', this.boundBubbleTouchDrag = (e) => this.onBubbleTouchDrag(e, token), { passive: false });
+        document.addEventListener('touchend', this.boundBubbleTouchEnd = (e) => this.onBubbleTouchEnd(e, token));
+    },
+
+    onBubbleDrag(e, token) {
+        if (!this.draggedToken) return;
+        this.moveToken(e.clientX, e.clientY);
+        this.updateBubblePositions(token);
+    },
+
+    onBubbleTouchDrag(e, token) {
+        if (!this.draggedToken) return;
+        e.preventDefault();
+        const touch = e.touches[0];
+        this.moveToken(touch.clientX, touch.clientY);
+        this.updateBubblePositions(token);
+    },
+
+    onBubbleDragEnd(e, token) {
+        document.removeEventListener('mousemove', this.boundBubbleDrag);
+        document.removeEventListener('mouseup', this.boundBubbleDragEnd);
+        this.dropToken();
+        this.updateBubblePositions(token);
+    },
+
+    onBubbleTouchEnd(e, token) {
+        document.removeEventListener('touchmove', this.boundBubbleTouchDrag);
+        document.removeEventListener('touchend', this.boundBubbleTouchEnd);
+        this.dropToken();
+        this.updateBubblePositions(token);
     },
 
     /**
