@@ -194,9 +194,10 @@ const VTTManager = {
         this.diceRollerStartY = e.clientY;
         diceRoller.classList.add('dragging');
 
-        const rect = diceRoller.getBoundingClientRect();
-        this.diceRollerOffsetX = e.clientX - rect.left;
-        this.diceRollerOffsetY = e.clientY - rect.top;
+        // Store the current position of the dice roller
+        const rollerRect = diceRoller.getBoundingClientRect();
+        this.diceRollerOffsetX = e.clientX - rollerRect.left;
+        this.diceRollerOffsetY = e.clientY - rollerRect.top;
 
         e.preventDefault();
     },
@@ -205,7 +206,9 @@ const VTTManager = {
         if (!this.diceRollerDragging) return;
 
         const diceRoller = document.getElementById('vtt-dice-roller');
-        const container = this.canvas;
+        const container = document.querySelector('.vtt-container');
+        const toolbar = document.querySelector('.vtt-toolbar');
+        const sidebar = document.getElementById('vtt-sidebar');
         if (!diceRoller || !container) return;
 
         // Check if we've moved enough to consider it a drag
@@ -218,16 +221,21 @@ const VTTManager = {
         if (!this.diceRollerMoved) return;
 
         const containerRect = container.getBoundingClientRect();
+        const toolbarHeight = toolbar ? toolbar.offsetHeight : 60;
+        const sidebarWidth = sidebar && sidebar.classList.contains('open') ? sidebar.offsetWidth : 0;
 
         // Calculate new position relative to container
         let newX = e.clientX - containerRect.left - this.diceRollerOffsetX;
         let newY = e.clientY - containerRect.top - this.diceRollerOffsetY;
 
-        // Constrain to container bounds
-        const maxX = containerRect.width - diceRoller.offsetWidth;
-        const maxY = containerRect.height - diceRoller.offsetHeight;
-        newX = Math.max(0, Math.min(newX, maxX));
-        newY = Math.max(0, Math.min(newY, maxY));
+        // Constrain to map area only (below toolbar, left of sidebar)
+        const minX = 8;
+        const minY = toolbarHeight + 8;
+        const maxX = containerRect.width - diceRoller.offsetWidth - sidebarWidth - 8;
+        const maxY = containerRect.height - diceRoller.offsetHeight - 8;
+
+        newX = Math.max(minX, Math.min(newX, maxX));
+        newY = Math.max(minY, Math.min(newY, maxY));
 
         // Apply position
         diceRoller.style.right = 'auto';
@@ -277,7 +285,9 @@ const VTTManager = {
         if (!this.diceRollerDragging) return;
 
         const diceRoller = document.getElementById('vtt-dice-roller');
-        const container = this.canvas;
+        const container = document.querySelector('.vtt-container');
+        const toolbar = document.querySelector('.vtt-toolbar');
+        const sidebar = document.getElementById('vtt-sidebar');
         if (!diceRoller || !container) return;
 
         const touch = e.touches[0];
@@ -292,14 +302,20 @@ const VTTManager = {
         if (!this.diceRollerMoved) return;
 
         const containerRect = container.getBoundingClientRect();
+        const toolbarHeight = toolbar ? toolbar.offsetHeight : 60;
+        const sidebarWidth = sidebar && sidebar.classList.contains('open') ? sidebar.offsetWidth : 0;
 
         let newX = touch.clientX - containerRect.left - this.diceRollerOffsetX;
         let newY = touch.clientY - containerRect.top - this.diceRollerOffsetY;
 
-        const maxX = containerRect.width - diceRoller.offsetWidth;
-        const maxY = containerRect.height - diceRoller.offsetHeight;
-        newX = Math.max(0, Math.min(newX, maxX));
-        newY = Math.max(0, Math.min(newY, maxY));
+        // Constrain to map area only (below toolbar, left of sidebar)
+        const minX = 8;
+        const minY = toolbarHeight + 8;
+        const maxX = containerRect.width - diceRoller.offsetWidth - sidebarWidth - 8;
+        const maxY = containerRect.height - diceRoller.offsetHeight - 8;
+
+        newX = Math.max(minX, Math.min(newX, maxX));
+        newY = Math.max(minY, Math.min(newY, maxY));
 
         diceRoller.style.right = 'auto';
         diceRoller.style.left = newX + 'px';
