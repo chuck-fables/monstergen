@@ -766,6 +766,10 @@ const VTTManager = {
             <div class="vtt-context-menu-item" onclick="VTTManager.saveTokenAsTemplate('${token.id}')">Save as Template</div>
         `;
 
+        // Get current size name for highlighting
+        const currentMultiplier = token.sizeMultiplier || 1;
+        const sizeNames = { 0.5: 'Tiny', 1: 'Medium', 2: 'Large', 3: 'Huge', 4: 'Gargantuan' };
+
         menuHtml += `
             <div class="vtt-context-submenu">
                 <div class="vtt-context-submenu-title">Conditions</div>
@@ -777,7 +781,16 @@ const VTTManager = {
                     `).join('')}
                 </div>
             </div>
-            <div class="vtt-context-menu-item" onclick="VTTManager.setTokenSize('${token.id}')">Change Size</div>
+            <div class="vtt-context-submenu">
+                <div class="vtt-context-submenu-title">Size</div>
+                <div class="vtt-size-grid">
+                    <button class="vtt-size-btn ${currentMultiplier === 0.5 ? 'active' : ''}" onclick="VTTManager.setTokenSize('${token.id}', 0.5)">Tiny</button>
+                    <button class="vtt-size-btn ${currentMultiplier === 1 ? 'active' : ''}" onclick="VTTManager.setTokenSize('${token.id}', 1)">Med</button>
+                    <button class="vtt-size-btn ${currentMultiplier === 2 ? 'active' : ''}" onclick="VTTManager.setTokenSize('${token.id}', 2)">Large</button>
+                    <button class="vtt-size-btn ${currentMultiplier === 3 ? 'active' : ''}" onclick="VTTManager.setTokenSize('${token.id}', 3)">Huge</button>
+                    <button class="vtt-size-btn ${currentMultiplier === 4 ? 'active' : ''}" onclick="VTTManager.setTokenSize('${token.id}', 4)">Garg</button>
+                </div>
+            </div>
             <div class="vtt-context-menu-item danger" onclick="VTTManager.removeToken('${token.id}')">Remove Token</div>
         `;
 
@@ -882,25 +895,13 @@ const VTTManager = {
         this.saveState();
     },
 
-    setTokenSize(tokenId) {
+    setTokenSize(tokenId, multiplier) {
         const token = this.tokens.find(t => t.id === tokenId);
         if (!token) return;
 
-        const sizes = {
-            'Tiny': 0.5,
-            'Small': 1,
-            'Medium': 1,
-            'Large': 2,
-            'Huge': 3,
-            'Gargantuan': 4
-        };
-
-        const size = prompt('Size (Tiny, Small, Medium, Large, Huge, Gargantuan):', 'Medium');
-        if (size && sizes[size]) {
-            token.sizeMultiplier = sizes[size];  // Store multiplier instead of absolute size
-            this.renderTokens();
-            this.saveState();
-        }
+        token.sizeMultiplier = multiplier;
+        this.renderTokens();
+        this.saveState();
         this.closeContextMenu();
     },
 

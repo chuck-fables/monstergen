@@ -596,14 +596,14 @@
 }
 
 .vtt-token.player {
-    border: 3px solid rgba(255, 255, 255, 0.8);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+    border: 2px solid rgba(34, 139, 34, 0.7);  /* Dark green, semi-transparent */
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
 }
 
 .vtt-token.monster {
-    border: 3px solid #7b341e;
+    border: 2px solid rgba(139, 37, 0, 0.6);  /* Dark red, semi-transparent */
     background: linear-gradient(135deg, #8b2500 0%, #5a1a00 100%);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
 }
 
 .vtt-token-label {
@@ -651,20 +651,20 @@
 /* AC Bubble */
 .vtt-token-ac {
     position: absolute;
-    top: -8px;
-    right: -8px;
-    width: 20px;
-    height: 20px;
-    background: linear-gradient(135deg, #4a90d9 0%, #357abd 100%);
-    border: 2px solid #fff;
-    border-radius: 50%;
+    top: -6px;
+    right: -6px;
+    width: 18px;
+    height: 18px;
+    background: rgba(74, 144, 217, 0.9);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    border-radius: 4px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 0.65rem;
-    font-weight: bold;
+    font-size: 0.6rem;
+    font-weight: 600;
     color: white;
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
 }
 
 /* Condition Icons */
@@ -826,6 +826,36 @@
     background: #7b341e;
     border-color: #c9a227;
     box-shadow: 0 0 0 2px #c9a227;
+}
+
+/* Size Buttons */
+.vtt-size-grid {
+    display: flex;
+    gap: 4px;
+}
+
+.vtt-size-btn {
+    flex: 1;
+    padding: 6px 4px;
+    border: 1px solid #555;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.65rem;
+    font-weight: bold;
+    color: #e0e0e5;
+    background: #1a1a1e;
+    transition: all 0.2s;
+}
+
+.vtt-size-btn:hover {
+    background: #2a2a30;
+    border-color: #c9a227;
+}
+
+.vtt-size-btn.active {
+    background: #7b341e;
+    border-color: #c9a227;
+    color: #f0e0c0;
 }
 
 /* ==================== Responsive ==================== */
