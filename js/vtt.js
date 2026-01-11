@@ -208,6 +208,7 @@ const VTTManager = {
         const diceRoller = document.getElementById('vtt-dice-roller');
         const container = document.querySelector('.vtt-container');
         const toolbar = document.querySelector('.vtt-toolbar');
+        const gridSettings = document.querySelector('.vtt-grid-settings');
         const sidebar = document.getElementById('vtt-sidebar');
         const mobileActions = document.querySelector('.vtt-mobile-actions');
         if (!diceRoller || !container) return;
@@ -223,6 +224,7 @@ const VTTManager = {
 
         const containerRect = container.getBoundingClientRect();
         const toolbarHeight = toolbar ? toolbar.offsetHeight : 60;
+        const gridSettingsHeight = gridSettings ? gridSettings.offsetHeight : 0;
         const sidebarWidth = sidebar && sidebar.classList.contains('open') ? sidebar.offsetWidth : 0;
         const mobileActionsHeight = mobileActions ? mobileActions.offsetHeight : 0;
 
@@ -230,9 +232,9 @@ const VTTManager = {
         let newX = e.clientX - containerRect.left - this.diceRollerOffsetX;
         let newY = e.clientY - containerRect.top - this.diceRollerOffsetY;
 
-        // Constrain to map area only (below toolbar, left of sidebar, above mobile actions)
+        // Constrain to map area only (below toolbar and grid settings, left of sidebar, above mobile actions)
         const minX = 8;
-        const minY = toolbarHeight + 16;
+        const minY = toolbarHeight + gridSettingsHeight + 16;
         const maxX = containerRect.width - diceRoller.offsetWidth - sidebarWidth - 8;
         const maxY = containerRect.height - diceRoller.offsetHeight - mobileActionsHeight - 8;
 
@@ -290,6 +292,7 @@ const VTTManager = {
         const diceRoller = document.getElementById('vtt-dice-roller');
         const container = document.querySelector('.vtt-container');
         const toolbar = document.querySelector('.vtt-toolbar');
+        const gridSettings = document.querySelector('.vtt-grid-settings');
         const sidebar = document.getElementById('vtt-sidebar');
         const mobileActions = document.querySelector('.vtt-mobile-actions');
         if (!diceRoller || !container) return;
@@ -307,15 +310,16 @@ const VTTManager = {
 
         const containerRect = container.getBoundingClientRect();
         const toolbarHeight = toolbar ? toolbar.offsetHeight : 60;
+        const gridSettingsHeight = gridSettings ? gridSettings.offsetHeight : 0;
         const sidebarWidth = sidebar && sidebar.classList.contains('open') ? sidebar.offsetWidth : 0;
         const mobileActionsHeight = mobileActions ? mobileActions.offsetHeight : 0;
 
         let newX = touch.clientX - containerRect.left - this.diceRollerOffsetX;
         let newY = touch.clientY - containerRect.top - this.diceRollerOffsetY;
 
-        // Constrain to map area only (below toolbar, left of sidebar, above mobile actions)
+        // Constrain to map area only (below toolbar and grid settings, left of sidebar, above mobile actions)
         const minX = 8;
-        const minY = toolbarHeight + 16;
+        const minY = toolbarHeight + gridSettingsHeight + 16;
         const maxX = containerRect.width - diceRoller.offsetWidth - sidebarWidth - 8;
         const maxY = containerRect.height - diceRoller.offsetHeight - mobileActionsHeight - 8;
 

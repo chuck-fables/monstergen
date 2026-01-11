@@ -996,7 +996,7 @@
 /* ==================== Dice Roller Bubble ==================== */
 .vtt-dice-roller {
     position: absolute;
-    top: 130px;
+    top: 160px;
     left: 16px;
     z-index: 300;
     user-select: none;
@@ -1008,7 +1008,7 @@
 
 @media (max-width: 768px) {
     .vtt-dice-roller {
-        top: 180px;
+        top: 220px;
     }
 }
 
