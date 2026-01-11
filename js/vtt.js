@@ -68,6 +68,9 @@ const VTTManager = {
     // Dice roller state
     currentDie: 20,
     diceCount: 1,
+    diceRollerDragging: false,
+    diceRollerOffsetX: 0,
+    diceRollerOffsetY: 0,
 
     // D&D 5e Conditions
     conditions: [
@@ -148,6 +151,130 @@ const VTTManager = {
 
         // Keyboard shortcuts
         document.addEventListener('keydown', (e) => this.onKeyDown(e));
+
+        // Dice roller drag events
+        this.initDiceRollerDrag();
+    },
+
+    /**
+     * Initialize dice roller drag functionality
+     */
+    initDiceRollerDrag() {
+        const diceRoller = document.getElementById('vtt-dice-roller');
+        if (!diceRoller) return;
+
+        // Mouse events
+        diceRoller.addEventListener('mousedown', (e) => this.onDiceRollerDragStart(e));
+        document.addEventListener('mousemove', (e) => this.onDiceRollerDrag(e));
+        document.addEventListener('mouseup', (e) => this.onDiceRollerDragEnd(e));
+
+        // Touch events
+        diceRoller.addEventListener('touchstart', (e) => this.onDiceRollerTouchStart(e), { passive: false });
+        document.addEventListener('touchmove', (e) => this.onDiceRollerTouchMove(e), { passive: false });
+        document.addEventListener('touchend', (e) => this.onDiceRollerTouchEnd(e));
+    },
+
+    onDiceRollerDragStart(e) {
+        // Don't start drag if clicking on panel or buttons
+        if (e.target.closest('.vtt-dice-panel') || e.target.closest('.vtt-dice-toggle')) return;
+
+        const diceRoller = document.getElementById('vtt-dice-roller');
+        if (!diceRoller) return;
+
+        this.diceRollerDragging = true;
+        diceRoller.classList.add('dragging');
+
+        const rect = diceRoller.getBoundingClientRect();
+        this.diceRollerOffsetX = e.clientX - rect.left;
+        this.diceRollerOffsetY = e.clientY - rect.top;
+    },
+
+    onDiceRollerDrag(e) {
+        if (!this.diceRollerDragging) return;
+
+        const diceRoller = document.getElementById('vtt-dice-roller');
+        const container = this.canvas;
+        if (!diceRoller || !container) return;
+
+        const containerRect = container.getBoundingClientRect();
+
+        // Calculate new position relative to container
+        let newX = e.clientX - containerRect.left - this.diceRollerOffsetX;
+        let newY = e.clientY - containerRect.top - this.diceRollerOffsetY;
+
+        // Constrain to container bounds
+        const maxX = containerRect.width - diceRoller.offsetWidth;
+        const maxY = containerRect.height - diceRoller.offsetHeight;
+        newX = Math.max(0, Math.min(newX, maxX));
+        newY = Math.max(0, Math.min(newY, maxY));
+
+        // Apply position (use left/top instead of right)
+        diceRoller.style.right = 'auto';
+        diceRoller.style.left = newX + 'px';
+        diceRoller.style.top = newY + 'px';
+    },
+
+    onDiceRollerDragEnd(e) {
+        if (!this.diceRollerDragging) return;
+
+        this.diceRollerDragging = false;
+        const diceRoller = document.getElementById('vtt-dice-roller');
+        if (diceRoller) {
+            diceRoller.classList.remove('dragging');
+        }
+    },
+
+    onDiceRollerTouchStart(e) {
+        if (e.target.closest('.vtt-dice-panel') || e.target.closest('.vtt-dice-toggle')) return;
+        if (e.touches.length !== 1) return;
+
+        const diceRoller = document.getElementById('vtt-dice-roller');
+        if (!diceRoller) return;
+
+        this.diceRollerDragging = true;
+        diceRoller.classList.add('dragging');
+
+        const touch = e.touches[0];
+        const rect = diceRoller.getBoundingClientRect();
+        this.diceRollerOffsetX = touch.clientX - rect.left;
+        this.diceRollerOffsetY = touch.clientY - rect.top;
+
+        e.preventDefault();
+    },
+
+    onDiceRollerTouchMove(e) {
+        if (!this.diceRollerDragging) return;
+
+        const diceRoller = document.getElementById('vtt-dice-roller');
+        const container = this.canvas;
+        if (!diceRoller || !container) return;
+
+        const touch = e.touches[0];
+        const containerRect = container.getBoundingClientRect();
+
+        let newX = touch.clientX - containerRect.left - this.diceRollerOffsetX;
+        let newY = touch.clientY - containerRect.top - this.diceRollerOffsetY;
+
+        const maxX = containerRect.width - diceRoller.offsetWidth;
+        const maxY = containerRect.height - diceRoller.offsetHeight;
+        newX = Math.max(0, Math.min(newX, maxX));
+        newY = Math.max(0, Math.min(newY, maxY));
+
+        diceRoller.style.right = 'auto';
+        diceRoller.style.left = newX + 'px';
+        diceRoller.style.top = newY + 'px';
+
+        e.preventDefault();
+    },
+
+    onDiceRollerTouchEnd(e) {
+        if (!this.diceRollerDragging) return;
+
+        this.diceRollerDragging = false;
+        const diceRoller = document.getElementById('vtt-dice-roller');
+        if (diceRoller) {
+            diceRoller.classList.remove('dragging');
+        }
     },
 
     /**

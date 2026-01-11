@@ -995,10 +995,16 @@
 
 /* ==================== Dice Roller Bubble ==================== */
 .vtt-dice-roller {
-    position: fixed;
-    top: 16px;
-    left: 16px;
+    position: absolute;
+    top: 70px;
+    right: 16px;
     z-index: 300;
+    cursor: grab;
+    user-select: none;
+}
+
+.vtt-dice-roller.dragging {
+    cursor: grabbing;
 }
 
 .vtt-dice-toggle {
@@ -1009,12 +1015,12 @@
     border: 2px solid #c9a227;
     color: #f0e0c0;
     font-size: 1.5rem;
-    cursor: pointer;
+    cursor: inherit;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: transform 0.2s, box-shadow 0.2s;
+    transition: box-shadow 0.2s;
 }
 
 .vtt-dice-toggle:hover {
