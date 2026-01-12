@@ -1,0 +1,501 @@
+/* Campaign Notes Styles - D&D Parchment Theme */
+
+/* CSS Variables for Notes */
+:root {
+    --note-accent: #7A200D;
+    --note-border: #9E2A2B;
+    --note-border-light: #E6D5B8;
+    --note-parchment: #FDF1DC;
+    --note-gold: #D4A76A;
+}
+
+/* ==================== Panel Layout ==================== */
+.notes-panel-layout {
+    display: grid;
+    grid-template-columns: 320px 1fr;
+    gap: 0;
+    height: 100%;
+    overflow: hidden;
+}
+
+.notes-editor {
+    background: #1a1a2e;
+    border-right: 1px solid #333;
+    overflow-y: auto;
+    height: 100%;
+}
+
+.notes-list-container {
+    background: #121220;
+    overflow-y: auto;
+    padding: 20px;
+    height: 100%;
+}
+
+/* ==================== Note Form ==================== */
+.note-form {
+    padding: 16px;
+}
+
+.note-form-group {
+    margin-bottom: 16px;
+}
+
+.note-form-group label {
+    display: block;
+    color: #D4A76A;
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.note-form-group input[type="text"],
+.note-form-group textarea,
+.note-form-group select {
+    width: 100%;
+    padding: 10px 12px;
+    background: #252538;
+    border: 1px solid #444;
+    border-radius: 4px;
+    color: #eee;
+    font-size: 0.95rem;
+    font-family: inherit;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.note-form-group input[type="text"]:focus,
+.note-form-group textarea:focus,
+.note-form-group select:focus {
+    outline: none;
+    border-color: var(--note-gold);
+    box-shadow: 0 0 0 2px rgba(212, 167, 106, 0.2);
+}
+
+.note-form-group textarea {
+    resize: vertical;
+    min-height: 120px;
+    line-height: 1.5;
+}
+
+.note-form-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.note-form-actions .btn {
+    flex: 1;
+    padding: 10px 16px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+}
+
+.note-form-actions .btn-primary {
+    background: linear-gradient(135deg, var(--note-border) 0%, var(--note-accent) 100%);
+    color: white;
+}
+
+.note-form-actions .btn-primary:hover {
+    background: linear-gradient(135deg, #b03030 0%, #8a1a0a 100%);
+}
+
+.note-form-actions .btn-secondary {
+    background: #333;
+    color: #ccc;
+}
+
+.note-form-actions .btn-secondary:hover {
+    background: #444;
+    color: #fff;
+}
+
+/* ==================== Notes Filter ==================== */
+.notes-filter {
+    display: flex;
+    gap: 10px;
+    padding: 16px;
+    border-top: 1px solid #333;
+    background: #151525;
+}
+
+.notes-filter input,
+.notes-filter select {
+    flex: 1;
+    padding: 8px 12px;
+    background: #252538;
+    border: 1px solid #444;
+    border-radius: 4px;
+    color: #eee;
+    font-size: 0.85rem;
+}
+
+.notes-filter input:focus,
+.notes-filter select:focus {
+    outline: none;
+    border-color: var(--note-gold);
+}
+
+/* ==================== Notes List ==================== */
+.notes-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+/* ==================== Note Card ==================== */
+.note-card {
+    font-family: 'Libre Baskerville', 'Georgia', serif;
+    font-size: 13px;
+    line-height: 1.4;
+    background: var(--note-parchment);
+    background-image:
+        linear-gradient(to bottom,
+            rgba(0, 0, 0, 0.03) 0%,
+            transparent 50%,
+            rgba(0, 0, 0, 0.03) 100%);
+    color: #000;
+    position: relative;
+    border-radius: 0;
+    box-shadow:
+        0 0 0 1px var(--note-border),
+        0 0 0 4px var(--note-border-light),
+        0 0 0 5px var(--note-border),
+        0 4px 20px rgba(0, 0, 0, 0.4);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.note-card:hover {
+    transform: translateY(-2px);
+    box-shadow:
+        0 0 0 1px var(--note-border),
+        0 0 0 4px var(--note-border-light),
+        0 0 0 5px var(--note-border),
+        0 8px 30px rgba(0, 0, 0, 0.5);
+}
+
+/* Top decorative bar */
+.note-card::before {
+    content: '';
+    display: block;
+    height: 6px;
+    background: linear-gradient(to right,
+        var(--note-border) 0%,
+        var(--note-gold) 15%,
+        var(--note-border) 30%,
+        var(--note-gold) 50%,
+        var(--note-border) 70%,
+        var(--note-gold) 85%,
+        var(--note-border) 100%);
+}
+
+.note-card-header {
+    padding: 12px 16px 8px;
+    border-left: 4px solid var(--note-border);
+    margin-left: 8px;
+}
+
+.note-card-title {
+    font-family: 'Libre Baskerville', Georgia, serif;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--note-accent);
+    letter-spacing: 0.5px;
+    line-height: 1.2;
+    margin: 0 0 8px 0;
+}
+
+.note-card-meta {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.note-card-category {
+    font-size: 0.65rem;
+    padding: 2px 8px;
+    border-radius: 2px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: white;
+}
+
+.note-card-date {
+    font-size: 0.75rem;
+    color: #666;
+    font-style: italic;
+}
+
+.note-card-body {
+    padding: 0 16px 12px 28px;
+}
+
+.note-card-preview {
+    font-size: 0.9rem;
+    color: #333;
+    line-height: 1.5;
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+/* Bottom decorative bar */
+.note-card::after {
+    content: '';
+    display: block;
+    height: 6px;
+    background: linear-gradient(to right,
+        var(--note-border) 0%,
+        var(--note-gold) 15%,
+        var(--note-border) 30%,
+        var(--note-gold) 50%,
+        var(--note-border) 70%,
+        var(--note-gold) 85%,
+        var(--note-border) 100%);
+}
+
+/* ==================== Note Card Actions ==================== */
+.note-card-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 4px;
+    padding: 8px 12px;
+    background: rgba(0, 0, 0, 0.05);
+    border-top: 1px solid rgba(158, 42, 43, 0.2);
+}
+
+.note-action-btn {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.8);
+    border: 1px solid rgba(158, 42, 43, 0.3);
+    border-radius: 4px;
+    cursor: pointer;
+    color: #666;
+    transition: all 0.2s;
+}
+
+.note-action-btn:hover {
+    background: white;
+    color: var(--note-accent);
+    border-color: var(--note-accent);
+}
+
+.note-action-btn.note-action-canvas:hover {
+    background: #E8F5E9;
+    color: #2E7D32;
+    border-color: #2E7D32;
+}
+
+.note-action-btn.note-action-delete:hover {
+    background: #FFEBEE;
+    color: #C62828;
+    border-color: #C62828;
+}
+
+/* ==================== Empty State ==================== */
+.notes-empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: #888;
+    grid-column: 1 / -1;
+}
+
+.notes-empty-state .icon {
+    margin-bottom: 16px;
+    opacity: 0.5;
+}
+
+.notes-empty-state .icon svg {
+    stroke: #666;
+}
+
+.notes-empty-state h3 {
+    font-size: 1.25rem;
+    color: #aaa;
+    margin-bottom: 8px;
+}
+
+.notes-empty-state p {
+    color: #666;
+    font-size: 0.9rem;
+}
+
+/* ==================== Note Modal ==================== */
+.note-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.note-modal-backdrop {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+}
+
+.note-modal-content {
+    position: relative;
+    max-width: 600px;
+    max-height: 80vh;
+    width: 90%;
+    background: var(--note-parchment);
+    box-shadow:
+        0 0 0 1px var(--note-border),
+        0 0 0 4px var(--note-border-light),
+        0 0 0 5px var(--note-border),
+        0 20px 60px rgba(0, 0, 0, 0.5);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.note-modal-content::before {
+    content: '';
+    display: block;
+    height: 6px;
+    background: linear-gradient(to right,
+        var(--note-border) 0%,
+        var(--note-gold) 15%,
+        var(--note-border) 30%,
+        var(--note-gold) 50%,
+        var(--note-border) 70%,
+        var(--note-gold) 85%,
+        var(--note-border) 100%);
+}
+
+.note-modal-close {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    width: 32px;
+    height: 32px;
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid var(--note-border);
+    border-radius: 50%;
+    font-size: 20px;
+    color: var(--note-accent);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1;
+    transition: all 0.2s;
+}
+
+.note-modal-close:hover {
+    background: var(--note-border);
+    color: white;
+}
+
+.note-modal-header {
+    padding: 20px 24px 16px;
+    border-left: 4px solid var(--note-border);
+    margin: 16px 16px 0;
+}
+
+.note-modal-header h2 {
+    font-family: 'Libre Baskerville', Georgia, serif;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--note-accent);
+    margin: 0 0 8px 0;
+}
+
+.note-modal-category {
+    font-size: 0.7rem;
+    padding: 3px 10px;
+    border-radius: 2px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: white;
+}
+
+.note-modal-body {
+    padding: 16px 24px 24px 40px;
+    overflow-y: auto;
+    font-size: 14px;
+    line-height: 1.6;
+    color: #333;
+}
+
+/* ==================== Responsive ==================== */
+@media (max-width: 900px) {
+    .notes-panel-layout {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto 1fr;
+    }
+
+    .notes-editor {
+        border-right: none;
+        border-bottom: 1px solid #333;
+        max-height: none;
+        overflow: visible;
+    }
+
+    .notes-editor .controls-content.collapsed {
+        display: none;
+    }
+
+    .notes-editor .controls-header.collapsed .toggle-indicator {
+        transform: rotate(-90deg);
+    }
+
+    .notes-list-container {
+        padding: 16px;
+    }
+
+    .notes-list {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 500px) {
+    .note-form {
+        padding: 12px;
+    }
+
+    .note-card-title {
+        font-size: 14px;
+    }
+
+    .note-card-body {
+        padding: 0 12px 12px 20px;
+    }
+
+    .note-card-preview {
+        font-size: 0.85rem;
+    }
+
+    .notes-filter {
+        flex-direction: column;
+    }
+}
+
+/* ==================== Canvas Card for Notes ==================== */
+.canvas-card-note {
+    border-color: #3B82F6;
+}
+
+.canvas-card-note .canvas-card-header {
+    background: #3B82F6;
+}

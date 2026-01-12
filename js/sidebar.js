@@ -51,7 +51,7 @@ const Sidebar = {
             // Alt + number to switch panels
             if (e.altKey && e.key >= '1' && e.key <= '9') {
                 const index = parseInt(e.key) - 1;
-                const panelKeys = ['monster', 'npc', 'loot', 'hooks', 'location', 'item', 'library', 'campaign', 'vtt'];
+                const panelKeys = ['monster', 'npc', 'loot', 'hooks', 'location', 'item', 'library', 'campaign', 'notes', 'vtt'];
                 if (panelKeys[index]) {
                     this.switchPanel(panelKeys[index]);
                     e.preventDefault();

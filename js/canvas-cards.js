@@ -26,6 +26,7 @@ const CanvasCards = {
         hook: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>',
         location: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>',
         item: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>',
+        note: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>',
         connect: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>'
     },
 
@@ -54,6 +55,10 @@ const CanvasCards = {
         item: {
             color: '#8E44AD',
             label: 'Item'
+        },
+        note: {
+            color: '#3B82F6',
+            label: 'Note'
         }
     },
 
@@ -561,8 +566,10 @@ const CanvasCards = {
                 return data.name || 'Location';
             case 'item':
                 return data.name || 'Magic Item';
+            case 'note':
+                return data.title || 'Note';
             default:
-                return data.name || 'Unknown';
+                return data.name || data.title || 'Unknown';
         }
     },
 
@@ -586,6 +593,18 @@ const CanvasCards = {
                 return data.type || data.scale || '';
             case 'item':
                 return `${data.rarity || ''} ${data.type || ''}`;
+            case 'note':
+                const categoryLabels = {
+                    general: 'General',
+                    session: 'Session Notes',
+                    plot: 'Plot Points',
+                    npc: 'NPC Info',
+                    location: 'Location Details',
+                    quest: 'Quest Log',
+                    lore: 'Lore & History',
+                    rules: 'House Rules'
+                };
+                return categoryLabels[data.category] || 'Note';
             default:
                 return '';
         }
@@ -617,6 +636,8 @@ const CanvasCards = {
                 return data.description ? data.description.substring(0, 80) + '...' : '';
             case 'item':
                 return data.description ? data.description.substring(0, 80) + '...' : '';
+            case 'note':
+                return data.body ? data.body.substring(0, 80) + '...' : '';
             default:
                 return '';
         }
@@ -692,6 +713,31 @@ const CanvasCards = {
                     return ItemCardRenderer.renderSingle(data, { hideActions: true });
                 }
                 break;
+            case 'note':
+                // Render note with parchment styling
+                const categoryColors = {
+                    general: '#6B7280', session: '#3B82F6', plot: '#EF4444', npc: '#8B5CF6',
+                    location: '#10B981', quest: '#F59E0B', lore: '#EC4899', rules: '#6366F1'
+                };
+                const categoryLabelsNote = {
+                    general: 'General', session: 'Session Notes', plot: 'Plot Points', npc: 'NPC Info',
+                    location: 'Location Details', quest: 'Quest Log', lore: 'Lore & History', rules: 'House Rules'
+                };
+                const noteColor = categoryColors[data.category] || categoryColors.general;
+                const noteLabel = categoryLabelsNote[data.category] || 'General';
+                return `
+                    <div class="note-card" style="max-width: 100%; margin: 0;">
+                        <div class="note-card-header" style="border-left-color: ${noteColor}">
+                            <div class="note-card-title">${this.escapeHtml(data.title)}</div>
+                            <div class="note-card-meta">
+                                <span class="note-card-category" style="background: ${noteColor}">${noteLabel}</span>
+                            </div>
+                        </div>
+                        <div class="note-card-body">
+                            <div class="note-card-preview" style="white-space: pre-wrap;">${this.escapeHtml(data.body)}</div>
+                        </div>
+                    </div>
+                `;
         }
 
         // Fallback to JSON display
@@ -745,8 +791,14 @@ const CanvasCards = {
     },
 
     /**
-     * Show notification
+     * Escape HTML to prevent XSS
      */
+    escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    },
+
     showNotification(message) {
         if (typeof showNotification === 'function') {
             showNotification(message, 'success');

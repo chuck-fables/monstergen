@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="css/hook-card.css">
     <link rel="stylesheet" href="css/location-card.css">
     <link rel="stylesheet" href="css/item-card.css">
+    <link rel="stylesheet" href="css/notes-card.css">
     <link rel="stylesheet" href="css/canvas.css">
     <link rel="stylesheet" href="css/vtt.css">
     <link rel="stylesheet" href="css/srd.css">
@@ -63,6 +64,10 @@
                 <li class="nav-item" data-panel="campaign">
                     <span class="nav-icon">&#128203;</span>
                     <span class="nav-label">Campaign</span>
+                </li>
+                <li class="nav-item" data-panel="notes">
+                    <span class="nav-icon">&#128221;</span>
+                    <span class="nav-label">Notes</span>
                 </li>
                 <li class="nav-item" data-panel="vtt">
                     <span class="nav-icon">&#127918;</span>
@@ -1134,6 +1139,86 @@
                 </div>
             </div>
 
+            <!-- ==================== NOTES PANEL ==================== -->
+            <div id="panel-notes" class="generator-panel">
+                <div class="notes-panel-layout">
+                    <!-- Note Editor -->
+                    <div class="notes-editor">
+                        <header class="controls-header" id="notes-panel-toggle">
+                            <h2>Campaign Notes</h2>
+                            <span class="toggle-indicator">&#9660;</span>
+                        </header>
+                        <div class="controls-content" id="notes-panel-content">
+                            <div class="note-form">
+                                <div class="note-form-group">
+                                    <label for="noteTitle">Title</label>
+                                    <input type="text" id="noteTitle" placeholder="Enter note title...">
+                                </div>
+                                <div class="note-form-group">
+                                    <label for="noteBody">Content</label>
+                                    <textarea id="noteBody" rows="8" placeholder="Write your note here..."></textarea>
+                                </div>
+                                <div class="note-form-group">
+                                    <label for="noteCategory">Category</label>
+                                    <select id="noteCategory">
+                                        <option value="general">General</option>
+                                        <option value="session">Session Notes</option>
+                                        <option value="plot">Plot Points</option>
+                                        <option value="npc">NPC Info</option>
+                                        <option value="location">Location Details</option>
+                                        <option value="quest">Quest Log</option>
+                                        <option value="lore">Lore & History</option>
+                                        <option value="rules">House Rules</option>
+                                    </select>
+                                </div>
+                                <div class="note-form-actions">
+                                    <button type="button" class="btn btn-primary" onclick="NotesPanel.saveNote()">
+                                        Save Note
+                                    </button>
+                                    <button type="button" class="btn btn-secondary" onclick="NotesPanel.clearForm()">
+                                        Clear
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Search and Filter -->
+                            <div class="notes-filter">
+                                <input type="text" id="notesSearch" placeholder="Search notes..." oninput="NotesPanel.filterNotes()">
+                                <select id="notesFilterCategory" onchange="NotesPanel.filterNotes()">
+                                    <option value="all">All Categories</option>
+                                    <option value="general">General</option>
+                                    <option value="session">Session Notes</option>
+                                    <option value="plot">Plot Points</option>
+                                    <option value="npc">NPC Info</option>
+                                    <option value="location">Location Details</option>
+                                    <option value="quest">Quest Log</option>
+                                    <option value="lore">Lore & History</option>
+                                    <option value="rules">House Rules</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Notes List -->
+                    <div class="notes-list-container">
+                        <div id="notesList" class="notes-list">
+                            <div class="notes-empty-state">
+                                <div class="icon">
+                                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                        <polyline points="14 2 14 8 20 8"></polyline>
+                                        <line x1="12" y1="18" x2="12" y2="12"></line>
+                                        <line x1="9" y1="15" x2="15" y2="15"></line>
+                                    </svg>
+                                </div>
+                                <h3>No Notes Yet</h3>
+                                <p>Create your first campaign note to get started!</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <!-- ==================== VTT BATTLEMAP MANAGER PANEL ==================== -->
             <div id="panel-vtt" class="generator-panel">
                 <div class="vtt-container">
@@ -1807,6 +1892,9 @@
     <script src="js/canvas-cards.js"></script>
     <script src="js/canvas-connections.js"></script>
     <script src="js/canvas-library.js"></script>
+
+    <!-- Notes Panel -->
+    <script src="js/notes-panel.js"></script>
 
     <!-- VTT Battlemap Manager -->
     <script src="js/vtt.js"></script>
