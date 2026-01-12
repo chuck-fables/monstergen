@@ -161,7 +161,7 @@ const VTTManager = {
     /**
      * Initialize the VTT
      */
-    init() {
+    async init() {
         this.canvas = document.getElementById('vtt-canvas');
         this.gridLayer = document.getElementById('vtt-grid-layer');
         this.backgroundLayer = document.getElementById('vtt-background-layer');
@@ -174,10 +174,29 @@ const VTTManager = {
             return;
         }
 
+        // Initialize IndexedDB storage
+        try {
+            await VTTStorage.init();
+
+            // Check if migration from localStorage is needed
+            if (await VTTStorage.needsMigration()) {
+                console.log('Migrating VTT data to IndexedDB...');
+                if (typeof showNotification === 'function') {
+                    showNotification('Upgrading storage for better capacity...', 'info');
+                }
+                await VTTStorage.migrateFromLocalStorage();
+                if (typeof showNotification === 'function') {
+                    showNotification('Storage upgrade complete!', 'success');
+                }
+            }
+        } catch (e) {
+            console.error('IndexedDB initialization failed, falling back to localStorage:', e);
+        }
+
         this.loadSettings();
-        this.loadMaps();
+        await this.loadMaps();
         this.loadFavorites();
-        this.loadSavedTokens();
+        await this.loadSavedTokens();
         this.bindEvents();
         this.updateGrid();
         this.loadMonsterLibrary();
@@ -2721,25 +2740,43 @@ const VTTManager = {
     /**
      * Saved Token Templates
      */
-    loadSavedTokens() {
+    async loadSavedTokens() {
         try {
-            this.savedTokens = JSON.parse(localStorage.getItem('dmtk_vtt_saved_tokens')) || [];
+            // Try IndexedDB first
+            if (VTTStorage.isReady) {
+                this.savedTokens = await VTTStorage.loadAllTokenTemplates();
+            } else {
+                // Fallback to localStorage
+                this.savedTokens = JSON.parse(localStorage.getItem('dmtk_vtt_saved_tokens')) || [];
+            }
         } catch (e) {
+            console.error('Failed to load saved tokens:', e);
             this.savedTokens = [];
         }
         this.renderSavedTokens();
     },
 
     saveSavedTokens() {
-        try {
-            localStorage.setItem('dmtk_vtt_saved_tokens', JSON.stringify(this.savedTokens));
-        } catch (e) {
-            console.error('Failed to save tokens:', e);
-            if (typeof showNotification === 'function') {
-                if (e.name === 'QuotaExceededError') {
-                    showNotification('Storage full! Try removing some saved tokens.', 'error');
-                } else {
+        // Use IndexedDB if available
+        if (VTTStorage.isReady) {
+            VTTStorage.saveTokenTemplates(this.savedTokens).catch(e => {
+                console.error('Failed to save tokens to IndexedDB:', e);
+                if (typeof showNotification === 'function') {
                     showNotification('Failed to save token templates', 'error');
+                }
+            });
+        } else {
+            // Fallback to localStorage
+            try {
+                localStorage.setItem('dmtk_vtt_saved_tokens', JSON.stringify(this.savedTokens));
+            } catch (e) {
+                console.error('Failed to save tokens:', e);
+                if (typeof showNotification === 'function') {
+                    if (e.name === 'QuotaExceededError') {
+                        showNotification('Storage full! Try removing some saved tokens.', 'error');
+                    } else {
+                        showNotification('Failed to save token templates', 'error');
+                    }
                 }
             }
         }
@@ -2846,26 +2883,49 @@ const VTTManager = {
     /**
      * Map Management
      */
-    loadMaps() {
+    async loadMaps() {
         try {
-            this.maps = JSON.parse(localStorage.getItem('dmtk_vtt_maps')) || [];
+            // Try IndexedDB first
+            if (VTTStorage.isReady) {
+                this.maps = await VTTStorage.loadAllMapsWithImages();
+                const lastMapId = await VTTStorage.loadSetting('activeMap');
 
-            const lastMapId = localStorage.getItem('dmtk_vtt_active');
-            if (lastMapId) {
-                const map = this.maps.find(m => m.id === lastMapId);
-                if (map) {
-                    this.loadMap(map.id);
-                    this.updateMapsList();
-                    return;
+                if (lastMapId) {
+                    const map = this.maps.find(m => m.id === lastMapId);
+                    if (map) {
+                        this.loadMap(map.id);
+                        this.updateMapsList();
+                        return;
+                    }
                 }
-            }
 
-            if (this.maps.length === 0) {
-                this.createMap('Default Battlemap');
+                if (this.maps.length === 0) {
+                    this.createMap('Default Battlemap');
+                } else {
+                    this.loadMap(this.maps[0].id);
+                }
+                this.updateMapsList();
             } else {
-                this.loadMap(this.maps[0].id);
+                // Fallback to localStorage
+                this.maps = JSON.parse(localStorage.getItem('dmtk_vtt_maps')) || [];
+
+                const lastMapId = localStorage.getItem('dmtk_vtt_active');
+                if (lastMapId) {
+                    const map = this.maps.find(m => m.id === lastMapId);
+                    if (map) {
+                        this.loadMap(map.id);
+                        this.updateMapsList();
+                        return;
+                    }
+                }
+
+                if (this.maps.length === 0) {
+                    this.createMap('Default Battlemap');
+                } else {
+                    this.loadMap(this.maps[0].id);
+                }
+                this.updateMapsList();
             }
-            this.updateMapsList();
         } catch (e) {
             console.error('Failed to load maps:', e);
             this.maps = [];
@@ -2959,7 +3019,12 @@ const VTTManager = {
             this.updateMapControls();
         }
 
-        localStorage.setItem('dmtk_vtt_active', mapId);
+        // Save active map to storage
+        if (VTTStorage.isReady) {
+            VTTStorage.saveSetting('activeMap', mapId);
+        } else {
+            localStorage.setItem('dmtk_vtt_active', mapId);
+        }
     },
 
     saveState() {
@@ -3058,20 +3123,30 @@ const VTTManager = {
     },
 
     saveMaps() {
-        try {
-            const data = JSON.stringify(this.maps);
-            localStorage.setItem('dmtk_vtt_maps', data);
-        } catch (e) {
-            console.error('Failed to save maps:', e);
-            // Notify user of save failure
-            if (typeof showNotification === 'function') {
-                if (e.name === 'QuotaExceededError') {
-                    showNotification('Storage full! Try removing some token images.', 'error');
-                } else {
+        // Use IndexedDB if available (async, but we don't wait)
+        if (VTTStorage.isReady) {
+            VTTStorage.saveMaps(this.maps).catch(e => {
+                console.error('Failed to save maps to IndexedDB:', e);
+                if (typeof showNotification === 'function') {
                     showNotification('Failed to save map data', 'error');
                 }
-            } else {
-                alert('Failed to save: ' + (e.name === 'QuotaExceededError' ? 'Storage full!' : e.message));
+            });
+        } else {
+            // Fallback to localStorage
+            try {
+                const data = JSON.stringify(this.maps);
+                localStorage.setItem('dmtk_vtt_maps', data);
+            } catch (e) {
+                console.error('Failed to save maps:', e);
+                if (typeof showNotification === 'function') {
+                    if (e.name === 'QuotaExceededError') {
+                        showNotification('Storage full! Try removing some token images.', 'error');
+                    } else {
+                        showNotification('Failed to save map data', 'error');
+                    }
+                } else {
+                    alert('Failed to save: ' + (e.name === 'QuotaExceededError' ? 'Storage full!' : e.message));
+                }
             }
         }
     },
